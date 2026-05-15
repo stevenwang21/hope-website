@@ -1,12 +1,73 @@
 # 希望文理網站 Bug 巡檢報告
 
-**最新檢查時間**：2026-05-13（自動排程任務）
-**檢查範圍**：`web_updated.html`（正式版，最後異動 5/12 11:50）、`courses.html`、相關靜態資源
-**修正版檔案**：`web_bugfix_test.html`（本輪重新產生，以最新 web_updated.html 為基礎）
+**最新檢查時間**：2026-05-15（自動排程任務）
+**檢查範圍**：`index.html`（正式版）、`courses.html`、相關靜態資源
+**修正版檔案**：`index_bugfix_test.html`（本輪新建）
 
 ---
 
-## 一、最新一輪（2026-05-13）巡檢結果
+## 一、最新一輪（2026-05-15）巡檢結果
+
+### 📌 說明
+本輪正式版已從 `web_updated.html` 更名為 `index.html`，以此為基礎進行全面掃描。`web_bugfix_test.html` 仍保留先前紀錄。本輪測試檔為 `index_bugfix_test.html`。
+
+### ✅ 整體狀況：良好
+
+首頁、導覽列、手機版、圖片、按鈕、表單邏輯均正常。本輪未發現高優先度的破圖或功能性 bug。
+
+### 🟡 本輪發現問題（2 項）
+
+#### 問題 1（中優先）：`onlinePanelG12` 孤立面板仍然存在
+- **位置：** `index.html` Line 8126–8178
+- **問題：** 「高三課程」面板 div（`id="onlinePanelG12"`）設定 `hidden`，但仍無任何卡片有 `aria-controls` 指向它。面板永遠無法被打開，裡面的「選擇章節」「加入問問題群組」「購物車」按鈕使用者完全看不到。
+- **備註：** 此問題已在 2026-05-13 報告的第七條「舊有待確認事項」第 5 點提及，仍待確認處理方向。
+- **✅ 已在 `index_bugfix_test.html` 加入 `<!-- [BUG NOTE] -->` 標記**
+
+#### 問題 2（輕微/效能）：6 張圖片缺少 `loading` 屬性
+- **位置：** `index.html`，以下圖片 `<img>` 未設定 `loading`：
+
+  | 圖片 | 建議 | 說明 |
+  |---|---|---|
+  | `navbar-logo.jpg` | `loading="eager"` | 首屏 LOGO |
+  | `logo.jpg` | `loading="eager"` | 首屏 LOGO |
+  | `封面底圖.png` | `loading="eager"` | Hero 主圖 |
+  | `汪飛白影片.png` | `loading="lazy"` | 頁面中段 |
+  | `scholarshipZoomImg`（動態） | `loading="lazy"` | Lightbox 動態圖 |
+  | `dmLightboxImg`（動態） | `loading="lazy"` | Lightbox 動態圖 |
+
+- **✅ 已在 `index_bugfix_test.html` 全部修正**
+
+### ✅ 本輪確認正常的項目
+
+| 項目 | 結果 |
+|---|---|
+| HTML 標籤結構 | ✅ 正常，無不匹配標籤 |
+| Viewport meta（手機版 RWD）| ✅ 存在且正確 |
+| 導覽列 8 個錨點連結 | ✅ 全部對應正確 section id |
+| 手機版漢堡選單 JS | ✅ 正常（toggle `.active` class） |
+| 54 個 media query（最小 520px）| ✅ RWD 設計健全 |
+| 所有本地圖片（含 %20 空格編碼）| ✅ 全部存在，無破圖 |
+| courses.html 圖片 | ✅ 全部存在 |
+| courses.html 返回首頁連結 | ✅ 正常 |
+| JS 括號/大括號匹配 | ✅ 正常 |
+| Google Form 聯絡表單 URL | ✅ 設定正常 |
+| Hero 輪播 5 張背景圖 | ✅ 全部存在 |
+| 53 個按鈕事件綁定 | ✅ 正常 |
+| Hardcode 本機 URL | ✅ 無 localhost 殘留 |
+| 明顯文字重複/錯字 | ✅ 無發現 |
+| img alt 屬性 | ✅ 所有圖片均有 alt |
+
+### ❓ 本輪待您確認事項
+
+1. **`onlinePanelG12` 如何處理？**（先前已提，本輪再次確認）
+   - **選項 A**：刪除孤立面板（Line 8126–8178），高三與其他年級同樣連到 `courses.html`
+   - **選項 B**：將高三卡片改為展開面板，加回 `aria-controls="onlinePanelG12"` 並改成 `<button>` 而非 `<a href>`
+
+2. **`index_bugfix_test.html` 中的圖片 loading 修正確認沒問題後，是否要覆蓋到正式版 `index.html`？**
+
+---
+
+## 二、先前最新一輪（2026-05-13）巡檢結果
 
 ### 📌 重要說明
 `web_updated.html` 在 5/12 11:50 有更新（新增高中部榮譽榜單、新課表等大量內容），因此本輪以最新版為基礎重新產生 `web_bugfix_test.html`，包含所有歷史積累修正。

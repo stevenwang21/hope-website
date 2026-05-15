@@ -5,6 +5,7 @@
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <title>希望文理補習班 | 汪飛白理化 · 50 年教育的信任之選</title>
 <meta name="description" content="希望補習班 · 汪飛白理化，深耕台北小巨蛋商圈 50 年。國高中文理專業師資團隊，建中北一女錄取率 25%。" />
+<meta name="google-site-verification" content="10Nejl_O8mydsy_ZxcVvNp6edB3U8rQFWppxsWpcWUs" />
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+TC:wght@300;400;500;600;700;800;900&family=Noto+Serif+TC:wght@500;700&display=swap" rel="stylesheet">
@@ -8647,11 +8648,15 @@
             試聽影片 · 升八理化說明會
           </span>
         </div>
-        <div class="teacher-card fade-up">
-          <div class="teacher-avatar">侯</div>
+        <div class="teacher-card fade-up is-clickable" id="teacherHou" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="houVideosModal">
+          <div class="teacher-avatar"><img src="侯昇4.jpg" alt="侯昇老師" loading="lazy"></div>
           <h4>侯昇 老師</h4>
           <div class="teacher-sub">數學 · 國一 · 國三</div>
           <p class="teacher-desc">擅長把複雜概念拆成清晰脈絡，帶領國一與國三學生穩扎穩打，會考數學高分常勝軍。</p>
+          <span class="teacher-cta">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
+            試聽影片 · 侯昇老師
+          </span>
         </div>
         <div class="teacher-card fade-up is-clickable" id="teacherLian" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="lianVideosModal">
           <div class="teacher-avatar"><img src="teacher-lian.jpg" alt="連晨老師" loading="lazy"></div>
@@ -8802,12 +8807,40 @@
   </div>
 </div>
 
+<div class="video-modal" id="houVideosModal" role="dialog" aria-modal="true" aria-label="試聽影片" hidden>
+  <div class="video-modal-backdrop" data-hou-close></div>
+  <div class="video-modal-card" role="document">
+    <button type="button" class="video-modal-close" aria-label="關閉" data-hou-close>×</button>
+    <header class="video-modal-header">
+      <span class="video-modal-kicker">TRIAL VIDEO · 試聽影片</span>
+    </header>
+
+    <div class="video-modal-grid is-single">
+      <a class="video-card" href="https://youtu.be/PifWRJipBVE" target="_blank" rel="noopener" data-grade="7">
+        <div class="video-card-frame">
+          <img src="https://i.ytimg.com/vi/PifWRJipBVE/maxresdefault.jpg" alt="侯昇老師 數學說明會" loading="lazy" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/PifWRJipBVE/hqdefault.jpg';" />
+          <span class="video-card-play" aria-hidden="true">
+            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
+          </span>
+          <span class="video-card-grade">數學</span>
+        </div>
+        <div class="video-card-body">
+          <span class="video-card-kicker">MATH · 侯昇老師</span>
+          <span class="video-card-title">侯昇老師 數學說明會</span>
+          <span class="video-card-desc">國一、國三數學章節脈絡分析，會考數學高分解題策略。</span>
+        </div>
+      </a>
+    </div>
+  </div>
+</div>
+
 <script>
   (function teacherVideoModalsInit(){
     var pairs = [
       { triggerId: 'teacherWang', modalId: 'wangVideosModal', closeAttr: 'data-wang-close' },
       { triggerId: 'teacherFang', modalId: 'fangVideosModal', closeAttr: 'data-fang-close' },
-      { triggerId: 'teacherLian', modalId: 'lianVideosModal', closeAttr: 'data-lian-close' }
+      { triggerId: 'teacherLian', modalId: 'lianVideosModal', closeAttr: 'data-lian-close' },
+      { triggerId: 'teacherHou', modalId: 'houVideosModal', closeAttr: 'data-hou-close' }
     ];
     pairs.forEach(function(cfg){
       var trigger = document.getElementById(cfg.triggerId);

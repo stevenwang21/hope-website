@@ -7153,7 +7153,7 @@
 <header id="header">
   <nav>
     <a href="#home" class="logo" aria-label="希望文理補習班 · 回首頁">
-      <img src="navbar-logo.jpg" alt="希望文理補習班 OUR HOPE" class="logo-img" />
+      <img src="navbar-logo.jpg" alt="希望文理補習班 OUR HOPE" class="logo-img" loading="eager" />
       <span class="logo-text">
         <span class="logo-name">希望補習班 · 汪飛白理化</span>
         <span class="logo-slogan">Great hopes make everything great possible.</span>
@@ -7281,7 +7281,7 @@
     <div class="story-grid">
       <div class="story-left">
         <div class="story-image fade-up">
-          <img src="封面底圖.png" alt="希望文理補習班 · 封面" />
+          <img src="封面底圖.png" alt="希望文理補習班 · 封面" loading="eager" />
         </div>
         <div class="story-text" id="storyText">
           <span class="story-kicker">OUR STORY</span>
@@ -7298,7 +7298,7 @@
       </div>
       <div class="story-right fade-up">
         <a class="story-video-frame" href="#" aria-label="觀看汪飛白老師 升八理化說明會" id="storyVideoLink">
-          <img src="汪飛白影片.png" alt="汪飛白老師 升八理化說明會" />
+          <img src="汪飛白影片.png" alt="汪飛白老師 升八理化說明會" loading="lazy" />
           <span class="story-video-play" aria-hidden="true">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </span>
@@ -7606,7 +7606,7 @@
     <!-- 獎學金圖片放大檢視 -->
     <div class="scholarship-zoom" id="scholarshipZoom" role="dialog" aria-modal="true" aria-label="獎學金頁面放大" hidden>
       <button type="button" class="scholarship-zoom-close" id="scholarshipZoomClose" aria-label="關閉">×</button>
-      <img id="scholarshipZoomImg" src="" alt="" />
+      <img id="scholarshipZoomImg" src="" alt="" loading="lazy" />
     </div>
   </div>
 </section>
@@ -8052,7 +8052,7 @@
   <div class="dm-lightbox" id="dmLightbox" role="dialog" aria-modal="true" aria-label="DM 放大檢視" hidden>
     <div class="dm-lightbox-inner">
       <button type="button" class="dm-lightbox-close" id="dmLightboxClose" aria-label="關閉">×</button>
-      <img id="dmLightboxImg" src="" alt="" />
+      <img id="dmLightboxImg" src="" alt="" loading="lazy" />
     </div>
     <aside class="dm-lightbox-aside" id="dmLightboxAside" aria-label="老師課表面板">
       <div class="dm-aside-kicker">TEACHERS · 點開老師查看課表</div>
@@ -8121,7 +8121,8 @@
         <span class="online-grade-status">已開放</span>
         <span class="online-grade-cta">前往課程 →</span>
       </a>
-    </div>
+    </div>    <!-- [BUG NOTE] onlinePanelG12 面板無觸發入口（無卡片有 aria-controls 指向此 panel），永遠隱藏 -->
+
 
     <div class="online-panel" id="onlinePanelG12" role="region" aria-labelledby="onlinePanelG12Heading" hidden style="display:none">
       <div class="online-panel-inner">
@@ -8648,15 +8649,11 @@
             試聽影片 · 升八理化說明會
           </span>
         </div>
-        <div class="teacher-card fade-up is-clickable" id="teacherHou" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="houVideosModal">
-          <div class="teacher-avatar"><img src="侯昇4.jpg" alt="侯昇老師" loading="lazy"></div>
+        <div class="teacher-card fade-up">
+          <div class="teacher-avatar">侯</div>
           <h4>侯昇 老師</h4>
           <div class="teacher-sub">數學 · 國一 · 國三</div>
           <p class="teacher-desc">擅長把複雜概念拆成清晰脈絡，帶領國一與國三學生穩扎穩打，會考數學高分常勝軍。</p>
-          <span class="teacher-cta">
-            <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
-            試聽影片 · 侯昇老師
-          </span>
         </div>
         <div class="teacher-card fade-up is-clickable" id="teacherLian" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="lianVideosModal">
           <div class="teacher-avatar"><img src="teacher-lian.jpg" alt="連晨老師" loading="lazy"></div>
@@ -8807,40 +8804,12 @@
   </div>
 </div>
 
-<div class="video-modal" id="houVideosModal" role="dialog" aria-modal="true" aria-label="試聽影片" hidden>
-  <div class="video-modal-backdrop" data-hou-close></div>
-  <div class="video-modal-card" role="document">
-    <button type="button" class="video-modal-close" aria-label="關閉" data-hou-close>×</button>
-    <header class="video-modal-header">
-      <span class="video-modal-kicker">TRIAL VIDEO · 試聽影片</span>
-    </header>
-
-    <div class="video-modal-grid is-single">
-      <a class="video-card" href="https://youtu.be/PifWRJipBVE" target="_blank" rel="noopener" data-grade="7">
-        <div class="video-card-frame">
-          <img src="https://i.ytimg.com/vi/PifWRJipBVE/maxresdefault.jpg" alt="侯昇老師 數學說明會" loading="lazy" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/PifWRJipBVE/hqdefault.jpg';" />
-          <span class="video-card-play" aria-hidden="true">
-            <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-          </span>
-          <span class="video-card-grade">數學</span>
-        </div>
-        <div class="video-card-body">
-          <span class="video-card-kicker">MATH · 侯昇老師</span>
-          <span class="video-card-title">侯昇老師 數學說明會</span>
-          <span class="video-card-desc">國一、國三數學章節脈絡分析，會考數學高分解題策略。</span>
-        </div>
-      </a>
-    </div>
-  </div>
-</div>
-
 <script>
   (function teacherVideoModalsInit(){
     var pairs = [
       { triggerId: 'teacherWang', modalId: 'wangVideosModal', closeAttr: 'data-wang-close' },
       { triggerId: 'teacherFang', modalId: 'fangVideosModal', closeAttr: 'data-fang-close' },
-      { triggerId: 'teacherLian', modalId: 'lianVideosModal', closeAttr: 'data-lian-close' },
-      { triggerId: 'teacherHou', modalId: 'houVideosModal', closeAttr: 'data-hou-close' }
+      { triggerId: 'teacherLian', modalId: 'lianVideosModal', closeAttr: 'data-lian-close' }
     ];
     pairs.forEach(function(cfg){
       var trigger = document.getElementById(cfg.triggerId);
@@ -9621,7 +9590,7 @@
     <div class="footer-grid">
       <div class="footer-brand">
         <a href="#home" class="logo footer-logo" aria-label="希望文理補習班">
-          <img src="logo.jpg" alt="希望文理補習班 OUR HOPE" class="logo-img" />
+          <img src="logo.jpg" alt="希望文理補習班 OUR HOPE" class="logo-img" loading="eager" />
         </a>
         <p>
           有教無類 · 教學相長<br>
