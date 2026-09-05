@@ -7452,18 +7452,105 @@
 <!-- ║  科目代號: bio=生物 physics=物理 chemistry=化學 math=數學 english=英文 ║ -->
 <!-- ╚══════════════════════════════════════════════════════════╝ -->
 <script>
-window.HOMEWORK_DATES = 'auto'; // 'auto' = 永遠顯示今天日期。想改單一科目也可以改成物件如 { '8-physics': '8/15 更新' }
+// 自動從 Blogger 部落格抓最後更新日期
+// 每個科目卡片有 data-blog 或 href 指向該部落格，這裡直接呼叫 Blogger JSON feed
+window.HOMEWORK_MANUAL = {}; // 若要手動覆蓋某科目，寫在這 例如: {'8-physics':'8/28 更新'}
 
-// 自動套用今天日期到所有科目卡片
+function fetchBloggerLatest(blogUrl, callback) {
+  // 清乾淨網址 (去掉 trailing slash, 保留 https)
+  var base = blogUrl.replace(/\/$/, '');
+  if (!/^https?:\/\//.test(base) || !/\.blogspot\.com/.test(base)) {
+    callback(null); return;
+  }
+  var cbName = 'blogCb_' + Math.random().toString(36).slice(2, 10);
+  var timer = setTimeout(function () {
+    try { delete window[cbName]; } catch(e){}
+    callback(null);
+  }, 8000);
+  window[cbName] = function (data) {
+    clearTimeout(timer);
+    try {
+      var entry = data.feed && data.feed.entry && data.feed.entry[0];
+      var upd = entry && (entry.updated || entry.published);
+      if (upd && upd.$t) {
+        var dt = new Date(upd.$t);
+        callback(dt);
+      } else {
+        callback(null);
+      }
+    } catch (e) { callback(null); }
+    try {
+      delete window[cbName];
+      if (script.parentNode) script.parentNode.removeChild(script);
+    } catch(e){}
+  };
+  var script = document.createElement('script');
+  script.src = base + '/feeds/posts/summary?max-results=1&alt=json-in-script&callback=' + cbName;
+  script.onerror = function () {
+    clearTimeout(timer);
+    try { delete window[cbName]; } catch(e){}
+    callback(null);
+  };
+  document.head.appendChild(script);
+}
+
 document.addEventListener('DOMContentLoaded', function () {
-  var now = new Date();
-  var todayStr = (now.getMonth() + 1) + '/' + now.getDate() + ' 更新';
   document.querySelectorAll('.homework-subject[data-grade][data-subject]').forEach(function (card) {
     var key = card.getAttribute('data-grade') + '-' + card.getAttribute('data-subject');
     var hint = card.querySelector('.homework-subject-hint');
-    var date = (typeof window.HOMEWORK_DATES === 'object' && window.HOMEWORK_DATES[key]) || todayStr;
-    if (hint) hint.textContent = date;
+    if (!hint) return;
+
+    // 1) 手動覆蓋優先
+    if (window.HOMEWORK_MANUAL[key]) {
+      hint.textContent = window.HOMEWORK_MANUAL[key];
+      return;
+    }
+
+    // 2) 找部落格網址 (data-blog 或 href)
+    var blogUrl = card.getAttribute('data-blog');
+    if (!blogUrl) {
+      var href = card.getAttribute('href');
+      if (href && /^https?:\/\//.test(href) && /\.blogspot\.com/.test(href)) blogUrl = href;
+    }
+    if (!blogUrl) {
+      hint.textContent = '尚未上線';
+      return;
+    }
+
+    // 3) 抓最後更新日期
+    hint.textContent = '載入中...';
+    fetchBloggerLatest(blogUrl, function (date) {
+      if (date) {
+        hint.textContent = (date.getMonth() + 1) + '/' + date.getDate() + ' 更新';
+      } else {
+        hint.textContent = '看最新聯絡簿';
+      }
+    });
   });
+});
+  return bestDate;
+}
+
+// 套用到所有科目卡片
+document.addEventListener('DOMContentLoaded', function () {
+  document.querySelectorAll('.homework-subject[data-grade][data-subject]').forEach(function (card) {
+    var key = card.getAttribute('data-grade') + '-' + card.getAttribute('data-subject');
+    var hint = card.querySelector('.homework-subject-hint');
+    if (!hint) return;
+    // 手動覆蓋優先
+    if (window.HOMEWORK_MANUAL[key]) {
+      hint.textContent = window.HOMEWORK_MANUAL[key];
+      return;
+    }
+    // 否則自動抓最近的上課日
+    var days = window.HOMEWORK_SCHEDULE[key];
+    if (days === undefined) return;
+    var date = getMostRecentClassDate(days);
+    if (date) {
+      hint.textContent = (date.getMonth() + 1) + '/' + date.getDate() + ' 更新';
+    }
+  });
+});
 });
 </script>
 
