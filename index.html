@@ -7453,11 +7453,24 @@
 <!-- ╚══════════════════════════════════════════════════════════╝ -->
 <script>
 // 自動從 Blogger 部落格抓最後更新日期
-// 每個科目卡片有 data-blog 或 href 指向該部落格，這裡直接呼叫 Blogger JSON feed
-window.HOMEWORK_MANUAL = {}; // 若要手動覆蓋某科目，寫在這 例如: {'8-physics':'8/28 更新'}
+// 有快取，第二次打開就會秒顯示 (背景仍會偷偷更新)
+window.HOMEWORK_MANUAL = {}; // 手動覆蓋: {'8-physics':'8/28 更新'}
+
+var HOMEWORK_CACHE_KEY = 'hw_dates_v1';
+
+function getCache() {
+  try { return JSON.parse(localStorage.getItem(HOMEWORK_CACHE_KEY) || '{}'); }
+  catch (e) { return {}; }
+}
+function saveCache(cache) {
+  try { localStorage.setItem(HOMEWORK_CACHE_KEY, JSON.stringify(cache)); } catch (e) {}
+}
+
+function fmtDate(dt) {
+  return (dt.getMonth() + 1) + '/' + dt.getDate() + ' 更新';
+}
 
 function fetchBloggerLatest(blogUrl, callback) {
-  // 清乾淨網址 (去掉 trailing slash, 保留 https)
   var base = blogUrl.replace(/\/$/, '');
   if (!/^https?:\/\//.test(base) || !/\.blogspot\.com/.test(base)) {
     callback(null); return;
@@ -7472,12 +7485,8 @@ function fetchBloggerLatest(blogUrl, callback) {
     try {
       var entry = data.feed && data.feed.entry && data.feed.entry[0];
       var upd = entry && (entry.updated || entry.published);
-      if (upd && upd.$t) {
-        var dt = new Date(upd.$t);
-        callback(dt);
-      } else {
-        callback(null);
-      }
+      if (upd && upd.$t) callback(new Date(upd.$t));
+      else callback(null);
     } catch (e) { callback(null); }
     try {
       delete window[cbName];
@@ -7495,6 +7504,7 @@ function fetchBloggerLatest(blogUrl, callback) {
 }
 
 document.addEventListener('DOMContentLoaded', function () {
+  var cache = getCache();
   document.querySelectorAll('.homework-subject[data-grade][data-subject]').forEach(function (card) {
     var key = card.getAttribute('data-grade') + '-' + card.getAttribute('data-subject');
     var hint = card.querySelector('.homework-subject-hint');
@@ -7506,7 +7516,7 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    // 2) 找部落格網址 (data-blog 或 href)
+    // 2) 找 blog 網址
     var blogUrl = card.getAttribute('data-blog');
     if (!blogUrl) {
       var href = card.getAttribute('href');
@@ -7517,15 +7527,26 @@ document.addEventListener('DOMContentLoaded', function () {
       return;
     }
 
-    // 3) 抓最後更新日期
-    hint.textContent = '載入中...';
+    // 3) 先秀快取（立即顯示）
+    if (cache[key]) {
+      hint.textContent = cache[key];
+    } else {
+      hint.textContent = '載入中...';
+    }
+
+    // 4) 背景更新快取
     fetchBloggerLatest(blogUrl, function (date) {
       if (date) {
-        hint.textContent = (date.getMonth() + 1) + '/' + date.getDate() + ' 更新';
-      } else {
+        var txt = fmtDate(date);
+        hint.textContent = txt;
+        cache[key] = txt;
+        saveCache(cache);
+      } else if (!cache[key]) {
         hint.textContent = '看最新聯絡簿';
       }
     });
+  });
+});
   });
 });
   return bestDate;
