@@ -1,280 +1,61 @@
-# 希望文理網站 Bug 巡檢報告
+# 網站 Bug 檢查報告
 
-**最新檢查時間**：2026-05-15（自動排程任務）
-**檢查範圍**：`index.html`（正式版）、`courses.html`、相關靜態資源
-**修正版檔案**：`index_bugfix_test.html`（本輪新建）
+## 2026-09-04 檢查
+**結果：無新問題。** index.html（8/28）、courses.html、tracking.html 自上次檢查後皆無更動；`index_bugfix_test.html` 仍為 index.html + 昨日 3 項修正（8 行差異），本次未再修改。
 
----
+本次沙盒無法下載 Chromium、線上網址（hopehope.net / GitHub Pages）瀏覽器仍被擋，所以只做靜態檢查：
+- HTML 標籤配對：4 個檔案全部通過，無重複 id
+- JS：index 9 段、courses 1 段、tracking 1 段內嵌腳本語法全部通過；JSON-LD 有效
+- CSS：測試檔僅剩 `--text-1 / --c-primary / --pos` 未在 :root 定義，但全部有 fallback 值，不影響顯示
+- 圖片：41 個本機圖片路徑全部存在，`<img>` 皆有 alt
+- 連結：本機 href 與 `#錨點` 全部存在；無 http:// 混合內容；`target="_blank"` 皆有 rel
+- 文案：仍有「20 多年」(1)、「近 40 年」(1)、「四十年」(1)、「30 年」(8)、「40 年」(3) 並存，待您決定統一
 
-## 一、最新一輪（2026-05-15）巡檢結果
-
-### 📌 說明
-本輪正式版已從 `web_updated.html` 更名為 `index.html`，以此為基礎進行全面掃描。`web_bugfix_test.html` 仍保留先前紀錄。本輪測試檔為 `index_bugfix_test.html`。
-
-### ✅ 整體狀況：良好
-
-首頁、導覽列、手機版、圖片、按鈕、表單邏輯均正常。本輪未發現高優先度的破圖或功能性 bug。
-
-### 🟡 本輪發現問題（2 項）
-
-#### 問題 1（中優先）：`onlinePanelG12` 孤立面板仍然存在
-- **位置：** `index.html` Line 8126–8178
-- **問題：** 「高三課程」面板 div（`id="onlinePanelG12"`）設定 `hidden`，但仍無任何卡片有 `aria-controls` 指向它。面板永遠無法被打開，裡面的「選擇章節」「加入問問題群組」「購物車」按鈕使用者完全看不到。
-- **備註：** 此問題已在 2026-05-13 報告的第七條「舊有待確認事項」第 5 點提及，仍待確認處理方向。
-- **✅ 已在 `index_bugfix_test.html` 加入 `<!-- [BUG NOTE] -->` 標記**
-
-#### 問題 2（輕微/效能）：6 張圖片缺少 `loading` 屬性
-- **位置：** `index.html`，以下圖片 `<img>` 未設定 `loading`：
-
-  | 圖片 | 建議 | 說明 |
-  |---|---|---|
-  | `navbar-logo.jpg` | `loading="eager"` | 首屏 LOGO |
-  | `logo.jpg` | `loading="eager"` | 首屏 LOGO |
-  | `封面底圖.png` | `loading="eager"` | Hero 主圖 |
-  | `汪飛白影片.png` | `loading="lazy"` | 頁面中段 |
-  | `scholarshipZoomImg`（動態） | `loading="lazy"` | Lightbox 動態圖 |
-  | `dmLightboxImg`（動態） | `loading="lazy"` | Lightbox 動態圖 |
-
-- **✅ 已在 `index_bugfix_test.html` 全部修正**
-
-### ✅ 本輪確認正常的項目
-
-| 項目 | 結果 |
-|---|---|
-| HTML 標籤結構 | ✅ 正常，無不匹配標籤 |
-| Viewport meta（手機版 RWD）| ✅ 存在且正確 |
-| 導覽列 8 個錨點連結 | ✅ 全部對應正確 section id |
-| 手機版漢堡選單 JS | ✅ 正常（toggle `.active` class） |
-| 54 個 media query（最小 520px）| ✅ RWD 設計健全 |
-| 所有本地圖片（含 %20 空格編碼）| ✅ 全部存在，無破圖 |
-| courses.html 圖片 | ✅ 全部存在 |
-| courses.html 返回首頁連結 | ✅ 正常 |
-| JS 括號/大括號匹配 | ✅ 正常 |
-| Google Form 聯絡表單 URL | ✅ 設定正常 |
-| Hero 輪播 5 張背景圖 | ✅ 全部存在 |
-| 53 個按鈕事件綁定 | ✅ 正常 |
-| Hardcode 本機 URL | ✅ 無 localhost 殘留 |
-| 明顯文字重複/錯字 | ✅ 無發現 |
-| img alt 屬性 | ✅ 所有圖片均有 alt |
-
-### ❓ 本輪待您確認事項
-
-1. **`onlinePanelG12` 如何處理？**（先前已提，本輪再次確認）
-   - **選項 A**：刪除孤立面板（Line 8126–8178），高三與其他年級同樣連到 `courses.html`
-   - **選項 B**：將高三卡片改為展開面板，加回 `aria-controls="onlinePanelG12"` 並改成 `<button>` 而非 `<a href>`
-
-2. **`index_bugfix_test.html` 中的圖片 loading 修正確認沒問題後，是否要覆蓋到正式版 `index.html`？**
+待確認事項與 9/3 相同（見下方 1–6）。若要恢復真實瀏覽器檢查，請在對話中開一次線上網址並核准存取。
 
 ---
 
-## 二、先前最新一輪（2026-05-13）巡檢結果
+## 2026-09-03 檢查
+檢查範圍：index.html、courses.html、tracking.html
 
-### 📌 重要說明
-`web_updated.html` 在 5/12 11:50 有更新（新增高中部榮譽榜單、新課表等大量內容），因此本輪以最新版為基礎重新產生 `web_bugfix_test.html`，包含所有歷史積累修正。
+## 本次檢查結果摘要
+三個頁面自 8/28 以來仍無更動。**本次首次以真實瀏覽器（Chromium 129）在沙盒內渲染本機檔案**，桌機 1366px 與手機 390px 各跑一遍：逐頁截圖、點擊全部導覽列與底部導覽、點擊全部按鈕（57 個）、滾動觸發 lazy 圖片、量測橫向溢出。
+**新發現 2 個真實 bug，已在測試檔修正。** 線上網址（hopehope.net / GitHub Pages）仍被瀏覽器權限擋下，所以檢查的是本機檔案，不是線上版。
 
-### 🔴 本輪發現的問題（含歷史積累未修正）
+## 發現的問題
 
-#### Bug 1（高優先）：破圖 — 國中部第三次段考英雄榜圖片
-- **位置：** 第 8991 行
-- **問題：** `src="114國中部第三次段考更該三%20拷貝.jpg"` — 此檔案**不存在**，訪客看到破圖。
-- **正確檔名：** `114國中部第三次段考英雄榜三.jpg`（檔案已在資料夾中）
-- **✅ 已在 `web_bugfix_test.html` 修正**
+1. **【新・已修】手機版「關於我們」頁可以左右滑動（跑版）**
+   `.about::before` 是一個 1000px 寬的裝飾光暈，沒有被裁切，導致手機版 About 頁整體寬度變成 695px（畫面只有 390px），底部導覽列也跟著被拉寬。其他 9 頁均正常。
+   修正：`.about` 加上 `overflow: hidden;`（第 1007 行）。修正後 10 頁手機寬度全部 = 390。
 
-#### Bug 2（高優先）：「豬眷」錯字 + 按鈕點擊只顯示「照片即將上架」
-- **位置：** 第 7426 行
-- **問題：** `data-room="豬眷"` 名稱錯誤（應為「豬圈」），且沒有 `data-images`，明明資料夾有兩張照片（`豬圈1.JPEG`、`豬圈2.JPEG`）。
-- **✅ 已在 `web_bugfix_test.html` 修正：** 改名為「豬圈」並掛上兩張圖片
+2. **【新・已修】高中聯絡簿 6 張卡片點了會開一個空白分頁**
+   高一英文、高二數學、高三物理/化學/數學/英文這 6 張卡片 `href="javascript:void(0)"` 卻帶 `target="_blank"`，Chrome 點下去會開 about:blank 空白頁。且 title 寫「最新聯絡簿」、日期由 JS 自動顯示「今天 更新」，但實際沒有連結，會誤導家長。
+   修正：移除這 6 個 `target="_blank" rel="noopener"`，title 改為「連結尚未設定」（第 8102/8137/8162/8172/8182/8192 行）。修正後點擊不再開分頁。
 
-#### Bug 3（中優先）：「補課區」按鈕點擊只顯示「照片即將上架」
-- **位置：** 第 7428 行
-- **問題：** 沒有 `data-images`，但資料夾中有 `補課區.JPEG`。
-- **✅ 已在 `web_bugfix_test.html` 修正：** 補上 `data-images="補課區.JPEG"`
+3. **CSS 變數 `--text-muted` 未定義**（沿用，已在測試檔修正為 `--text-2`，第 7190 行）
 
-#### Bug 4（中優先）：馬槽圖片檔名錯誤
-- **位置：** 第 7422 行
-- **問題：** `data-images` 中有 `馬操3.JPEG`，正確應為 `馬槽3.JPEG`。
-- **✅ 已在 `web_bugfix_test.html` 修正**
+4. **【請確認】國七英文部落格網址疑似錯字**：`steneneng-7.blogspot.com`（第 7973 行），其他為 `steveneng-8`、`steveneng-g9`。沙盒無法連外驗證，未改。
 
-#### Bug 5（中優先）：羊欄圖片檔名錯誤
-- **位置：** 第 7425 行
-- **問題：** `data-images` 中有 `羊爛2.JPEG`，正確應為 `羊欄2.JPEG`。
-- **✅ 已在 `web_bugfix_test.html` 修正**
+5. **【請確認】文案年數不一致**：手機版 About 頁同一屏就同時出現「20 多年來秉持此一信念」與「四十年的信念」（另 title/footer 為「30 年」）。
 
-#### Bug 6（高優先）：影片縮圖點擊無效（storyVideoLink）
-- **位置：** 第 7182 行（關於我們 / 故事區塊）
-- **問題：** 影片縮圖 `<a href="#">` 沒有 JS 事件處理，點擊後分頁器攔截，畫面跳回頂部，Modal **不會開啟**。
-- **✅ 已在 `web_bugfix_test.html` 修正：** 加入 `initStoryVideoLink()` 函式
+6. **【請確認】SEO 網域不一致**：canonical → GitHub Pages、og:url / sitemap → hopehope.net、robots.txt → ourhope.com.tw。
 
-#### Bug 7（中優先）：高中部聯絡簿按鈕（高一/高二/高三）點擊誤跳首頁
-- **位置：** 第 7690–7810 行（grade 10/11/12，共 12 個連結）
-- **問題：** `href="#"` 被分頁器攔截，使用者點了頁面跳動。
-- **✅ 已在 `web_bugfix_test.html` 修正：** 改為 `href="javascript:void(0)"` + 灰色樣式 + 提示 title
+其餘正常：三頁在桌機與手機皆無 JavaScript 錯誤；本機圖片 46 張全部載入、無破圖（唯一載不到的是 YouTube 縮圖與外部字型/GA，屬沙盒無網路，非網站問題）；9 個桌機導覽連結與 5 個手機底部導覽全部正確切頁；57 個按鈕全部可點且無報錯；汪老師影片連結能正常開 modal；HTML 標籤配對、JSON-LD、內嵌 JS 語法全部通過。
 
-### 本輪確認正常項目
+## 已修正的內容（僅測試檔）
+- `.about` 加 `overflow: hidden`（修手機橫向跑版）
+- 6 個高中聯絡簿卡片移除 `target="_blank"`、title 改「連結尚未設定」
+- `var(--text-muted)` → `var(--text-2)`
 
-- 導覽列 10 個錨點（`#home` `#about` `#courses` `#dm` `#online` `#teachers` `#calendar` `#honor` `#testimonials` `#contact`）→ **全部有對應 `id`，正常**
-- 全部 39 個圖片引用 → **38 個存在，1 個破圖（Bug 1 已修正）**
-- DM 卡片 6 張圖（`115國七課程DM2.jpg`、`115國八課程DM3.jpg`、`115升九...jpg`、`114高一早鳥DM4.jpg`、`114高二DM5.png`、`115新課表...jpg`）→ **全部存在，正常**
-- 行事曆圖片 2 張 → **全部存在，正常**
-- 高中部榮單圖片（`高一段考榜單最終版拷貝.jpg`）→ **存在，正常**
-- HTML 標籤結構 → **完全配對，無未關閉標籤**
-- 7 段內嵌 JS 括號 → **全部平衡**
-- CSS 大括號 1325 對 1325 → **完全平衡**
-- 手機版 viewport meta 與 RWD media query → **正常**
-- `courses.html` → **未變動，正常**
+## 修改到的檔案
+- `index_bugfix_test.html`（由今日 index.html 重新複製後套用上述 3 項修正，共 8 行差異）
+- `bug-report.md`（本報告）
+- 正式版 `index.html`、`courses.html`、`tracking.html` 未更動。
 
-### 📁 待處理建議
-
-- `115G8開課資訊DM1.jpg` 已在資料夾但**尚未加入課程 DM 專區**，若需展示可由我補上。
-
-### ⚠️ 需要您確認的事項
-
-1. **Bug 1–7 的修正** 已在 `web_bugfix_test.html` 完成，請您確認後，若符合預期，我可以將所有修正套用到正式版 `web_updated.html`。
-2. **高中部聯絡簿**（高一/高二/高三）— 確認建置後，請提供 Blogger 網址，我可以直接更新連結。
-3. **影片連結確認** — `storyVideoLink` 目前連到汪飛白老師 YouTube 影片（`ZN_3dqgHKQo`），請確認是否為正確影片。
-4. **115G8開課資訊DM1.jpg** — 是否要加進課程 DM 區？
-
----
-
-> 以下保留先前各輪的紀錄供參考。
-
-### 🔴 本輪發現 2 個新 Bug，已於測試檔修正
-
-#### Bug A（高優先）：「升八理化說明會」影片縮圖點擊無效
-- **位置：** `web_updated.html` 第 7028 行（關於我們 / 故事區塊）
-- **問題：** `id="storyVideoLink"` 的影片縮圖 `<a href="#">` 完全沒有 JS 事件處理。  
-  點擊後分頁器攔截 `href="#"` → 找不到對應頁面 → 瀏覽器執行預設捲頂，影片 Modal **不會開啟**。
-- **影響：** 訪客點了縮圖，畫面跳回首頁，體驗很差。
-- **✅ 已在 `web_bugfix_test.html` 修正：** 加入 `initStoryVideoLink()` 函式，點縮圖即開啟汪飛白老師影片 Modal（與點師資卡片效果相同）。
-
-#### Bug B（中優先）：高中部聯絡簿按鈕（高一/高二/高三）點擊會誤跳首頁
-- **位置：** `web_updated.html` 第 7536–7656 行（聯絡簿區塊 grade 10/11/12）
-- **問題：** 高一、高二、高三共 12 個聯絡簿按鈕的 `href="#"`，分頁器攔截後找不到路由，執行捲頂；使用者以為有功能，點了卻頁面跳動。
-- **備註：** 國中部（國七/八/九）已正常設定 blogspot 網址；高中部疑似尚未建立。
-- **✅ 已在 `web_bugfix_test.html` 修正：** 改為 `href="javascript:void(0)"` + `title="課程聯絡簿建置中，敬請期待"` + 灰色外觀，避免誤跳且對使用者有明確提示。
-
----
-
-### 本輪確認正常項目
-
-- 首頁、導覽列 10 個錨點連結 → **全數正常**
-- 全部本地圖片（含主圖、hero 輪播、教室、DM、榜單、師資、獎學金 9 頁）→ **無破圖**
-- HTML 結構（div/section/nav/header/footer/ul/li/form/script 開關標籤）→ **完全配對**
-- 7 段內嵌 JS 括號 → **全部平衡，無明顯語法錯誤**
-- 手機版 RWD（900px 以下漢堡選單顯示、切換）→ **正常**
-- 聯絡表單送出邏輯（handleSubmit + Google Form）→ **正常**
-- `courses.html` JS 與 iframe 結構 → **正常**
-
----
-
-今日巡檢項目：
-- 首頁顯示、導覽列 10 個錨點連結 → **全數正常**
-- 圖片引用（主要圖片 21 張 + scholarship 9 張 + 教室 14 張）→ **無破圖**
-- 手機版 RWD 斷點（49 處 media query，最小 380px）→ **無新增跑版問題**
-- HTML 結構（標籤對應完整）、7 段 JS（Node.js 語法正確）→ **無新錯誤**
-- 教室照片按鈕、DM 卡片、漢堡選單、mobile-pager 頁面切換 → **無新 bug**
-- 測試版 `web_test.html` 中的所有舊修正 **仍然有效、未被覆蓋**
-- 正式版 `web_updated.html`（最後異動 5/6）、`courses.html`（最後異動 5/5）**均未變動**，已知 bug 仍待您確認後同步
-
-### 📁 新注意事項
-- `115G8開課資訊DM1.jpg` 已上傳至資料夾，但**尚未加入網頁的「課程 DM 專區」**。若要展示此 DM，可由我補上。
-
-> 以下保留先前各輪的紀錄供參考。
-
----
-
-## 二、先前紀錄（2026-05-08）新發現的問題
-
-### 真正會影響使用者的 Bug
-
-| # | 嚴重度 | 檔案 | 問題說明 |
-|---|---|---|---|
-| A | 高 | `web_updated.html` 第 7142 行 | 教室按鈕中文字寫成「豬眷」，正確應為「豬圈」（資料夾裡的圖檔就是 `豬圈1.JPEG`、`豬圈2.JPEG`）。`data-room` 與按鈕文字都拼錯，且沒有掛 `data-images`，使用者點下去只會看到「豬眷 照片即將上架」訊息，明明圖檔是有的。 |
-| B | 中 | `web_updated.html` 第 7144 行 | 「補課區」按鈕沒有掛 `data-images`，但資料夾裡其實有 `補課區.JPEG`。使用者點下去只會看到「補課區 照片即將上架」訊息。 |
-
-### 已驗證沒有問題（非 bug）
-
-- 全部 78 個 `id` 沒有重複，所有 `<a href="#xxx">` 與 `getElementById()` 都對得到實際 DOM。
-- 7 段內嵌 `<script>` 以 Node 解析皆語法正確；CSS 大括號 1265 對 1265 完全平衡；HTML 主要標籤一一對應。
-- HTML 中 60 多張圖片（含 hero 輪播 5 張、教室 14 張、DM 12 張、榜單、獎學金 9 頁、課程封面…）全部在資料夾中存在，不會破圖。
-- 9 個導覽錨點（`#about`、`#courses`、`#dm`、`#online`、`#teachers`、`#calendar`、`#honor`、`#testimonials`、`#contact`）都有對應的 `id="..."` 區塊。
-- 49 處 `@media` 斷點覆蓋 380px、420px、480px、520px、560px、720px、900px、960px、1000px、1020px、1100px、1180px，無發現會明顯跑版的 CSS。
-- `getElementById('hiddenSubmitFrame')` 雖然找不到對應 DOM，但 JS 內已有 fallback 動態建立，不算 bug；`courses_test.html` 的 `cartFab` / `cartDrawer` / `cartToast` 同理。
-
----
-
-## 三、先前修正內容（5/8，只動到測試檔）
-
-### `web_test.html`
-- 第 7142 行：`<button data-room="豬眷">豬眷</button>` 改為 `<button data-room="豬圈" data-images="豬圈1.JPEG|豬圈2.JPEG">豬圈</button>`
-  - 修正錯字「眷 → 圈」，並把現成的兩張照片掛上，使用者按下「豬圈」後可以看到實景照片。
-- 第 7144 行：`<button data-room="補課區">補課區</button>` 補上 `data-images="補課區.JPEG"`，按下後可顯示補課區照片。
-
-> 上述修正只動到 `web_test.html`，正式版 `web_updated.html` 維持原樣，等您確認後再覆蓋。
-
----
-
-## 四、先前修正內容（5/7，仍只在測試檔）
-
-以下這些是上一輪報告就已經處理的，仍維持「已在測試檔修正、未覆蓋正式版」的狀態：
-
-### `courses_test.html`
-- `index.html` 連結改為 `web_updated.html`（正式版的首頁檔名其實叫 `web_updated.html`，原本連回首頁會 404）。
-
-### `web_test.html`
-- 「馬槽」`data-images` 中的 `馬操3.JPEG` → `馬槽3.JPEG`。
-- 「羊欄」`data-images` 中的 `羊爛2.JPEG` → `羊欄2.JPEG`。
-- 第三次段考榜單圖片從 `114國中部第三次段考更該三%20拷貝.jpg` → `114國中部第三次段考英雄榜三.jpg`。
-- 線上課程 6 張卡片 `href="courses.html"` → `href="courses_test.html"`，讓測試版能完整自成一套。
-- 7 處外部 URL（Google Fonts、Google Maps）的裸 `&` → `&amp;`，HTML5 解析錯誤從 7 筆歸零。
-- 為了讓正確檔名能載入，資料夾中已**複製**（非重命名）3 個對應圖檔：`羊欄2.JPEG`、`馬槽3.JPEG`、`114國中部第三次段考英雄榜三.jpg`。
-
----
-
-## 五、修改到的檔案
-
-本次（5/12）：
-- `web_bugfix_test.html`（新增）— 以 `web_updated.html` 為基礎，修正 Bug A（storyVideoLink）與 Bug B（高中部聯絡簿空連結）。
-- `bug-report.md` — 更新本份報告。
-
-上次（5/11）：
-- `bug-report.md` — 更新本份報告，無新 bug、無新修正。
-
-上次（5/9）：
-- `bug-report.md` — 更新本份報告，無新 bug、無新修正。
-
-上次（5/8）：
-- `web_test.html` — 修正豬圈按鈕錯字、補上補課區圖片。
-- `bug-report.md` — 新增報告。
-
-再之前（5/7）：
-- `web_test.html`、`courses_test.html`（從正式版複製後修正）
-- `羊欄2.JPEG`、`馬槽3.JPEG`、`114國中部第三次段考英雄榜三.jpg`（複製產生的正名圖檔）
-
-未動到的正式檔：
-- `web_updated.html`、`courses.html`、原有的圖片檔仍保留原狀。
-
----
-
-## 六、還需要您確認的地方（5/12 新增）
-
-1. **storyVideoLink 修正方向正確嗎？** 目前設計為點縮圖開啟「汪飛白老師影片 Modal」。如果您希望直接播放特定一支影片（例如升八理化說明會），請提供 YouTube 連結，我可以改成直接嵌入播放。
-
-2. **高中部聯絡簿連結何時會有內容？** 如果高一/高二/高三的 blogspot 網址已知，請告訴我，我可以直接填入。
-
-3. **確認測試版沒問題後，要覆蓋正式版嗎？** 請先開 `web_bugfix_test.html` 測試，沒問題後告訴我，我會把修改套用到 `web_updated.html`。
-
----
-
-## 七、舊有待確認事項（前幾輪留下）
-
-1. **「豬圈」這個房名是否確認要展示？** 我看資料夾裡的圖檔（`豬圈1.JPEG`、`豬圈2.JPEG`）以及其他房名都是動物圈舍的命名規則（馬槽 / 象圈 / 牛棚 / 羊欄 / 豬圈），所以判定「豬眷」是錯字。如果原本是刻意要寫成別的字，再請告訴我改回去。
-2. **同步到正式版**：等您驗證 `web_test.html` 上「豬圈」「補課區」的點擊行為都 OK 之後，可以把以下檔案覆蓋過去：
-   - `web_test.html` → `web_updated.html`
-   - `courses_test.html` → `courses.html`
-3. **舊的錯字檔名是否要清掉**？目前以複製檔保留了正名版，原檔案 `羊爛2.JPEG`、`馬操3.JPEG`、`114國中部第三次段考更該三 拷貝.jpg` 還在資料夾中，可在覆蓋正式版後一併刪除。
-4. **`繳學金申請pdf.pdf`**（檔名「繳」應為「獎」、且未被任何 HTML 引用）要刪除、改名（建議 `獎學金申請.pdf`），還是先放著？
-5. **`onlinePanelG12`**（線上課程高三的展開面板）目前永遠不會被觸發，是要拿掉，還是要把高三卡片改成不跳轉到 `courses.html`、改為展開這個面板？
-6. **YouTube 章節影片連結**目前 10 章全部指向同一支 `S1vQm2VkaxE`，請問是還在準備中嗎？
-
-確認後我可以再幫您把對應的修正套到正式版。
+## 還需要您確認的地方
+1. 測試檔的 3 項修正若沒問題，可直接把 `index_bugfix_test.html` 覆蓋為 `index.html`。
+2. 高中 6 張聯絡簿卡片：要補上真正的部落格網址，還是先把 `data-status` 改成 `"empty"`（灰色不可點樣式已存在）？
+3. `steneneng-7` 是否應為 `steveneng-7`？
+4. 「20 多年 / 30 年 / 四十年」要統一成哪個。
+5. canonical / og:url / sitemap / robots 網域要統一成哪一個。
+6. 若要排程檢查線上版而非本機檔，請在對話中開一次 `hopehope.net` 並核准瀏覽器存取。

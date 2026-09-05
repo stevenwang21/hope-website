@@ -1,0 +1,464 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta http-equiv="Cache-Control" content="no-cache, no-store, must-revalidate" />
+<title>希望文理 · 家長後台</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&family=Noto+Sans+TC:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+  * { box-sizing: border-box; }
+  :root {
+    --bg: #fdf4ff;
+    --surface: rgba(255,255,255,0.85);
+    --surface-2: rgba(255,255,255,0.95);
+    --border: rgba(13, 7, 38, 0.18);
+    --text: #050010;
+    --text-2: rgba(5, 0, 16, 0.85);
+    --text-3: rgba(5, 0, 16, 0.55);
+    --brand: #3d4ecc;
+    --brand-2: #6e4ee6;
+    --gold: #d97706;
+    --green: #16a34a;
+    --red: #dc2626;
+    --r-md: 12px;
+    --r-lg: 18px;
+  }
+  html, body {
+    margin: 0; padding: 0;
+    background: linear-gradient(135deg, #ffb3d9 0%, #a8c8ff 28%, #95d8c4 55%, #ffe599 80%, #ffb088 100%);
+    background-attachment: fixed;
+    color: var(--text);
+    font-family: "Inter", "Noto Sans TC", -apple-system, sans-serif;
+    min-height: 100vh;
+    line-height: 1.6;
+  }
+  .nav {
+    display: flex; align-items: center; justify-content: space-between;
+    padding: 18px 32px;
+    background: rgba(255,255,255,0.75);
+    backdrop-filter: blur(28px) saturate(1.4);
+    -webkit-backdrop-filter: blur(28px) saturate(1.4);
+    border-bottom: 1px solid rgba(13,7,38,0.18);
+    position: sticky; top: 0; z-index: 10;
+  }
+  .nav-logo { font-size: 1.05rem; font-weight: 700; color: #050010; text-decoration: none; }
+  .nav-logo span { color: var(--gold); }
+  .nav-back { color: var(--text-2); text-decoration: none; font-size: 0.88rem; }
+  .nav-back:hover { color: #050010; }
+  .nav-user { display: flex; align-items: center; gap: 14px; font-size: 0.88rem; color: var(--text-2); }
+  .nav-user strong { color: #050010; font-weight: 600; }
+  .btn-ghost {
+    background: rgba(255,255,255,0.4);
+    border: 1px solid var(--border);
+    color: var(--text);
+    padding: 7px 14px;
+    border-radius: 8px;
+    font-size: 0.84rem;
+    cursor: pointer;
+    font-family: inherit;
+  }
+  .btn-ghost:hover { background: rgba(255,255,255,0.7); }
+  .container { max-width: 1000px; margin: 0 auto; padding: 48px 24px 80px; }
+  .page-head { text-align: center; margin-bottom: 32px; }
+  .page-kicker { display: inline-block; font-size: 0.74rem; letter-spacing: 0.22em; color: var(--brand); font-weight: 600; margin-bottom: 8px; }
+  .page-title {
+    font-size: 2.2rem; font-weight: 700; margin: 0 0 8px;
+    background: linear-gradient(135deg, #3d4ecc 0%, #b91d8c 60%, #d97706 100%);
+    -webkit-background-clip: text; background-clip: text; color: transparent;
+  }
+  .page-sub { color: var(--text); font-size: 1rem; font-weight: 500; margin: 0; }
+
+  /* Auth */
+  .auth-card {
+    max-width: 420px; margin: 0 auto;
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(24px) saturate(1.4);
+    -webkit-backdrop-filter: blur(24px) saturate(1.4);
+    border: 1px solid rgba(91,71,188,0.18);
+    border-radius: var(--r-lg);
+    padding: 36px 32px;
+    box-shadow: 0 30px 60px -22px rgba(0,0,0,0.15);
+  }
+  .auth-tabs {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 4px;
+    background: rgba(91,71,188,0.10);
+    padding: 4px; border-radius: 999px; margin-bottom: 28px;
+  }
+  .auth-tab {
+    appearance: none; border: 0; background: transparent;
+    color: var(--text-2); font-family: inherit; font-size: 0.92rem; font-weight: 500;
+    padding: 10px; border-radius: 999px; cursor: pointer;
+  }
+  .auth-tab.is-active {
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    color: #fff; font-weight: 600;
+  }
+  .field { margin-bottom: 16px; }
+  .field label { display: block; font-size: 0.82rem; color: #050010; font-weight: 600; margin-bottom: 6px; }
+  .field input {
+    width: 100%; padding: 12px 14px;
+    background: #1a1233; border: 1px solid rgba(255,255,255,0.20);
+    border-radius: 10px; color: #fff; font-size: 0.95rem; font-family: inherit;
+    -webkit-text-fill-color: #fff; caret-color: #fff;
+  }
+  .field input:focus { outline: 0; border-color: #8b6dff; background: #221842; }
+  .field input::placeholder { color: rgba(255,255,255,0.45); }
+  .btn-primary {
+    width: 100%; border: 0;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    color: #fff; font-size: 1rem; font-weight: 600;
+    padding: 13px; border-radius: 10px; cursor: pointer; font-family: inherit;
+    margin-top: 8px;
+    box-shadow: 0 12px 24px -10px rgba(61,78,204,0.4);
+  }
+  .btn-primary:disabled { opacity: 0.5; cursor: not-allowed; }
+  .form-msg { margin-top: 14px; padding: 10px 14px; border-radius: 8px; font-size: 0.86rem; display: none; }
+  .form-msg.show { display: block; }
+  .form-msg.is-error { background: rgba(255,90,110,0.12); border: 1px solid rgba(255,90,110,0.35); color: #b91d3e; }
+  .form-msg.is-success { background: rgba(58,200,152,0.12); border: 1px solid rgba(58,200,152,0.35); color: #0f6e56; }
+
+  /* Dashboard */
+  .student-card {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(13,7,38,0.12);
+    border-radius: var(--r-lg);
+    padding: 22px 24px;
+    margin-bottom: 24px;
+    display: flex; align-items: center; justify-content: space-between; gap: 16px;
+    flex-wrap: wrap;
+  }
+  .student-info-name { font-size: 1.3rem; font-weight: 700; color: #050010; }
+  .student-info-meta { color: var(--text-2); font-size: 0.9rem; }
+  .student-stat { text-align: right; }
+  .student-stat-label { font-size: 0.78rem; color: var(--text-3); letter-spacing: 0.05em; }
+  .student-stat-value { font-size: 1.6rem; font-weight: 700; background: linear-gradient(135deg, var(--brand), var(--brand-2)); -webkit-background-clip: text; background-clip: text; color: transparent; }
+
+  .dash-grid {
+    display: grid; grid-template-columns: 1fr 1fr; gap: 20px;
+  }
+  @media (max-width: 760px) { .dash-grid { grid-template-columns: 1fr; } }
+  .panel {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(20px);
+    border: 1px solid rgba(13,7,38,0.12);
+    border-radius: var(--r-lg);
+    padding: 20px 22px;
+  }
+  .panel-head {
+    display: flex; align-items: center; justify-content: space-between;
+    margin-bottom: 14px; padding-bottom: 12px;
+    border-bottom: 1px solid rgba(13,7,38,0.08);
+  }
+  .panel-head h3 { margin: 0; font-size: 1.05rem; font-weight: 700; color: #050010; display: flex; align-items: center; gap: 8px; }
+  .panel-head .badge {
+    background: rgba(61,78,204,0.12); color: var(--brand);
+    padding: 4px 10px; border-radius: 999px;
+    font-size: 0.72rem; font-weight: 600;
+  }
+
+  /* 打卡記錄 */
+  .attendance-list { display: flex; flex-direction: column; gap: 8px; }
+  .attendance-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 10px 12px; background: rgba(13,7,38,0.03);
+    border: 1px solid rgba(13,7,38,0.06);
+    border-radius: 10px;
+  }
+  .att-date { flex: 0 0 auto; width: 56px; font-size: 0.84rem; font-weight: 700; color: #050010; }
+  .att-day { font-size: 0.7rem; color: var(--text-3); font-weight: 500; display: block; }
+  .att-times { flex: 1 1 auto; display: flex; gap: 12px; align-items: center; }
+  .att-time {
+    display: flex; align-items: center; gap: 6px;
+    font-size: 0.84rem; color: var(--text-2);
+    font-variant-numeric: tabular-nums;
+  }
+  .att-time .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--green); }
+  .att-time.out .dot { background: var(--red); }
+  .att-duration {
+    flex: 0 0 auto;
+    background: rgba(22,163,74,0.12); color: var(--green);
+    padding: 3px 8px; border-radius: 999px;
+    font-size: 0.74rem; font-weight: 700;
+  }
+
+  /* 考試成績 */
+  .scores-list { display: flex; flex-direction: column; gap: 8px; }
+  .score-row {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px; background: rgba(13,7,38,0.03);
+    border: 1px solid rgba(13,7,38,0.06); border-radius: 10px;
+  }
+  .score-subj {
+    flex: 0 0 auto; padding: 6px 10px;
+    background: linear-gradient(135deg, var(--brand), var(--brand-2));
+    color: #fff; border-radius: 8px;
+    font-size: 0.78rem; font-weight: 700;
+  }
+  .score-info { flex: 1 1 auto; min-width: 0; }
+  .score-title { font-size: 0.92rem; font-weight: 600; color: #050010; }
+  .score-meta { font-size: 0.74rem; color: var(--text-3); }
+  .score-value { flex: 0 0 auto; font-size: 1.4rem; font-weight: 700; color: #050010; font-variant-numeric: tabular-nums; }
+  .score-delta {
+    flex: 0 0 auto; padding: 3px 8px; border-radius: 999px;
+    font-size: 0.72rem; font-weight: 700;
+  }
+  .score-delta.up { background: rgba(22,163,74,0.14); color: var(--green); }
+  .score-delta.down { background: rgba(220,38,38,0.14); color: var(--red); }
+  .score-delta.same { background: rgba(13,7,38,0.06); color: var(--text-3); }
+
+  .empty-state { text-align: center; padding: 30px 16px; color: var(--text-3); font-size: 0.88rem; }
+
+  @media (max-width: 560px) {
+    .container { padding: 32px 16px 60px; }
+    .page-title { font-size: 1.7rem; }
+    .auth-card { padding: 28px 22px; }
+    .student-card { flex-direction: column; align-items: stretch; text-align: left; }
+    .student-stat { text-align: left; }
+  }
+</style>
+</head>
+<body>
+
+<nav class="nav">
+  <a href="index.html" class="nav-logo">希望文理 <span>·</span> 家長後台</a>
+  <div id="navRight">
+    <a href="index.html" class="nav-back">← 回首頁</a>
+  </div>
+</nav>
+
+<div class="container">
+
+  <!-- 未登入 -->
+  <section id="authSection">
+    <div class="page-head">
+      <span class="page-kicker">PARENT PORTAL</span>
+      <h1 class="page-title">家長後台</h1>
+      <p class="page-sub">查看孩子的打卡記錄、考試成績、學習進度</p>
+    </div>
+
+    <div class="auth-card">
+      <div class="auth-tabs">
+        <button class="auth-tab is-active" data-mode="login">登入</button>
+        <button class="auth-tab" data-mode="register">註冊新帳號</button>
+      </div>
+
+      <form id="loginForm" autocomplete="on">
+        <div class="field">
+          <label for="loginEmail">Email</label>
+          <input type="email" id="loginEmail" required placeholder="your@email.com" />
+        </div>
+        <div class="field">
+          <label for="loginPassword">密碼</label>
+          <input type="password" id="loginPassword" required placeholder="••••••••" />
+        </div>
+        <button type="submit" class="btn-primary">登入</button>
+        <div class="form-msg" id="loginMsg"></div>
+      </form>
+
+      <form id="registerForm" autocomplete="on" hidden>
+        <div class="field">
+          <label for="regName">家長姓名</label>
+          <input type="text" id="regName" required placeholder="王媽媽" />
+        </div>
+        <div class="field">
+          <label for="regChild">孩子姓名</label>
+          <input type="text" id="regChild" required placeholder="王小明" />
+        </div>
+        <div class="field">
+          <label for="regEmail">Email</label>
+          <input type="email" id="regEmail" required placeholder="your@email.com" />
+        </div>
+        <div class="field">
+          <label for="regPassword">密碼（至少 6 碼）</label>
+          <input type="password" id="regPassword" required minlength="6" placeholder="••••••••" />
+        </div>
+        <button type="submit" class="btn-primary">註冊</button>
+        <div class="form-msg" id="regMsg"></div>
+      </form>
+    </div>
+  </section>
+
+  <!-- 登入後 -->
+  <section id="dashSection" hidden>
+    <div class="page-head" style="text-align:left;">
+      <span class="page-kicker">PARENT PORTAL</span>
+      <h1 class="page-title" id="welcomeTitle">家長後台</h1>
+    </div>
+
+    <!-- 學生資訊 -->
+    <div class="student-card">
+      <div>
+        <div class="student-info-name" id="studentName">王小明</div>
+        <div class="student-info-meta">國八 · 數學 / 理化 / 英文</div>
+      </div>
+      <div class="student-stat">
+        <div class="student-stat-label">本月出席</div>
+        <div class="student-stat-value" id="attendanceRate">98%</div>
+      </div>
+    </div>
+
+    <!-- 兩欄面板 -->
+    <div class="dash-grid">
+
+      <!-- 打卡記錄 -->
+      <div class="panel">
+        <div class="panel-head">
+          <h3>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="9"/><path d="M12 7v5l3 2"/></svg>
+            打卡記錄
+          </h3>
+          <span class="badge" id="attBadge">本週</span>
+        </div>
+        <div class="attendance-list" id="attendanceList"></div>
+      </div>
+
+      <!-- 考試成績 -->
+      <div class="panel">
+        <div class="panel-head">
+          <h3>
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 3v18h18"/><path d="M7 14l4-4 4 4 6-6"/></svg>
+            考試成績
+          </h3>
+          <span class="badge" id="scoreBadge">最近 5 次</span>
+        </div>
+        <div class="scores-list" id="scoresList"></div>
+      </div>
+
+    </div>
+  </section>
+
+</div>
+
+<script>
+  const STORAGE_KEY = 'wfb_parent_v1';
+
+  const authSection = document.getElementById('authSection');
+  const dashSection = document.getElementById('dashSection');
+  const navRight = document.getElementById('navRight');
+  const tabs = document.querySelectorAll('.auth-tab');
+  const loginForm = document.getElementById('loginForm');
+  const registerForm = document.getElementById('registerForm');
+  const loginMsg = document.getElementById('loginMsg');
+  const regMsg = document.getElementById('regMsg');
+
+  function getUser(){ try { return JSON.parse(localStorage.getItem(STORAGE_KEY)); } catch(e){ return null; } }
+  function setUser(u){ localStorage.setItem(STORAGE_KEY, JSON.stringify(u)); }
+  function clearUser(){ localStorage.removeItem(STORAGE_KEY); }
+  function showMsg(el, text, isError){ el.textContent = text; el.classList.remove('is-error','is-success'); el.classList.add('show', isError ? 'is-error' : 'is-success'); }
+
+  // 分頁切換
+  tabs.forEach(t => t.addEventListener('click', () => {
+    const m = t.dataset.mode;
+    tabs.forEach(x => x.classList.toggle('is-active', x === t));
+    loginForm.hidden = m !== 'login';
+    registerForm.hidden = m !== 'register';
+  }));
+
+  // 登入：暫時用本地驗證 (任何 6 碼以上密碼都通過 — 後端接好後改成 API)
+  loginForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const email = document.getElementById('loginEmail').value.trim();
+    const pwd = document.getElementById('loginPassword').value;
+    if (!email || pwd.length < 6) { showMsg(loginMsg, 'Email 或密碼錯誤', true); return; }
+    setUser({ email, name: '家長', child: '王小明' });
+    showDashboard();
+  });
+
+  // 註冊
+  registerForm.addEventListener('submit', (e) => {
+    e.preventDefault();
+    const name = document.getElementById('regName').value.trim();
+    const child = document.getElementById('regChild').value.trim();
+    const email = document.getElementById('regEmail').value.trim();
+    const pwd = document.getElementById('regPassword').value;
+    if (!name || !child || !email || pwd.length < 6) { showMsg(regMsg, '請完整填寫', true); return; }
+    setUser({ email, name, child });
+    showDashboard();
+  });
+
+  // 假資料 (之後接 API 取代)
+  const MOCK_ATTENDANCE = [
+    { date: '5/13', day: '三', in: '18:25', out: '21:08' },
+    { date: '5/12', day: '二', in: '18:30', out: '21:05' },
+    { date: '5/11', day: '一', in: '18:28', out: '21:10' },
+    { date: '5/10', day: '日', in: '14:00', out: '17:05' },
+    { date: '5/08', day: '五', in: '18:32', out: '21:15' }
+  ];
+  const MOCK_SCORES = [
+    { subj: '理化', title: '第二次段考', date: '2026/05/05', score: 92, delta: +6 },
+    { subj: '數學', title: '段考前模擬', date: '2026/05/03', score: 88, delta: +4 },
+    { subj: '英文', title: '單字小考 W18', date: '2026/05/01', score: 95, delta: 0 },
+    { subj: '理化', title: '章節考 第6章', date: '2026/04/26', score: 86, delta: -3 },
+    { subj: '數學', title: '段考前模擬', date: '2026/04/22', score: 84, delta: +2 }
+  ];
+
+  function diffMinutes(a, b){
+    const [h1,m1] = a.split(':').map(Number);
+    const [h2,m2] = b.split(':').map(Number);
+    return (h2*60+m2) - (h1*60+m1);
+  }
+  function fmtDuration(min){
+    const h = Math.floor(min/60), m = min%60;
+    return (h ? h + '時 ' : '') + m + '分';
+  }
+
+  function renderAttendance(){
+    const wrap = document.getElementById('attendanceList');
+    wrap.innerHTML = MOCK_ATTENDANCE.map(r => {
+      const dur = diffMinutes(r.in, r.out);
+      return `
+        <div class="attendance-row">
+          <div class="att-date">${r.date}<span class="att-day">星期${r.day}</span></div>
+          <div class="att-times">
+            <span class="att-time"><span class="dot"></span>${r.in}</span>
+            <span style="color:var(--text-3); font-size:0.78rem;">→</span>
+            <span class="att-time out"><span class="dot"></span>${r.out}</span>
+          </div>
+          <div class="att-duration">${fmtDuration(dur)}</div>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function renderScores(){
+    const wrap = document.getElementById('scoresList');
+    wrap.innerHTML = MOCK_SCORES.map(s => {
+      let cls = 'same', label = '—';
+      if (s.delta > 0) { cls = 'up'; label = '+' + s.delta; }
+      else if (s.delta < 0) { cls = 'down'; label = String(s.delta); }
+      return `
+        <div class="score-row">
+          <span class="score-subj">${s.subj}</span>
+          <div class="score-info">
+            <div class="score-title">${s.title}</div>
+            <div class="score-meta">${s.date}</div>
+          </div>
+          <span class="score-value">${s.score}</span>
+          <span class="score-delta ${cls}">${label}</span>
+        </div>
+      `;
+    }).join('');
+  }
+
+  function showDashboard(){
+    const u = getUser();
+    if (!u) return;
+    authSection.hidden = true;
+    dashSection.hidden = false;
+    document.getElementById('welcomeTitle').textContent = (u.name || '家長') + '，您好';
+    document.getElementById('studentName').textContent = u.child || '王小明';
+    navRight.innerHTML = `<span class="nav-user"><strong>${u.name || u.email}</strong><button class="btn-ghost" id="logoutBtn">登出</button></span>`;
+    document.getElementById('logoutBtn').addEventListener('click', () => { clearUser(); location.reload(); });
+    renderAttendance();
+    renderScores();
+  }
+
+  if (getUser()) showDashboard();
+</script>
+
+</body>
+</html>

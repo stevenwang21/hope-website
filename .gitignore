@@ -1,2 +1,17 @@
+﻿notes/
+_*.bat
+_*.ps1
+啟動本機伺服器.bat
+複製到桌面.bat
+bug-report*.md
+index_bugfix_test*.html
+web_test.html
+web_bugfix_test.html
+courses_test.html
+web_updated.html
+index_backup*.html
 ourhope網站.zip
 ziDmtgJA
+*.tmp
+Thumbs.db
+.DS_Store
