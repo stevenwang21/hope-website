@@ -7367,27 +7367,30 @@
     .nav-cta { padding: 8px 12px !important; font-size: 0.82rem !important; }
   }
 
-  /* ===== 手機版 IG-style 底部導覽列 ===== */
+  /* ===== 手機版底部導覽列 LINE 風格 ===== */
   .mobile-bottom-nav {
     display: none;
   }
   @media (max-width: 720px) {
-    /* 顯示底部 nav */
     .mobile-bottom-nav {
       display: flex;
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(20px) saturate(1.4);
-      -webkit-backdrop-filter: blur(20px) saturate(1.4);
-      border-top: 1px solid rgba(13, 7, 38, 0.10);
-      box-shadow: 0 -8px 24px -8px rgba(13, 7, 38, 0.10);
+      bottom: 14px;
+      left: 12px;
+      right: 12px;
+      background: rgba(28, 28, 32, 0.95);
+      backdrop-filter: blur(24px) saturate(1.4);
+      -webkit-backdrop-filter: blur(24px) saturate(1.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 38px;
+      box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.5),
+                  0 4px 12px -2px rgba(0, 0, 0, 0.3);
       z-index: 9999;
-      padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0));
+      padding: 8px 10px;
+      padding-bottom: calc(8px + env(safe-area-inset-bottom, 0) / 3);
       justify-content: space-around;
       align-items: center;
+      gap: 4px;
     }
     .mob-nav-item {
       flex: 1;
@@ -7395,12 +7398,14 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      padding: 6px 4px;
-      color: rgba(13, 7, 38, 0.55);
+      gap: 3px;
+      padding: 8px 4px;
+      color: rgba(255, 255, 255, 0.75);
       text-decoration: none;
-      transition: color 0.2s, transform 0.18s;
+      border-radius: 24px;
+      transition: background 0.24s ease, color 0.24s ease, transform 0.18s ease;
       -webkit-tap-highlight-color: transparent;
+      position: relative;
     }
     .mob-nav-item svg {
       width: 24px;
@@ -7416,31 +7421,30 @@
     .mob-nav-item:active {
       transform: scale(0.92);
     }
+    /* 選中的項目：黑色泡泡背景，白色圖示 */
     .mob-nav-item.is-active {
-      color: #050010;
+      background: #000;
+      color: #fff;
     }
     .mob-nav-item.is-active svg {
-      stroke-width: 2.6;
-    }
-    .mob-nav-item.is-active span {
-      font-weight: 700;
+      stroke-width: 2.4;
     }
 
-    /* 隱藏原本的漢堡選單 (用底部 nav 取代) */
+    /* 隱藏原本的漢堡選單 */
     .menu-toggle { display: none !important; }
     .nav-links { display: none !important; }
 
     /* 內容區下方留空間，避免被底部 nav 蓋住 */
-    body { padding-bottom: 72px; }
-    body.is-paged section[data-page] { padding-bottom: 80px !important; }
+    body { padding-bottom: 90px; }
+    body.is-paged section[data-page] { padding-bottom: 100px !important; }
 
     /* hero 區的 hero-buttons 位置往上推 */
     .hero > .container .hero-buttons {
-      bottom: 100px !important;
+      bottom: 120px !important;
     }
   }
 
-</style>
+  </style>
 
 <!-- ╔══════════════════════════════════════════════════════════╗ -->
 <!-- ║  聯絡簿日期設定 — 改這裡就好，全部科目卡片會自動更新         ║ -->
