@@ -7549,30 +7549,6 @@ document.addEventListener('DOMContentLoaded', function () {
 });
   });
 });
-  return bestDate;
-}
-
-// 套用到所有科目卡片
-document.addEventListener('DOMContentLoaded', function () {
-  document.querySelectorAll('.homework-subject[data-grade][data-subject]').forEach(function (card) {
-    var key = card.getAttribute('data-grade') + '-' + card.getAttribute('data-subject');
-    var hint = card.querySelector('.homework-subject-hint');
-    if (!hint) return;
-    // 手動覆蓋優先
-    if (window.HOMEWORK_MANUAL[key]) {
-      hint.textContent = window.HOMEWORK_MANUAL[key];
-      return;
-    }
-    // 否則自動抓最近的上課日
-    var days = window.HOMEWORK_SCHEDULE[key];
-    if (days === undefined) return;
-    var date = getMostRecentClassDate(days);
-    if (date) {
-      hint.textContent = (date.getMonth() + 1) + '/' + date.getDate() + ' 更新';
-    }
-  });
-});
-});
 </script>
 
 </head>
@@ -8083,7 +8059,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國七生物</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8093,7 +8069,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國七英文</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8103,7 +8079,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國七數學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8118,7 +8094,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國八理化</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8128,7 +8104,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國八英文</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8138,7 +8114,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國八數學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8153,7 +8129,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國九理化</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8163,7 +8139,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國九英文</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8173,7 +8149,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國九數學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8192,7 +8168,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高一物理</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8202,7 +8178,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高一化學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8212,7 +8188,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高一數學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8222,7 +8198,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高一英文</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8237,7 +8213,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高二物理</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8247,7 +8223,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高二化學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8257,7 +8233,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高二數學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8267,7 +8243,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高二英文</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8282,7 +8258,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高三物理</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8292,7 +8268,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高三化學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8302,7 +8278,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高三數學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8312,7 +8288,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高三英文</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
