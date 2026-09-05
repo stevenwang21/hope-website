@@ -7617,11 +7617,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="hero-slide" style="background-image: url('牛棚1.JPEG');"></div>
   </div>
   <div class="hero-dots" id="heroDots">
-    <button type="button" class="hero-dot is-active" data-idx="0" aria-label="圖 1"></button>
-    <button type="button" class="hero-dot" data-idx="1" aria-label="圖 2"></button>
-    <button type="button" class="hero-dot" data-idx="2" aria-label="圖 3"></button>
-    <button type="button" class="hero-dot" data-idx="3" aria-label="圖 4"></button>
-    <button type="button" class="hero-dot" data-idx="4" aria-label="圖 5"></button>
+    <!-- 圓點會依 hero-slide 數量自動產生 -->
   </div>
   <div class="hero-bg">
     <div class="hero-grid"></div>
@@ -10234,8 +10230,21 @@ document.addEventListener('DOMContentLoaded', function () {
   // Hero 背景輪播：每 5 秒自動換一張
   (function initHeroSlideshow() {
     var slides = document.querySelectorAll('#heroSlides .hero-slide');
-    var dots = document.querySelectorAll('#heroDots .hero-dot');
+    var dotsContainer = document.getElementById('heroDots');
     if (slides.length < 2) return;
+    // 自動產生 dot (跟 slide 一樣多)
+    if (dotsContainer) {
+      dotsContainer.innerHTML = '';
+      slides.forEach(function (_, i) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'hero-dot' + (i === 0 ? ' is-active' : '');
+        btn.setAttribute('data-idx', i);
+        btn.setAttribute('aria-label', '圖 ' + (i + 1));
+        dotsContainer.appendChild(btn);
+      });
+    }
+    var dots = document.querySelectorAll('#heroDots .hero-dot');
 
     var current = 0;
     var timer;
