@@ -257,9 +257,19 @@
   @media (max-width: 1020px) {
     .logo-slogan { display: none; }
   }
-  /* 手機完全隱藏文字（只留 LOGO 圖） */
+  /* 手機保留店名，隱藏標語跟科目 */
   @media (max-width: 900px) {
-    .logo-text { display: none; }
+    .logo-name {
+      font-size: 0.88rem;
+      line-height: 1.15;
+      white-space: nowrap;
+    }
+  }
+  @media (max-width: 560px) {
+    .logo-name { font-size: 0.78rem; }
+  }
+  @media (max-width: 420px) {
+    .logo-name { font-size: 0.72rem; }
   }
 
   @media (max-width: 768px) {
@@ -4333,6 +4343,7 @@
     width: 100%;
     height: 100%;
     object-fit: cover;
+    object-position: center 15%;
     display: block;
   }
 
@@ -7357,27 +7368,30 @@
     .nav-cta { padding: 8px 12px !important; font-size: 0.82rem !important; }
   }
 
-  /* ===== 手機版 IG-style 底部導覽列 ===== */
+  /* ===== 手機版底部導覽列 LINE 風格 ===== */
   .mobile-bottom-nav {
     display: none;
   }
   @media (max-width: 720px) {
-    /* 顯示底部 nav */
     .mobile-bottom-nav {
       display: flex;
       position: fixed;
-      bottom: 0;
-      left: 0;
-      right: 0;
-      background: rgba(255, 255, 255, 0.96);
-      backdrop-filter: blur(20px) saturate(1.4);
-      -webkit-backdrop-filter: blur(20px) saturate(1.4);
-      border-top: 1px solid rgba(13, 7, 38, 0.10);
-      box-shadow: 0 -8px 24px -8px rgba(13, 7, 38, 0.10);
+      bottom: 14px;
+      left: 12px;
+      right: 12px;
+      background: rgba(28, 28, 32, 0.95);
+      backdrop-filter: blur(24px) saturate(1.4);
+      -webkit-backdrop-filter: blur(24px) saturate(1.4);
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 38px;
+      box-shadow: 0 12px 32px -8px rgba(0, 0, 0, 0.5),
+                  0 4px 12px -2px rgba(0, 0, 0, 0.3);
       z-index: 9999;
-      padding: 8px 0 calc(8px + env(safe-area-inset-bottom, 0));
+      padding: 8px 10px;
+      padding-bottom: calc(8px + env(safe-area-inset-bottom, 0) / 3);
       justify-content: space-around;
       align-items: center;
+      gap: 4px;
     }
     .mob-nav-item {
       flex: 1;
@@ -7385,12 +7399,14 @@
       flex-direction: column;
       align-items: center;
       justify-content: center;
-      gap: 4px;
-      padding: 6px 4px;
-      color: rgba(13, 7, 38, 0.55);
+      gap: 3px;
+      padding: 8px 4px;
+      color: rgba(255, 255, 255, 0.75);
       text-decoration: none;
-      transition: color 0.2s, transform 0.18s;
+      border-radius: 24px;
+      transition: background 0.24s ease, color 0.24s ease, transform 0.18s ease;
       -webkit-tap-highlight-color: transparent;
+      position: relative;
     }
     .mob-nav-item svg {
       width: 24px;
@@ -7406,31 +7422,30 @@
     .mob-nav-item:active {
       transform: scale(0.92);
     }
+    /* 選中的項目：黑色泡泡背景，白色圖示 */
     .mob-nav-item.is-active {
-      color: #050010;
+      background: #000;
+      color: #fff;
     }
     .mob-nav-item.is-active svg {
-      stroke-width: 2.6;
-    }
-    .mob-nav-item.is-active span {
-      font-weight: 700;
+      stroke-width: 2.4;
     }
 
-    /* 隱藏原本的漢堡選單 (用底部 nav 取代) */
+    /* 隱藏原本的漢堡選單 */
     .menu-toggle { display: none !important; }
     .nav-links { display: none !important; }
 
     /* 內容區下方留空間，避免被底部 nav 蓋住 */
-    body { padding-bottom: 72px; }
-    body.is-paged section[data-page] { padding-bottom: 80px !important; }
+    body { padding-bottom: 90px; }
+    body.is-paged section[data-page] { padding-bottom: 100px !important; }
 
     /* hero 區的 hero-buttons 位置往上推 */
     .hero > .container .hero-buttons {
-      bottom: 100px !important;
+      bottom: 120px !important;
     }
   }
 
-</style>
+  </style>
 
 <!-- ╔══════════════════════════════════════════════════════════╗ -->
 <!-- ║  聯絡簿日期設定 — 改這裡就好，全部科目卡片會自動更新         ║ -->
@@ -7438,17 +7453,92 @@
 <!-- ║  科目代號: bio=生物 physics=物理 chemistry=化學 math=數學 english=英文 ║ -->
 <!-- ╚══════════════════════════════════════════════════════════╝ -->
 <script>
-window.HOMEWORK_DATES = 'auto'; // 'auto' = 永遠顯示今天日期。想改單一科目也可以改成物件如 { '8-physics': '8/15 更新' }
+// 自動從 Blogger 部落格抓最後更新日期
+// 有快取，第二次打開就會秒顯示 (背景仍會偷偷更新)
+window.HOMEWORK_MANUAL = {}; // 手動覆蓋: {'8-physics':'8/28 更新'}
 
-// 自動套用今天日期到所有科目卡片
+var HOMEWORK_CACHE_KEY = 'hw_dates_v1';
+
+function getCache() {
+  try { return JSON.parse(localStorage.getItem(HOMEWORK_CACHE_KEY) || '{}'); }
+  catch (e) { return {}; }
+}
+function saveCache(cache) {
+  try { localStorage.setItem(HOMEWORK_CACHE_KEY, JSON.stringify(cache)); } catch (e) {}
+}
+
+function fmtDate(dt) {
+  return (dt.getMonth() + 1) + '/' + dt.getDate() + ' 更新';
+}
+
+function fetchBloggerLatest(blogUrl, callback) {
+  var base = blogUrl.replace(/\/$/, '');
+  if (!/^https?:\/\//.test(base) || !/\.blogspot\.com/.test(base)) {
+    callback(null); return;
+  }
+  // 用 CORS proxy 抓 Blogger 的 Atom feed
+  var feedUrl = base + '/feeds/posts/default?max-results=1';
+  var proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(feedUrl);
+  var timer = setTimeout(function () { callback(null); }, 10000);
+
+  fetch(proxyUrl)
+    .then(function (r) { return r.text(); })
+    .then(function (xml) {
+      clearTimeout(timer);
+      // 從 Atom XML 抓 updated 或 published
+      var m = xml.match(/<entry[\s\S]*?<updated>([^<]+)<\/updated>/) ||
+              xml.match(/<entry[\s\S]*?<published>([^<]+)<\/published>/);
+      if (m && m[1]) callback(new Date(m[1]));
+      else callback(null);
+    })
+    .catch(function () {
+      clearTimeout(timer);
+      callback(null);
+    });
+}
+
 document.addEventListener('DOMContentLoaded', function () {
-  var now = new Date();
-  var todayStr = (now.getMonth() + 1) + '/' + now.getDate() + ' 更新';
+  var cache = getCache();
   document.querySelectorAll('.homework-subject[data-grade][data-subject]').forEach(function (card) {
     var key = card.getAttribute('data-grade') + '-' + card.getAttribute('data-subject');
     var hint = card.querySelector('.homework-subject-hint');
-    var date = (typeof window.HOMEWORK_DATES === 'object' && window.HOMEWORK_DATES[key]) || todayStr;
-    if (hint) hint.textContent = date;
+    if (!hint) return;
+
+    // 1) 手動覆蓋優先
+    if (window.HOMEWORK_MANUAL[key]) {
+      hint.textContent = window.HOMEWORK_MANUAL[key];
+      return;
+    }
+
+    // 2) 找 blog 網址
+    var blogUrl = card.getAttribute('data-blog');
+    if (!blogUrl) {
+      var href = card.getAttribute('href');
+      if (href && /^https?:\/\//.test(href) && /\.blogspot\.com/.test(href)) blogUrl = href;
+    }
+    if (!blogUrl) {
+      hint.textContent = '尚未上線';
+      return;
+    }
+
+    // 3) 先秀快取（立即顯示）
+    if (cache[key]) {
+      hint.textContent = cache[key];
+    } else {
+      hint.textContent = '載入中...';
+    }
+
+    // 4) 背景更新快取
+    fetchBloggerLatest(blogUrl, function (date) {
+      if (date) {
+        var txt = fmtDate(date);
+        hint.textContent = txt;
+        cache[key] = txt;
+        saveCache(cache);
+      } else if (!cache[key]) {
+        hint.textContent = '看最新聯絡簿';
+      }
+    });
   });
 });
 </script>
@@ -7490,17 +7580,12 @@ document.addEventListener('DOMContentLoaded', function () {
   <!-- Hero 背景輪播 (5 張可自動切換) -->
   <div class="hero-slides" id="heroSlides">
     <div class="hero-slide is-active" style="background-image: url('封面底圖.png');"></div>
-    <div class="hero-slide is-contain" style="background-image: url('封面2.jpg');"></div>
-    <div class="hero-slide is-contain" style="background-image: url('封面3.jpg');"></div>
     <div class="hero-slide is-contain" style="background-image: url('115會考英雄榜.jpg');"></div>
+    <div class="hero-slide" style="background-image: url('國八同樂會.JPEG');"></div>
     <div class="hero-slide" style="background-image: url('牛棚1.JPEG');"></div>
   </div>
   <div class="hero-dots" id="heroDots">
-    <button type="button" class="hero-dot is-active" data-idx="0" aria-label="圖 1"></button>
-    <button type="button" class="hero-dot" data-idx="1" aria-label="圖 2"></button>
-    <button type="button" class="hero-dot" data-idx="2" aria-label="圖 3"></button>
-    <button type="button" class="hero-dot" data-idx="3" aria-label="圖 4"></button>
-    <button type="button" class="hero-dot" data-idx="4" aria-label="圖 5"></button>
+    <!-- 圓點會依 hero-slide 數量自動產生 -->
   </div>
   <div class="hero-bg">
     <div class="hero-grid"></div>
@@ -7618,7 +7703,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <h3 class="story-right-title">八年級<br/>理化課</h3>
           <p class="story-right-desc">汪飛白老師親自授課，國中理化章節完整分析，並帶你看懂「國中理化」與「高中物理」的銜接關鍵。</p>
           <ul class="story-right-list">
-            <li><span class="story-right-dot"></span>汪飛白老師 40 年教學經驗</li>
+            <li><span class="story-right-dot"></span>汪飛白老師 30 年教學經驗</li>
             <li><span class="story-right-dot"></span>章節脈絡 × 學習路徑規劃</li>
             <li><span class="story-right-dot"></span>國中理化 vs 高中物理 銜接解析</li>
           </ul>
@@ -7688,7 +7773,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     <div class="about-mission fade-up">
       <p>
-        <strong>有教無類、教學相長</strong>是本班的教學宗旨。20 多年來秉持此一信念，所有教職員堅持做一股默默的清流，結合認同我們理念的無數家長、同學共同努力，完成了不可能的任務 — 許多孩子實現夢想進入了自己的第一志願，達成眾多家長的期盼。
+        <strong>有教無類、教學相長</strong>是本班的教學宗旨。30 多年來秉持此一信念，所有教職員堅持做一股默默的清流，結合認同我們理念的無數家長、同學共同努力，完成了不可能的任務 — 許多孩子實現夢想進入了自己的第一志願，達成眾多家長的期盼。
       </p>
       <p>
         更由於忠於教育本質的巨大力量，讓從希望學成離開的孩子，能開拓自己的視野，<em style="white-space: nowrap; display: inline-block;">創造屬於自己的未來</em>。
@@ -7699,7 +7784,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     <div class="about-origin-head fade-up">
       <span class="section-kicker">OUR STORY · 關於希望</span>
-      <h3>四十年的信念<br/>從一間小閣樓開始</h3>
+      <h3>三十年的信念<br/>從一間小閣樓開始</h3>
     </div>
 
     <ol class="about-timeline fade-up" aria-label="希望補習班大事紀">
@@ -7826,7 +7911,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <span class="bento-card-arrow" aria-hidden="true">▾</span>
         </div>
         <div class="bento-card-body"><div class="bento-card-body-inner"><div class="bento-card-body-inner-pad">
-          <p>理化核心科目由汪飛白老師親自授課，不換人、不外包。近 40 年教學資歷一脈相承的經驗、口碑與責任感。</p>
+          <p>理化核心科目由汪飛白老師親自授課，不換人、不外包。近 30 年教學資歷一脈相承的經驗、口碑與責任感。</p>
         </div></div></div>
       </div>
 
@@ -7966,7 +8051,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國七生物</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -7976,7 +8061,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國七英文</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -7986,7 +8071,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國七數學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8001,7 +8086,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國八理化</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8011,7 +8096,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國八英文</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8021,7 +8106,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國八數學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8036,7 +8121,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國九理化</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8046,7 +8131,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國九英文</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8056,7 +8141,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">國九數學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8075,7 +8160,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高一物理</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8085,7 +8170,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高一化學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8095,7 +8180,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高一數學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8105,7 +8190,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高一英文</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8120,7 +8205,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高二物理</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8130,7 +8215,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高二化學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8140,7 +8225,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高二數學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8150,7 +8235,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高二英文</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8165,7 +8250,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高三物理</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8175,7 +8260,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高三化學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8185,7 +8270,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高三數學</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8195,7 +8280,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </span>
             <span class="homework-subject-body">
               <span class="homework-subject-name">高三英文</span>
-              <span class="homework-subject-hint">6/27 已更新</span>
+              <span class="homework-subject-hint">載入中...</span>
             </span>
             <span class="homework-subject-arrow" aria-hidden="true">→</span>
           </a>
@@ -8251,13 +8336,13 @@ document.addEventListener('DOMContentLoaded', function () {
         <span class="dm-swipe-label">國九</span>
         <img src="115升九-各科上課時間(含小團班).jpg" alt="115 升九 DM" loading="lazy" />
       </button>
-      <button type="button" class="dm-swipe-card dm-card" data-src="114高一早鳥優惠DM4.jpg" data-title="114 高一早鳥優惠" aria-label="114 高一早鳥優惠 DM">
+      <button type="button" class="dm-swipe-card dm-card" data-src="高一課表.jpg" data-title="115 高一課程" aria-label="115 高一課程 DM">
         <span class="dm-swipe-label">高一</span>
-        <img src="114高一早鳥優惠DM4.jpg" alt="114 高一早鳥優惠 DM" loading="lazy" />
+        <img src="高一課表.jpg" alt="115 高一課程 DM" loading="lazy" />
       </button>
-      <button type="button" class="dm-swipe-card dm-card" data-src="114高二DM5.png" data-title="114 高二課程" aria-label="114 高二課程 DM">
+      <button type="button" class="dm-swipe-card dm-card" data-src="高二DM.jpg" data-title="115 高二課程" aria-label="115 高二課程 DM">
         <span class="dm-swipe-label">高二</span>
-        <img src="114高二DM5.png" alt="114 高二課程 DM" loading="lazy" />
+        <img src="高二DM.jpg" alt="115 高二課程 DM" loading="lazy" />
       </button>
       <button type="button" class="dm-swipe-card dm-card is-schedule" data-src="115新課表(最新版).jpg" data-title="115 完整課表" data-schedule="true" aria-label="完整課表 點擊放大">
         <span class="dm-swipe-label">課表</span>
@@ -8291,11 +8376,11 @@ document.addEventListener('DOMContentLoaded', function () {
           <span class="dm-tier-name">高中部</span>
           <div class="dm-fan-stage">
             <div class="dm-fan-stack has-2">
-              <button type="button" class="dm-card" data-src="114高一早鳥優惠DM4.jpg" data-title="114 高一早鳥優惠" aria-label="114 高一早鳥優惠 DM">
-                <img src="114高一早鳥優惠DM4.jpg" alt="114 高一早鳥優惠 DM" loading="lazy" />
+              <button type="button" class="dm-card" data-src="高一課表.jpg" data-title="115 高一課程" aria-label="115 高一課程 DM">
+                <img src="高一課表.jpg" alt="115 高一課程 DM" loading="lazy" />
               </button>
-              <button type="button" class="dm-card" data-src="114高二DM5.png" data-title="114 高二課程" aria-label="114 高二課程 DM">
-                <img src="114高二DM5.png" alt="114 高二課程 DM" loading="lazy" />
+              <button type="button" class="dm-card" data-src="高二DM.jpg" data-title="115 高二課程" aria-label="115 高二課程 DM">
+                <img src="高二DM.jpg" alt="115 高二課程 DM" loading="lazy" />
               </button>
             </div>
           </div>
@@ -8906,7 +8991,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <div class="teacher-avatar"><img src="汪老師照片.jpg" alt="汪飛白老師" loading="lazy"></div>
           <h4>汪飛白 老師</h4>
           <div class="teacher-sub">理化</div>
-          <p class="teacher-desc">近 40 年教學資歷，對理化充滿熱情、從不停止學習，在學問面前永遠謙卑。將畢生所學盡教給同學，讓孩子自然啟發興趣，帶領無數學生考上心目中的第一志願。</p>
+          <p class="teacher-desc">近 30 年教學資歷，對理化充滿熱情、從不停止學習，在學問面前永遠謙卑。將畢生所學盡教給同學，讓孩子自然啟發興趣，帶領無數學生考上心目中的第一志願。</p>
           <span class="teacher-cta">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
             試聽影片 · 升八理化說明會
@@ -8942,12 +9027,26 @@ document.addEventListener('DOMContentLoaded', function () {
             試聽影片 · 國七／國八／國九
           </span>
         </div>
+        <div class="teacher-card fade-up">
+          <div class="teacher-avatar"><img src="旺哲老師.jpg" alt="旺哲老師" loading="lazy"></div>
+          <h4>旺哲 老師</h4>
+          <div class="teacher-sub">化學 · 高中</div>
+          <p class="teacher-desc">高中化學精修班，紮實理論基礎搭配歷屆試題精練，帶你穩健通過高一、高二、學測、指考各種挑戰。</p>
+        </div>
+        <div class="teacher-card fade-up">
+          <div class="teacher-avatar"><img src="楊傑老師.jpg" alt="楊傑老師" loading="lazy"></div>
+          <h4>楊傑 老師</h4>
+          <div class="teacher-sub">數學 · 高中</div>
+          <p class="teacher-desc">高中數學系統化教學，函數、微積分、機率統計章節分段拆解，讓孩子面對段考、學測都游刃有餘。</p>
+        </div>
       </div>
       <div class="teachers-dots" id="teachersDots" aria-hidden="true">
         <button class="dot active" data-idx="0" aria-label="第 1 位老師"></button>
         <button class="dot" data-idx="1" aria-label="第 2 位老師"></button>
         <button class="dot" data-idx="2" aria-label="第 3 位老師"></button>
         <button class="dot" data-idx="3" aria-label="第 4 位老師"></button>
+        <button class="dot" data-idx="4" aria-label="第 5 位老師"></button>
+        <button class="dot" data-idx="5" aria-label="第 6 位老師"></button>
       </div>
       <div class="teachers-hint" aria-hidden="true">← 滑動查看更多老師 →</div>
     </div>
@@ -10113,8 +10212,21 @@ document.addEventListener('DOMContentLoaded', function () {
   // Hero 背景輪播：每 5 秒自動換一張
   (function initHeroSlideshow() {
     var slides = document.querySelectorAll('#heroSlides .hero-slide');
-    var dots = document.querySelectorAll('#heroDots .hero-dot');
+    var dotsContainer = document.getElementById('heroDots');
     if (slides.length < 2) return;
+    // 自動產生 dot (跟 slide 一樣多)
+    if (dotsContainer) {
+      dotsContainer.innerHTML = '';
+      slides.forEach(function (_, i) {
+        var btn = document.createElement('button');
+        btn.type = 'button';
+        btn.className = 'hero-dot' + (i === 0 ? ' is-active' : '');
+        btn.setAttribute('data-idx', i);
+        btn.setAttribute('aria-label', '圖 ' + (i + 1));
+        dotsContainer.appendChild(btn);
+      });
+    }
+    var dots = document.querySelectorAll('#heroDots .hero-dot');
 
     var current = 0;
     var timer;

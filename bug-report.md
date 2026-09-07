@@ -1,5 +1,42 @@
 # 網站 Bug 檢查報告
 
+## 2026-09-06 檢查
+`index.html` 於 9/5 20:25 有更新（手機底部導覽改 LINE 風格深色膠囊、手機保留店名、年數文案已統一為「30 年」）。已重新從最新 index.html 複製一份測試檔並套用修正。沙盒仍無法下載 Chromium、線上網址仍待核准，本次為靜態檢查（標籤配對、id、錨點、本機路徑、圖片、JS 語法、CSS 變數）。
+
+### 發現的問題
+1. **【新・嚴重・已修】index.html 第 7545–7546 行多出兩行 `});`，造成第 1 段 `<script>` 語法錯誤**
+   這段是「聯絡簿自動抓 Blogger 更新日期」的腳本。語法錯誤會讓整段腳本不執行：所有聯絡簿卡片右下角的日期會停在空白/不更新，`HOMEWORK_MANUAL`、`fetchBloggerLatest` 也都不存在。瀏覽器 Console 會出現 `Uncaught SyntaxError: Unexpected token '}'`。應為 9/5 編輯時殘留。
+   修正：刪除多餘的兩行；9 段內嵌 JS 已全部重新通過 `node --check`。
+2. 【沿用・已修】手機版「關於我們」頁可左右滑動：`.about::before` 1000px 光暈未裁切 → `.about` 加 `overflow: hidden`。
+3. 【沿用・已修】高中 6 張聯絡簿卡片 `href="javascript:void(0)"` 卻帶 `target="_blank"`，點了會開空白分頁 → 移除 target/rel，title 改「連結尚未設定」（第 8189/8224/8249/8259/8269/8279 行）。
+4. 【沿用・已修】`var(--text-muted)` 未定義（第 7201 行）→ 改 `var(--text-2)`。
+5. 【請確認】國七英文部落格網址 `steneneng-7.blogspot.com`（第 8060 行），其他年級為 `steveneng-8` / `steveneng-g9`，疑似錯字，未改。
+6. 【請確認】SEO 網域仍不一致：canonical → GitHub Pages、og:url / sitemap → hopehope.net、robots.txt → ourhope.com.tw。
+
+其餘通過：4 個檔案 HTML 標籤配對正確、無重複 id；所有 `#錨點` 與本機 href/圖片路徑皆存在；49 個 `<img>` 皆有 alt；無 http:// 混合內容；`target="_blank"` 皆有 rel；JSON-LD 有效；桌機/手機導覽的 10 個 `data-page` 都有對應 section；文案年數已統一（「30 年」×11、「三十年」×1）；courses.html、tracking.html 無更動、無問題。
+
+### 已修正的內容（僅測試檔）
+- 刪除第 7545–7546 行多餘的 `});`（修 JS 語法錯誤）
+- `.about` 加 `overflow: hidden`
+- 6 張高中聯絡簿卡片移除 `target="_blank" rel="noopener"`、title 改「連結尚未設定」
+- `var(--text-muted)` → `var(--text-2)`
+
+### 修改到的檔案
+- `index_bugfix_test.html`（由 9/5 版 index.html 重新複製後套用上述 4 項，共 18 行差異）
+- `bug-report.md`
+- 正式版 `index.html`、`courses.html`、`tracking.html` 未更動。
+
+### 還需要您確認的地方
+1. **第 1 項是正式版現在就有的錯誤，建議儘快處理**：確認後可直接把 `index_bugfix_test.html` 覆蓋為 `index.html`。
+2. 高中 6 張聯絡簿卡片要補真實網址，還是先改 `data-status="empty"`？
+3. `steneneng-7` 是否應為 `steveneng-7`？
+4. canonical / og:url / sitemap / robots 網域要統一成哪一個。
+5. 若要真實瀏覽器檢查線上版，請在對話中開一次 `hopehope.net` 並核准存取。
+
+---
+
+# 網站 Bug 檢查報告
+
 ## 2026-09-04 檢查
 **結果：無新問題。** index.html（8/28）、courses.html、tracking.html 自上次檢查後皆無更動；`index_bugfix_test.html` 仍為 index.html + 昨日 3 項修正（8 行差異），本次未再修改。
 

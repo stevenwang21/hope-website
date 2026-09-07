@@ -7476,32 +7476,25 @@ function fetchBloggerLatest(blogUrl, callback) {
   if (!/^https?:\/\//.test(base) || !/\.blogspot\.com/.test(base)) {
     callback(null); return;
   }
-  var cbName = 'blogCb_' + Math.random().toString(36).slice(2, 10);
-  var timer = setTimeout(function () {
-    try { delete window[cbName]; } catch(e){}
-    callback(null);
-  }, 8000);
-  window[cbName] = function (data) {
-    clearTimeout(timer);
-    try {
-      var entry = data.feed && data.feed.entry && data.feed.entry[0];
-      var upd = entry && (entry.updated || entry.published);
-      if (upd && upd.$t) callback(new Date(upd.$t));
+  // 用 CORS proxy 抓 Blogger 的 Atom feed
+  var feedUrl = base + '/feeds/posts/default?max-results=1';
+  var proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(feedUrl);
+  var timer = setTimeout(function () { callback(null); }, 10000);
+
+  fetch(proxyUrl)
+    .then(function (r) { return r.text(); })
+    .then(function (xml) {
+      clearTimeout(timer);
+      // 從 Atom XML 抓 updated 或 published
+      var m = xml.match(/<entry[\s\S]*?<updated>([^<]+)<\/updated>/) ||
+              xml.match(/<entry[\s\S]*?<published>([^<]+)<\/published>/);
+      if (m && m[1]) callback(new Date(m[1]));
       else callback(null);
-    } catch (e) { callback(null); }
-    try {
-      delete window[cbName];
-      if (script.parentNode) script.parentNode.removeChild(script);
-    } catch(e){}
-  };
-  var script = document.createElement('script');
-  script.src = base + '/feeds/posts/summary?max-results=1&alt=json-in-script&callback=' + cbName;
-  script.onerror = function () {
-    clearTimeout(timer);
-    try { delete window[cbName]; } catch(e){}
-    callback(null);
-  };
-  document.head.appendChild(script);
+    })
+    .catch(function () {
+      clearTimeout(timer);
+      callback(null);
+    });
 }
 
 document.addEventListener('DOMContentLoaded', function () {
