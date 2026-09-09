@@ -1,111 +1,110 @@
 {
-  "updatedAt": null,
-  "updatedAtTaipei": null,
-  "note": "此檔由 GitHub Actions 自動產生，不用手動改",
+  "updatedAt": "2026-09-09T10:12:51.588Z",
+  "updatedAtTaipei": "2026/9/9 18:12:51",
   "dates": {
     "10-chemistry": {
-      "date": null,
-      "label": "看最新聯絡簿",
-      "title": "",
-      "url": "https://h1pc4.blogspot.com",
+      "date": "2026-09-04",
+      "label": "9/4 更新",
+      "title": "2026年09月04日 旺哲老師  高一化學",
+      "url": "https://h1pc4.blogspot.com/2026/09/20260904.html",
       "blog": "https://h1pc4.blogspot.com"
     },
     "10-math": {
-      "date": null,
-      "label": "看最新聯絡簿",
-      "title": "",
-      "url": "https://h1math.blogspot.com",
+      "date": "2026-09-07",
+      "label": "9/7 更新",
+      "title": "2026年09月07日 呂碩老師 高一數學",
+      "url": "https://h1math.blogspot.com/2026/09/20260907.html",
       "blog": "https://h1math.blogspot.com"
     },
     "10-physics": {
-      "date": null,
-      "label": "看最新聯絡簿",
-      "title": "",
-      "url": "https://h1pc5.blogspot.com",
+      "date": "2026-09-02",
+      "label": "9/2 更新",
+      "title": "高一汪飛白物理--家庭聯絡簿—2026年09月02日",
+      "url": "https://h1pc5.blogspot.com/2026/09/20260902.html",
       "blog": "https://h1pc5.blogspot.com"
     },
     "11-chemistry": {
-      "date": null,
-      "label": "看最新聯絡簿",
+      "date": "2024-07-09",
+      "label": "7/9 更新",
       "title": "",
-      "url": "https://h2ch22.blogspot.com",
+      "url": "https://h2ch22.blogspot.com/2024/07/2024.html",
       "blog": "https://h2ch22.blogspot.com"
     },
     "11-english": {
-      "date": null,
-      "label": "看最新聯絡簿",
-      "title": "",
-      "url": "https://h2eng.blogspot.com",
+      "date": "2026-08-08",
+      "label": "8/8 更新",
+      "title": "高二英文-週六聯絡簿-2025年8月8日星期六",
+      "url": "https://h2eng.blogspot.com/2026/08/202588.html",
       "blog": "https://h2eng.blogspot.com"
     },
     "11-physics": {
-      "date": null,
-      "label": "看最新聯絡簿",
-      "title": "",
-      "url": "https://wfphg2.blogspot.com",
+      "date": "2026-09-03",
+      "label": "9/3 更新",
+      "title": "高二汪飛白物理--家庭聯絡簿—2026年09月03日",
+      "url": "https://wfphg2.blogspot.com/2026/09/20260903.html",
       "blog": "https://wfphg2.blogspot.com"
     },
     "7-bio": {
-      "date": null,
-      "label": "看最新聯絡簿",
-      "title": "",
-      "url": "https://zcbio-7.blogspot.com",
+      "date": "2026-09-02",
+      "label": "9/2 更新",
+      "title": "旺哲生物七年級聯絡簿 - 2026/9/2",
+      "url": "https://zcbio-7.blogspot.com/2026/09/202692.html",
       "blog": "https://zcbio-7.blogspot.com"
     },
     "7-english": {
-      "date": null,
-      "label": "看最新聯絡簿",
-      "title": "",
-      "url": "https://steneneng-7.blogspot.com",
+      "date": "2026-09-08",
+      "label": "9/8 更新",
+      "title": "英文7年級-週一聯絡簿-2026年9月8日星期二",
+      "url": "https://steneneng-7.blogspot.com/2026/09/7-202698.html",
       "blog": "https://steneneng-7.blogspot.com"
     },
     "7-math": {
-      "date": null,
-      "label": "看最新聯絡簿",
-      "title": "",
-      "url": "https://easymath-7.blogspot.com",
+      "date": "2026-09-04",
+      "label": "9/4 更新",
+      "title": "侯昇數學七年級聯絡簿 - 2026/09/04",
+      "url": "https://easymath-7.blogspot.com/2026/09/20260904.html",
       "blog": "https://easymath-7.blogspot.com"
     },
     "8-english": {
-      "date": null,
-      "label": "看最新聯絡簿",
-      "title": "",
-      "url": "https://steveneng-8.blogspot.com",
+      "date": "2026-09-07",
+      "label": "9/7 更新",
+      "title": "英文8年級-週一聯絡簿-2026年9月7日星期一",
+      "url": "https://steveneng-8.blogspot.com/2026/09/8-202697.html",
       "blog": "https://steveneng-8.blogspot.com"
     },
     "8-math": {
-      "date": null,
-      "label": "看最新聯絡簿",
-      "title": "",
-      "url": "https://hopemath-8.blogspot.com",
+      "date": "2026-09-03",
+      "label": "9/3 更新",
+      "title": "連晨數學八年級聯絡簿 -  2026/9/3",
+      "url": "https://hopemath-8.blogspot.com/2026/09/202693.html",
       "blog": "https://hopemath-8.blogspot.com"
     },
     "8-physics": {
-      "date": null,
-      "label": "看最新聯絡簿",
-      "title": "",
-      "url": "https://wfbph.blogspot.com",
+      "date": "2026-09-04",
+      "label": "9/4 更新",
+      "title": "理化8年級－週五班聯絡簿(汪老師)－2026年09月04日 星期(五)",
+      "url": "https://wfbph.blogspot.com/2026/09/820260904.html",
       "blog": "https://wfbph.blogspot.com"
     },
     "9-english": {
-      "date": null,
-      "label": "看最新聯絡簿",
-      "title": "",
-      "url": "https://steveneng-g9.blogspot.com",
+      "date": "2026-09-04",
+      "label": "9/4 更新",
+      "title": "英文9年級-週五聯絡簿-2026年9月4日星期五",
+      "url": "https://steveneng-g9.blogspot.com/2026/09/9-202694.html",
       "blog": "https://steveneng-g9.blogspot.com"
     },
     "9-math": {
-      "date": null,
-      "label": "看最新聯絡簿",
-      "title": "",
-      "url": "https://hopemath-9.blogspot.com",
+      "date": "2026-09-05",
+      "label": "9/5 更新",
+      "title": "侯昇數學九年級聯絡簿 - 2026/09/05",
+      "url": "https://hopemath-9.blogspot.com/2026/09/20260905.html",
       "blog": "https://hopemath-9.blogspot.com"
     },
     "9-physics": {
-      "date": null,
-      "label": "看最新聯絡簿",
-      "title": "",
-      "url": "https://wfph-9.blogspot.com",
+      "date": "2026-09-05",
+      "label": "9/5 更新",
+      "title": "理化9年級－週六進度 聯絡簿(汪老師)－2026年09月05日(六)",
+      "url": "https://wfph-9.blogspot.com/2026/09/9-20260905.html",
       "blog": "https://wfph-9.blogspot.com"
     }
   }
