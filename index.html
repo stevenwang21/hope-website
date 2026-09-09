@@ -200,6 +200,16 @@
 
   header.scrolled nav { background: rgba(8,8,20,0.85); }
 
+  /* 往下滑時導覽列淡出、往上滑或回到頂部時淡入 */
+  header {
+    transition: top 0.4s var(--ease), opacity 0.35s var(--ease), transform 0.35s var(--ease);
+  }
+  header.nav-hidden {
+    opacity: 0;
+    transform: translateX(-50%) translateY(-16px);
+    pointer-events: none;
+  }
+
   .logo {
     display: flex;
     align-items: center;
@@ -10043,10 +10053,24 @@ document.addEventListener('DOMContentLoaded', function () {
         progress.style.width = scrolled + '%';
       }
       if (header) {
-        if (window.scrollY > 20) header.classList.add('scrolled');
+        var y = window.scrollY;
+        if (y > 20) header.classList.add('scrolled');
         else header.classList.remove('scrolled');
+
+        // 往下滑 → 隱藏；往上滑或接近頂部 → 顯示
+        var navLinks = document.getElementById('navLinks');
+        var menuOpen = navLinks && navLinks.classList.contains('active');
+        if (y < 80 || menuOpen) {
+          header.classList.remove('nav-hidden');
+        } else if (y > lastY + 6) {
+          header.classList.add('nav-hidden');
+        } else if (y < lastY - 6) {
+          header.classList.remove('nav-hidden');
+        }
+        lastY = y;
       }
     }
+    var lastY = window.scrollY;
     window.addEventListener('scroll', update, { passive: true });
     update();
   })();
