@@ -7453,11 +7453,12 @@
 <!-- ║  科目代號: bio=生物 physics=物理 chemistry=化學 math=數學 english=英文 ║ -->
 <!-- ╚══════════════════════════════════════════════════════════╝ -->
 <script>
-// 自動從 Blogger 部落格抓最後更新日期
-// 有快取，第二次打開就會秒顯示 (背景仍會偷偷更新)
+// 聯絡簿日期：由 GitHub Actions 機器人每小時抓 Blogger 產生 dates.json
+// （scripts/fetch-blogger.js + .github/workflows/update-dates.yml）
+// 這裡只負責讀 dates.json 顯示，不再直接打 Blogger
 window.HOMEWORK_MANUAL = {}; // 手動覆蓋: {'8-physics':'8/28 更新'}
 
-var HOMEWORK_CACHE_KEY = 'hw_dates_v1';
+var HOMEWORK_CACHE_KEY = 'hw_dates_v2';
 
 function getCache() {
   try { return JSON.parse(localStorage.getItem(HOMEWORK_CACHE_KEY) || '{}'); }
@@ -7467,81 +7468,53 @@ function saveCache(cache) {
   try { localStorage.setItem(HOMEWORK_CACHE_KEY, JSON.stringify(cache)); } catch (e) {}
 }
 
-function fmtDate(dt) {
-  return (dt.getMonth() + 1) + '/' + dt.getDate() + ' 更新';
-}
-
-function fetchBloggerLatest(blogUrl, callback) {
-  var base = blogUrl.replace(/\/$/, '');
-  if (!/^https?:\/\//.test(base) || !/\.blogspot\.com/.test(base)) {
-    callback(null); return;
-  }
-  // 用 CORS proxy 抓 Blogger 的 Atom feed
-  var feedUrl = base + '/feeds/posts/default?max-results=1';
-  var proxyUrl = 'https://corsproxy.io/?' + encodeURIComponent(feedUrl);
-  var timer = setTimeout(function () { callback(null); }, 10000);
-
-  fetch(proxyUrl)
-    .then(function (r) { return r.text(); })
-    .then(function (xml) {
-      clearTimeout(timer);
-      // 從 Atom XML 抓 updated 或 published
-      var m = xml.match(/<entry[\s\S]*?<updated>([^<]+)<\/updated>/) ||
-              xml.match(/<entry[\s\S]*?<published>([^<]+)<\/published>/);
-      if (m && m[1]) callback(new Date(m[1]));
-      else callback(null);
-    })
-    .catch(function () {
-      clearTimeout(timer);
-      callback(null);
-    });
-}
-
-document.addEventListener('DOMContentLoaded', function () {
-  var cache = getCache();
+// 把 dates.json 的內容套到每張卡片
+function applyHomeworkDates(dates) {
   document.querySelectorAll('.homework-subject[data-grade][data-subject]').forEach(function (card) {
     var key = card.getAttribute('data-grade') + '-' + card.getAttribute('data-subject');
     var hint = card.querySelector('.homework-subject-hint');
     if (!hint) return;
-
-    // 1) 手動覆蓋優先
-    if (window.HOMEWORK_MANUAL[key]) {
-      hint.textContent = window.HOMEWORK_MANUAL[key];
-      return;
+    if (window.HOMEWORK_MANUAL[key]) { hint.textContent = window.HOMEWORK_MANUAL[key]; return; }
+    var d = dates[key];
+    if (d && d.label) {
+      hint.textContent = d.label;
+      if (d.title) card.setAttribute('title', d.title);
     }
+  });
+}
 
-    // 2) 找 blog 網址
-    var blogUrl = card.getAttribute('data-blog');
-    if (!blogUrl) {
-      var href = card.getAttribute('href');
-      if (href && /^https?:\/\//.test(href) && /\.blogspot\.com/.test(href)) blogUrl = href;
-    }
-    if (!blogUrl) {
-      hint.textContent = '尚未上線';
-      return;
-    }
+document.addEventListener('DOMContentLoaded', function () {
+  var cache = getCache();
 
-    // 3) 先秀快取（立即顯示）
-    if (cache[key]) {
-      hint.textContent = cache[key];
-    } else {
-      hint.textContent = '載入中...';
-    }
+  // 1) 先把預設文字放好（沒有部落格的顯示「尚未上線」）
+  document.querySelectorAll('.homework-subject[data-grade][data-subject]').forEach(function (card) {
+    var key = card.getAttribute('data-grade') + '-' + card.getAttribute('data-subject');
+    var hint = card.querySelector('.homework-subject-hint');
+    if (!hint) return;
+    if (window.HOMEWORK_MANUAL[key]) { hint.textContent = window.HOMEWORK_MANUAL[key]; return; }
 
-    // 4) 背景更新快取
-    fetchBloggerLatest(blogUrl, function (date) {
-      if (date) {
-        var txt = fmtDate(date);
-        hint.textContent = txt;
-        cache[key] = txt;
-        saveCache(cache);
-      } else if (!cache[key]) {
-        hint.textContent = '看最新聯絡簿';
-      }
+    var blogUrl = card.getAttribute('data-blog') || card.getAttribute('href') || '';
+    var hasBlog = /^https?:\/\//.test(blogUrl) && /\.blogspot\.com/.test(blogUrl);
+    if (!hasBlog) { hint.textContent = '尚未上線'; return; }
+
+    hint.textContent = (cache[key] && cache[key].label) ? cache[key].label : '載入中...';
+  });
+
+  // 2) 讀 dates.json（加時間戳避免被快取）
+  fetch('dates.json?t=' + Date.now(), { cache: 'no-store' })
+    .then(function (r) { if (!r.ok) throw new Error(r.status); return r.json(); })
+    .then(function (json) {
+      var dates = (json && json.dates) || {};
+      applyHomeworkDates(dates);
+      saveCache(dates);
+    })
+    .catch(function () {
+      // 抓不到 dates.json：有快取就用快取，否則顯示提示文字
+      if (Object.keys(cache).length) { applyHomeworkDates(cache); return; }
+      document.querySelectorAll('.homework-subject-hint').forEach(function (hint) {
+        if (hint.textContent === '載入中...') hint.textContent = '看最新聯絡簿';
+      });
     });
-  });
-});
-  });
 });
 </script>
 

@@ -1,0 +1,49 @@
+name: 更新聯絡簿日期 (Blogger)
+
+on:
+  schedule:
+    # UTC 時間，每小時整點跑一次（台灣時間也是每小時）
+    - cron: '0 * * * *'
+  workflow_dispatch: {}        # 可在 GitHub Actions 頁面手動按「Run workflow」
+  push:
+    branches: [main]
+    paths:
+      - index.html             # 新增/修改部落格網址時立刻重抓
+      - scripts/fetch-blogger.js
+      - .github/workflows/update-dates.yml
+
+permissions:
+  contents: write
+
+concurrency:
+  group: update-dates
+  cancel-in-progress: true
+
+jobs:
+  update:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Setup Node
+        uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: 抓 Blogger 最新日期
+        run: node scripts/fetch-blogger.js
+
+      - name: 有變動才 commit & push
+        run: |
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git add dates.json
+          if git diff --cached --quiet; then
+            echo "dates.json 沒有變化，不用 commit"
+            exit 0
+          fi
+          git commit -m "chore: 更新聯絡簿日期 $(TZ=Asia/Taipei date '+%Y-%m-%d %H:%M')"
+          # 排程期間網站可能又被 push，先 rebase 再推
+          git pull --rebase origin main || true
+          git push origin HEAD:main
