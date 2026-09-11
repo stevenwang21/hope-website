@@ -62,7 +62,11 @@
 </script>
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+TC:wght@300;400;500;600;700;800;900&family=Noto+Serif+TC:wght@500;700&display=swap" rel="stylesheet">
+<!-- 首屏主圖：最高優先度先抓，讓第一眼的畫面立刻出現 -->
+<link rel="preload" as="image" href="封面底圖.jpg" fetchpriority="high" />
+<!-- 字體改成非阻塞載入：不擋住第一次繪製 -->
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;600;700;800;900&family=Noto+Serif+TC:wght@500;700&display=swap" media="print" onload="this.media='all'" />
+<noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;600;700;800;900&family=Noto+Serif+TC:wght@500;700&display=swap" /></noscript>
 <style>
   :root {
     --bg: #fdf4ff;
@@ -353,6 +357,12 @@
   }
 
   /* === Hero 背景輪播 === */
+  /* 首屏主圖的極小模糊預覽（內嵌 <1KB）：圖還沒到之前就先有畫面，不會留白 */
+  .hero-slides {
+    background-image: url("data:image/jpeg;base64,/9j/4AAQSkZJRgABAQAAAQABAAD/2wBDABIMDRANCxIQDhAUExIVGywdGxgYGzYnKSAsQDlEQz85Pj1HUGZXR0thTT0+WXlaYWltcnNyRVV9hnxvhWZwcm7/2wBDARMUFBsXGzQdHTRuST5Jbm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm5ubm7/wAARCAAaACADASIAAhEBAxEB/8QAFwAAAwEAAAAAAAAAAAAAAAAAAwQFAv/EACAQAAICAgICAwAAAAAAAAAAAAECAAMEERIhFDEFQVH/xAAWAQEBAQAAAAAAAAAAAAAAAAACAwD/xAAbEQACAgMBAAAAAAAAAAAAAAAAAQIRAxIhE//aAAwDAQACEQMRAD8Atr41dHAnqGxSFBCkERG/GFLcmPLf1C1mt69JtWmTZla6OW5VFThLGAJ9TIyS1vFOxJedRZbWNjkw9GG+Ppsqr25PIxqLfASyUrGMXHuYayBuG8VKVJA7lPUwwElrQ0+USq1Zx2pEOKW/I4AN+hNiU9JE3iif/9k=");
+    background-size: cover;
+    background-position: center;
+  }
   .hero-slides {
     position: absolute !important;
     inset: 0;
@@ -7817,10 +7827,10 @@ document.addEventListener('DOMContentLoaded', function () {
 <section class="hero" id="home" data-page="home">
   <!-- Hero 背景輪播 (5 張可自動切換) -->
   <div class="hero-slides" id="heroSlides">
-    <div class="hero-slide is-active" style="background-image: url('封面底圖.png');"></div>
-    <div class="hero-slide is-contain" style="background-image: url('115會考英雄榜.jpg');"></div>
-    <div class="hero-slide" style="background-image: url('國八同樂會.JPEG');"></div>
-    <div class="hero-slide" style="background-image: url('牛棚1.JPEG');"></div>
+    <div class="hero-slide is-active" style="background-image: url('封面底圖.jpg');"></div>
+    <div class="hero-slide is-contain" data-bg="115會考英雄榜.jpg"></div>
+    <div class="hero-slide" data-bg="國八同樂會.JPEG"></div>
+    <div class="hero-slide" data-bg="牛棚1.JPEG"></div>
   </div>
   <div class="hero-dots" id="heroDots">
     <!-- 圓點會依 hero-slide 數量自動產生 -->
@@ -7914,7 +7924,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="story-grid">
       <div class="story-left">
         <div class="story-image fade-up">
-          <img src="封面底圖.png" alt="希望文理補習班 · 封面" />
+          <img src="封面底圖.jpg" alt="希望文理補習班 · 封面" />
         </div>
         <div class="story-text" id="storyText">
           <span class="story-kicker">OUR STORY</span>
@@ -7931,7 +7941,7 @@ document.addEventListener('DOMContentLoaded', function () {
       </div>
       <div class="story-right fade-up">
         <a class="story-video-frame" href="#" aria-label="觀看汪飛白老師 升八理化說明會" id="storyVideoLink">
-          <img src="汪飛白影片.png" alt="汪飛白老師 升八理化說明會" />
+          <img src="汪飛白影片.jpg" alt="汪飛白老師 升八理化說明會" />
           <span class="story-video-play" aria-hidden="true">
             <svg width="28" height="28" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </span>
@@ -8195,15 +8205,15 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="bento-card-body"><div class="bento-card-body-inner"><div class="bento-card-body-inner-pad">
           <p>各年級獎學金辦法、申請條件與相關說明。點擊查看完整申請文件。</p>
           <div class="scholarship-gallery">
-            <img src="scholarship/page-1.jpg" alt="獎學金申請 第 1 頁" loading="lazy" />
-            <img src="scholarship/page-2.jpg" alt="獎學金申請 第 2 頁" loading="lazy" />
-            <img src="scholarship/page-3.jpg" alt="獎學金申請 第 3 頁" loading="lazy" />
-            <img src="scholarship/page-4.jpg" alt="獎學金申請 第 4 頁" loading="lazy" />
-            <img src="scholarship/page-5.jpg" alt="獎學金申請 第 5 頁" loading="lazy" />
-            <img src="scholarship/page-6.jpg" alt="獎學金申請 第 6 頁" loading="lazy" />
-            <img src="scholarship/page-7.jpg" alt="獎學金申請 第 7 頁" loading="lazy" />
-            <img src="scholarship/page-8.jpg" alt="獎學金申請 第 8 頁" loading="lazy" />
-            <img src="scholarship/page-9.jpg" alt="獎學金申請 第 9 頁" loading="lazy" />
+            <img src="scholarship/page-1.jpg" alt="獎學金申請 第 1 頁" loading="lazy" decoding="async" />
+            <img src="scholarship/page-2.jpg" alt="獎學金申請 第 2 頁" loading="lazy" decoding="async" />
+            <img src="scholarship/page-3.jpg" alt="獎學金申請 第 3 頁" loading="lazy" decoding="async" />
+            <img src="scholarship/page-4.jpg" alt="獎學金申請 第 4 頁" loading="lazy" decoding="async" />
+            <img src="scholarship/page-5.jpg" alt="獎學金申請 第 5 頁" loading="lazy" decoding="async" />
+            <img src="scholarship/page-6.jpg" alt="獎學金申請 第 6 頁" loading="lazy" decoding="async" />
+            <img src="scholarship/page-7.jpg" alt="獎學金申請 第 7 頁" loading="lazy" decoding="async" />
+            <img src="scholarship/page-8.jpg" alt="獎學金申請 第 8 頁" loading="lazy" decoding="async" />
+            <img src="scholarship/page-9.jpg" alt="獎學金申請 第 9 頁" loading="lazy" decoding="async" />
           </div>
         </div></div></div>
       </div>
@@ -8260,7 +8270,7 @@ document.addEventListener('DOMContentLoaded', function () {
     </div>
 
     <div class="process-image-wrap fade-up">
-      <img src="試聽報名上課輔導.png" alt="試聽 · 報名 · 上課 · 輔導" loading="lazy" />
+      <img src="試聽報名上課輔導.jpg" alt="試聽 · 報名 · 上課 · 輔導" loading="lazy" decoding="async" />
     </div>
   </div>
 </section>
@@ -8564,27 +8574,27 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="dm-mobile-swipe">
       <button type="button" class="dm-swipe-card dm-card" data-src="115國七課程DM2.jpg" data-title="115 國七課程" aria-label="115 國七課程 DM">
         <span class="dm-swipe-label">國七</span>
-        <img src="115國七課程DM2.jpg" alt="115 國七課程 DM" loading="lazy" />
+        <img src="115國七課程DM2.jpg" alt="115 國七課程 DM" loading="lazy" decoding="async" />
       </button>
       <button type="button" class="dm-swipe-card dm-card" data-src="115國八課程DM3.jpg" data-title="115 國八課程" aria-label="115 國八課程 DM">
         <span class="dm-swipe-label">國八</span>
-        <img src="115國八課程DM3.jpg" alt="115 國八課程 DM" loading="lazy" />
+        <img src="115國八課程DM3.jpg" alt="115 國八課程 DM" loading="lazy" decoding="async" />
       </button>
       <button type="button" class="dm-swipe-card dm-card" data-src="115升九-各科上課時間(含小團班).jpg" data-title="115 升九 各科上課時間" aria-label="115 升九 DM">
         <span class="dm-swipe-label">國九</span>
-        <img src="115升九-各科上課時間(含小團班).jpg" alt="115 升九 DM" loading="lazy" />
+        <img src="115升九-各科上課時間(含小團班).jpg" alt="115 升九 DM" loading="lazy" decoding="async" />
       </button>
       <button type="button" class="dm-swipe-card dm-card" data-src="高一課表.jpg" data-title="115 高一課程" aria-label="115 高一課程 DM">
         <span class="dm-swipe-label">高一</span>
-        <img src="高一課表.jpg" alt="115 高一課程 DM" loading="lazy" />
+        <img src="高一課表.jpg" alt="115 高一課程 DM" loading="lazy" decoding="async" />
       </button>
       <button type="button" class="dm-swipe-card dm-card" data-src="高二DM.jpg" data-title="115 高二課程" aria-label="115 高二課程 DM">
         <span class="dm-swipe-label">高二</span>
-        <img src="高二DM.jpg" alt="115 高二課程 DM" loading="lazy" />
+        <img src="高二DM.jpg" alt="115 高二課程 DM" loading="lazy" decoding="async" />
       </button>
       <button type="button" class="dm-swipe-card dm-card is-schedule" data-src="115新課表(最新版).jpg" data-title="115 完整課表" data-schedule="true" aria-label="完整課表 點擊放大">
         <span class="dm-swipe-label">課表</span>
-        <img src="115新課表(最新版).jpg" alt="115 完整課表" loading="lazy" />
+        <img src="115新課表(最新版).jpg" alt="115 完整課表" loading="lazy" decoding="async" />
       </button>
     </div>
 
@@ -8598,13 +8608,13 @@ document.addEventListener('DOMContentLoaded', function () {
           <div class="dm-fan-stage">
             <div class="dm-fan-stack has-3">
               <button type="button" class="dm-card" data-src="115國七課程DM2.jpg" data-title="115 國七課程" aria-label="115 國七課程 DM">
-                <img src="115國七課程DM2.jpg" alt="115 國七課程 DM" loading="lazy" />
+                <img src="115國七課程DM2.jpg" alt="115 國七課程 DM" loading="lazy" decoding="async" />
               </button>
               <button type="button" class="dm-card" data-src="115國八課程DM3.jpg" data-title="115 國八課程" aria-label="115 國八課程 DM">
-                <img src="115國八課程DM3.jpg" alt="115 國八課程 DM" loading="lazy" />
+                <img src="115國八課程DM3.jpg" alt="115 國八課程 DM" loading="lazy" decoding="async" />
               </button>
               <button type="button" class="dm-card" data-src="115升九-各科上課時間(含小團班).jpg" data-title="115 升九 各科上課時間" aria-label="115 升九 DM">
-                <img src="115升九-各科上課時間(含小團班).jpg" alt="115 升九 DM" loading="lazy" />
+                <img src="115升九-各科上課時間(含小團班).jpg" alt="115 升九 DM" loading="lazy" decoding="async" />
               </button>
             </div>
           </div>
@@ -8615,10 +8625,10 @@ document.addEventListener('DOMContentLoaded', function () {
           <div class="dm-fan-stage">
             <div class="dm-fan-stack has-2">
               <button type="button" class="dm-card" data-src="高一課表.jpg" data-title="115 高一課程" aria-label="115 高一課程 DM">
-                <img src="高一課表.jpg" alt="115 高一課程 DM" loading="lazy" />
+                <img src="高一課表.jpg" alt="115 高一課程 DM" loading="lazy" decoding="async" />
               </button>
               <button type="button" class="dm-card" data-src="高二DM.jpg" data-title="115 高二課程" aria-label="115 高二課程 DM">
-                <img src="高二DM.jpg" alt="115 高二課程 DM" loading="lazy" />
+                <img src="高二DM.jpg" alt="115 高二課程 DM" loading="lazy" decoding="async" />
               </button>
             </div>
           </div>
@@ -8628,7 +8638,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       <!-- 右邊：完整課表 (純圖片，乾淨無文字) -->
       <button type="button" class="dm-schedule dm-schedule-clean" id="dmScheduleBtn" data-src="115新課表(最新版).jpg" data-title="115 完整課表" aria-label="完整課表 點擊放大">
-        <img src="115新課表(最新版).jpg" alt="115 完整課表" loading="lazy" />
+        <img src="115新課表(最新版).jpg" alt="115 完整課表" loading="lazy" decoding="async" />
       </button>
 
     </div>
@@ -8721,7 +8731,7 @@ document.addEventListener('DOMContentLoaded', function () {
             </p>
           </div>
           <div class="online-panel-hero-photo">
-            <img src="汪老師照片.jpg" alt="汪飛白老師" loading="lazy" />
+            <img src="汪老師照片.jpg" alt="汪飛白老師" loading="lazy" decoding="async" />
           </div>
         </div>
 
@@ -9226,7 +9236,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="teachers-carousel-wrap">
       <div class="teachers-grid" id="teachersGrid">
         <div class="teacher-card fade-up is-clickable" id="teacherWang" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="wangVideosModal">
-          <div class="teacher-avatar"><img src="汪老師照片.jpg" alt="汪飛白老師" loading="lazy"></div>
+          <div class="teacher-avatar"><img src="汪老師照片.jpg" alt="汪飛白老師" loading="lazy" decoding="async"></div>
           <h4>汪飛白 老師</h4>
           <div class="teacher-sub">理化</div>
           <p class="teacher-desc">近 30 年教學資歷，對理化充滿熱情、從不停止學習，在學問面前永遠謙卑。將畢生所學盡教給同學，讓孩子自然啟發興趣，帶領無數學生考上心目中的第一志願。</p>
@@ -9236,7 +9246,7 @@ document.addEventListener('DOMContentLoaded', function () {
           </span>
         </div>
         <div class="teacher-card fade-up is-clickable" id="teacherHou" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="houVideosModal">
-          <div class="teacher-avatar"><img src="侯昇4.jpg" alt="侯昇老師" loading="lazy"></div>
+          <div class="teacher-avatar"><img src="侯昇4.jpg" alt="侯昇老師" loading="lazy" decoding="async"></div>
           <h4>侯昇 老師</h4>
           <div class="teacher-sub">數學 · 國一 · 國三</div>
           <p class="teacher-desc">擅長把複雜概念拆成清晰脈絡，帶領國一與國三學生穩扎穩打，會考數學高分常勝軍。</p>
@@ -9246,7 +9256,7 @@ document.addEventListener('DOMContentLoaded', function () {
           </span>
         </div>
         <div class="teacher-card fade-up is-clickable" id="teacherLian" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="lianVideosModal">
-          <div class="teacher-avatar"><img src="teacher-lian.jpg" alt="連晨老師" loading="lazy"></div>
+          <div class="teacher-avatar"><img src="teacher-lian.jpg" alt="連晨老師" loading="lazy" decoding="async"></div>
           <h4>連晨 老師</h4>
           <div class="teacher-sub">數學 · 國二</div>
           <p class="teacher-desc">專注國二數學銜接關鍵期，從函數、幾何到應用題，建立孩子扎實的解題邏輯。</p>
@@ -9256,7 +9266,7 @@ document.addEventListener('DOMContentLoaded', function () {
           </span>
         </div>
         <div class="teacher-card fade-up is-clickable" id="teacherFang" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="fangVideosModal">
-          <div class="teacher-avatar"><img src="teacher-fang.jpg" alt="方昊老師" loading="lazy"></div>
+          <div class="teacher-avatar"><img src="teacher-fang.jpg" alt="方昊老師" loading="lazy" decoding="async"></div>
           <h4>方昊 老師</h4>
           <div class="teacher-sub">英文 · 國中 · 高中</div>
           <p class="teacher-desc">國一到高三一條龍授課，文法、單字、閱讀、寫作完整規劃，銜接段考、會考到學測全面兼顧。</p>
@@ -9266,13 +9276,13 @@ document.addEventListener('DOMContentLoaded', function () {
           </span>
         </div>
         <div class="teacher-card fade-up">
-          <div class="teacher-avatar"><img src="旺哲老師.jpg" alt="旺哲老師" loading="lazy"></div>
+          <div class="teacher-avatar"><img src="旺哲老師.jpg" alt="旺哲老師" loading="lazy" decoding="async"></div>
           <h4>旺哲 老師</h4>
           <div class="teacher-sub">化學 · 高中</div>
           <p class="teacher-desc">高中化學精修班，紮實理論基礎搭配歷屆試題精練，帶你穩健通過高一、高二、學測、指考各種挑戰。</p>
         </div>
         <div class="teacher-card fade-up">
-          <div class="teacher-avatar"><img src="楊傑老師.jpg" alt="楊傑老師" loading="lazy"></div>
+          <div class="teacher-avatar"><img src="楊傑老師.jpg" alt="楊傑老師" loading="lazy" decoding="async"></div>
           <h4>楊傑 老師</h4>
           <div class="teacher-sub">數學 · 高中</div>
           <p class="teacher-desc">高中數學系統化教學，函數、微積分、機率統計章節分段拆解，讓孩子面對段考、學測都游刃有餘。</p>
@@ -9304,7 +9314,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="video-modal-grid">
       <a class="video-card" href="https://youtu.be/IJspIEJGaDc" target="_blank" rel="noopener" data-grade="7">
         <div class="video-card-frame">
-          <img src="115升七英文-影片封面.jpg" alt="115 升七英文說明會 · 方昊老師" loading="lazy" />
+          <img src="115升七英文-影片封面.jpg" alt="115 升七英文說明會 · 方昊老師" loading="lazy" decoding="async" />
           <span class="video-card-play" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </span>
@@ -9319,7 +9329,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       <a class="video-card" href="https://youtu.be/5q656bMyfdw" target="_blank" rel="noopener" data-grade="8">
         <div class="video-card-frame">
-          <img src="115升八英文-影片封面.jpg" alt="115 升八英文說明會 · 方昊老師" loading="lazy" />
+          <img src="115升八英文-影片封面.jpg" alt="115 升八英文說明會 · 方昊老師" loading="lazy" decoding="async" />
           <span class="video-card-play" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </span>
@@ -9334,7 +9344,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       <a class="video-card" href="https://youtu.be/q7zPa24TuOU" target="_blank" rel="noopener" data-grade="9">
         <div class="video-card-frame">
-          <img src="114國中英文說明-影片封面.jpg" alt="國中英文介紹 · 方昊老師 Steven" loading="lazy" />
+          <img src="114國中英文說明-影片封面.jpg" alt="國中英文介紹 · 方昊老師 Steven" loading="lazy" decoding="async" />
           <span class="video-card-play" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </span>
@@ -9363,7 +9373,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="video-modal-grid is-single">
       <a class="video-card" href="https://youtu.be/4G4OEgbEwy0" target="_blank" rel="noopener" data-grade="8">
         <div class="video-card-frame">
-          <img src="115升八理化-影片封面.jpg" alt="115 升八理化說明會 · 汪飛白老師" loading="lazy" />
+          <img src="115升八理化-影片封面.jpg" alt="115 升八理化說明會 · 汪飛白老師" loading="lazy" decoding="async" />
           <span class="video-card-play" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </span>
@@ -9392,7 +9402,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="video-modal-grid is-single">
       <a class="video-card" href="https://youtu.be/ttuixa9q064" target="_blank" rel="noopener" data-grade="8">
         <div class="video-card-frame">
-          <img src="115升八數學-影片封面.jpg" alt="115 升八數學說明會 · 連晨老師" loading="lazy" />
+          <img src="115升八數學-影片封面.jpg" alt="115 升八數學說明會 · 連晨老師" loading="lazy" decoding="async" />
           <span class="video-card-play" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </span>
@@ -9419,7 +9429,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <div class="video-modal-grid is-single">
       <a class="video-card" href="https://youtu.be/PifWRJipBVE" target="_blank" rel="noopener" data-grade="7">
         <div class="video-card-frame">
-          <img src="https://i.ytimg.com/vi/PifWRJipBVE/maxresdefault.jpg" alt="侯昇老師 數學說明會" loading="lazy" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/PifWRJipBVE/hqdefault.jpg';" />
+          <img src="https://i.ytimg.com/vi/PifWRJipBVE/maxresdefault.jpg" alt="侯昇老師 數學說明會" loading="lazy" decoding="async" onerror="this.onerror=null;this.src='https://i.ytimg.com/vi/PifWRJipBVE/hqdefault.jpg';" />
           <span class="video-card-play" aria-hidden="true">
             <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
           </span>
@@ -9491,7 +9501,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <span class="calendar-board-title">115 國七 英數行事曆（開學～一段）</span>
         </figcaption>
         <a class="calendar-board-frame" href="115國七行事曆.jpg" target="_blank" rel="noopener" aria-label="點擊放大 國七行事曆">
-          <img src="115國七行事曆.jpg" alt="115 國七 英數行事曆（開學～一段）" loading="lazy" />
+          <img src="115國七行事曆.jpg" alt="115 國七 英數行事曆（開學～一段）" loading="lazy" decoding="async" />
           <span class="calendar-board-zoom" aria-hidden="true">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
             點擊放大
@@ -9505,7 +9515,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <span class="calendar-board-title">115 國八 英數理行事曆（開學～一段）</span>
         </figcaption>
         <a class="calendar-board-frame" href="115國八行事曆.jpg" target="_blank" rel="noopener" aria-label="點擊放大 國八行事曆">
-          <img src="115國八行事曆.jpg" alt="115 國八 英數理行事曆（開學～一段）" loading="lazy" />
+          <img src="115國八行事曆.jpg" alt="115 國八 英數理行事曆（開學～一段）" loading="lazy" decoding="async" />
           <span class="calendar-board-zoom" aria-hidden="true">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
             點擊放大
@@ -9555,7 +9565,7 @@ document.addEventListener('DOMContentLoaded', function () {
       <span class="champion-ribbon">2026 最新</span>
       <span class="champion-new">NEW</span>
       <div class="champion-img-wrap">
-        <img src="115會考英雄榜.jpg" alt="115 年會考英雄榜 — 5A++ 學生" loading="lazy" />
+        <img src="115會考英雄榜.jpg" alt="115 年會考英雄榜 — 5A++ 學生" loading="lazy" decoding="async" />
         <span class="champion-zoom" aria-hidden="true">
           <svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round">
             <circle cx="11" cy="11" r="8"/>
@@ -9683,7 +9693,7 @@ document.addEventListener('DOMContentLoaded', function () {
         </div>
 
         <div class="honor-image-frame" style="margin-top:28px;">
-          <img src="高一段考榜單最終版拷貝.jpg" alt="114 上學期 高中部第一次段考 榜單" loading="lazy">
+          <img src="高一段考榜單最終版拷貝.jpg" alt="114 上學期 高中部第一次段考 榜單" loading="lazy" decoding="async">
         </div>
 
         <!-- 保留文字版資料供 SEO 及無障礙瀏覽 -->
@@ -9794,7 +9804,7 @@ document.addEventListener('DOMContentLoaded', function () {
         </div>
 
         <div class="honor-image-frame">
-          <img src="114國中部第三次段考更該三%20拷貝.jpg" alt="114 上學期 國中部第三次段考英雄榜" loading="lazy">
+          <img src="114國中部第三次段考更該三%20拷貝.jpg" alt="114 上學期 國中部第三次段考英雄榜" loading="lazy" decoding="async">
         </div>
 
         <!-- 保留文字版資料供 SEO 及無障礙瀏覽 -->
@@ -10130,7 +10140,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
         <div class="qr-card">
           <div class="qr-image">
-            <img src="qrcode.png" alt="希望文理補習班 官方 LINE QR Code" loading="lazy" />
+            <img src="qrcode.png" alt="希望文理補習班 官方 LINE QR Code" loading="lazy" decoding="async" />
           </div>
           <div class="qr-content">
             <span class="qr-kicker">LINE QR</span>
@@ -10157,7 +10167,7 @@ document.addEventListener('DOMContentLoaded', function () {
               src="https://www.google.com/maps?q=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F3%E6%A8%93&hl=zh-TW&z=17&output=embed"
               width="100%" height="320"
               style="border:0; display:block;"
-              loading="lazy"
+              loading="lazy" decoding="async"
               referrerpolicy="no-referrer-when-downgrade"
               title="希望文理補習班 · Google 地圖"
               allowfullscreen></iframe>
@@ -10295,6 +10305,67 @@ document.addEventListener('DOMContentLoaded', function () {
 </footer>
 
 <script>
+
+  /* ===== hero 背景：第一張先顯示，其餘等頁面載完才抓 ===== */
+  (function initHeroLazyBg() {
+    function load() {
+      document.querySelectorAll('.hero-slide[data-bg]').forEach(function (el) {
+        el.style.backgroundImage = "url('" + el.getAttribute('data-bg') + "')";
+      });
+    }
+    if (document.readyState === 'complete') load();
+    else window.addEventListener('load', load);
+  })();
+
+  /* ===== 圖片背景預載 =====
+     一頁一主題的架構下，沒顯示的分頁圖片不會先載，切過去才開始抓 → 會看到「跑一下才出來」。
+     這裡在首屏載完、瀏覽器閒下來之後，於背景把所有圖片抓進快取，
+     之後不管切到哪一頁、點開哪張 DM，都是從快取直接出現。            */
+  (function initImageWarmup() {
+    var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
+    if (conn.saveData) return;                                // 使用者開了「節省流量」就不預載
+    if (/(^|-)2g$/.test(conn.effectiveType || '')) return;    // 連線太慢也不預載
+
+    var seen = {}, soon = [], later = [];
+    function add(url, bucket) {
+      if (!url) return;
+      url = url.trim();
+      if (!url || seen[url]) return;
+      seen[url] = 1;
+      bucket.push(url);
+    }
+
+    // 各分頁一眼就會看到的圖 → 先抓
+    document.querySelectorAll('img[src]').forEach(function (im) {
+      var u = im.getAttribute('src');
+      add(u, /^scholarship\//.test(u) ? later : soon);
+    });
+    document.querySelectorAll('.hero-slide[data-bg]').forEach(function (el) {
+      add(el.getAttribute('data-bg'), soon);
+    });
+    // 要點按鈕才展開的教室照片 → 後抓
+    document.querySelectorAll('[data-images]').forEach(function (el) {
+      el.getAttribute('data-images').split('|').forEach(function (u) { add(u, later); });
+    });
+
+    var queue = soon.concat(later), idx = 0, LANES = 3;
+    function pump() {
+      if (idx >= queue.length) return;
+      var img = new Image();
+      img.decoding = 'async';
+      img.onload = img.onerror = pump;   // 成功失敗都往下一張
+      img.src = queue[idx++];
+    }
+    function start() { for (var i = 0; i < LANES; i++) pump(); }
+
+    function whenIdle() {
+      if (window.requestIdleCallback) requestIdleCallback(start, { timeout: 2000 });
+      else setTimeout(start, 400);
+    }
+    if (document.readyState === 'complete') whenIdle();
+    else window.addEventListener('load', whenIdle);
+  })();
+
   // 滾動進度 + Navbar 狀態
   (function initScrollNav() {
     var progress = document.getElementById('scrollProgress');
@@ -10851,7 +10922,7 @@ document.addEventListener('DOMContentLoaded', function () {
           if (photoBox) {
             if (imgs.length) {
               photoBox.innerHTML = imgs.map(function (src) {
-                return '<img src="' + src + '" alt="' + (btn.getAttribute('data-room') || '') + '" loading="lazy" />';
+                return '<img src="' + src + '" alt="' + (btn.getAttribute('data-room') || '') + '" loading="lazy" decoding="async" />';
               }).join('');
               photoBox.hidden = false;
             } else {
