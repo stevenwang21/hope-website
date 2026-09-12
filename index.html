@@ -2707,22 +2707,30 @@
   }
 
   /* ===== DM 2 欄版面：左 tiers / 右 schedule ===== */
+  /* 上排：國中部 / 高中部 並排；下排：完整課表 */
   .dm-layout {
     display: grid;
-    grid-template-columns: 1.05fr 1fr;
-    gap: 28px;
+    grid-template-columns: 1fr;
+    gap: 44px;
     align-items: start;
     max-width: 1180px;
     margin: 0 auto;
   }
-  .dm-layout .dm-tiers { margin: 0; }
-  /* 課表面板依圖片比例決定高度，不再拉滿整欄（避免大片留白）；
-     用 sticky 讓它跟著左欄一起往下看 */
+  .dm-layout .dm-tiers {
+    margin: 0;
+    max-width: none;
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 32px;
+    align-items: start;
+  }
+  /* 課表面板依圖片比例決定高度，不再拉滿整欄（避免大片留白） */
   .dm-layout .dm-schedule {
     height: auto;
-    align-self: start;
-    position: sticky;
-    top: 110px;
+    align-self: center;
+    width: 100%;
+    max-width: 880px;
+    margin: 0 auto;
   }
   .dm-layout .dm-schedule-preview img {
     aspect-ratio: 4/3;
@@ -2731,7 +2739,11 @@
   @media (max-width: 920px) {
     .dm-layout {
       grid-template-columns: 1fr;
-      gap: 24px;
+      gap: 28px;
+    }
+    .dm-layout .dm-tiers {
+      grid-template-columns: 1fr;
+      gap: 28px;
     }
   }
 
@@ -3232,6 +3244,15 @@
     box-shadow: 0 0 0 3px rgba(220, 38, 38, 0.18),
                 0 4px 12px -2px rgba(220, 38, 38, 0.5);
     animation: nowBadgePulse 1.6s ease-in-out infinite;
+  }
+  /* 線上課的徽章是連結，點下去直接開直播 */
+  a.dm-aside-now-badge {
+    text-decoration: none;
+    cursor: pointer;
+  }
+  a.dm-aside-now-badge:hover {
+    background: #b91c1c;
+    color: #fff;
   }
   .dm-aside-now-badge::before {
     content: '';
@@ -8697,7 +8718,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     <div class="dm-layout">
 
-      <!-- 左邊：國中部 / 高中部 扇形堆疊 -->
+      <!-- 上排：國中部 / 高中部 扇形堆疊（並排） -->
       <div class="dm-tiers">
 
         <div class="dm-tier-section">
@@ -8733,7 +8754,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       </div>
 
-      <!-- 右邊：完整課表 (純圖片，乾淨無文字) -->
+      <!-- 下排：完整課表 (純圖片，乾淨無文字) -->
       <button type="button" class="dm-schedule dm-schedule-clean" id="dmScheduleBtn" data-src="115新課表(最新版).jpg" data-title="115 完整課表" aria-label="完整課表 點擊放大">
         <img src="115新課表(最新版).jpg" alt="115 完整課表" loading="lazy" decoding="async" />
       </button>
@@ -11233,16 +11254,50 @@ document.addEventListener('DOMContentLoaded', function () {
     function isClassInSession(day, time) {
       if (!isToday(day)) return false;
       var t = parseClassTime(time);
-      if (!t) return true; // 解析失敗（例如「線上同步直播」）→ 整天都算
+      if (!t) return false; // 解析不出時間就不要亮徽章（避免整天都顯示「上課中」）
       var now = new Date();
       var nowMin = now.getHours() * 60 + now.getMinutes();
       return nowMin >= t.startMin && nowMin <= t.endMin;
     }
+
+    // ---- 線上課（高三物理）：不用課表時間判斷，直接看 YouTube 有沒有在直播 ----
+    // live.json 由 .github/workflows/update-live.yml 每三小時更新一次
+    var liveState = { live: false, url: '', checkedAt: 0 };
+    var LIVE_MAX_AGE_MS = 4 * 60 * 60 * 1000; // 超過四小時沒更新就當作沒直播
+    function isLiveNow() {
+      if (!liveState.live) return false;
+      if (!liveState.checkedAt) return false;
+      return (Date.now() - liveState.checkedAt) < LIVE_MAX_AGE_MS;
+    }
+    function loadLiveState() {
+      fetch('live.json?t=' + Date.now(), { cache: 'no-store' })
+        .then(function (r) { return r.ok ? r.json() : null; })
+        .then(function (d) {
+          if (!d) return;
+          var was = isLiveNow();
+          liveState = {
+            live: !!d.live,
+            url: d.url || d.channel || '',
+            checkedAt: d.checkedAt ? new Date(d.checkedAt).getTime() : 0
+          };
+          var aside = document.getElementById('dmAsideList');
+          if (aside && aside.children.length > 0 && was !== isLiveNow()) renderTeacherList();
+        })
+        .catch(function () {});
+    }
+    loadLiveState();
+    setInterval(loadLiveState, 10 * 60 * 1000); // 每十分鐘重讀一次 live.json
+
     function buildClassesHTML(classes) {
       var html = '<div class="dm-aside-classes">';
       classes.forEach(function (c) {
-        var inSession = isClassInSession(c.day, c.time);
-        var todayBadge = inSession ? '<span class="dm-aside-now-badge">上課中</span>' : '';
+        var inSession = c.online ? isLiveNow() : isClassInSession(c.day, c.time);
+        var todayBadge = '';
+        if (inSession) {
+          todayBadge = c.online && liveState.url
+            ? '<a class="dm-aside-now-badge" href="' + liveState.url + '" target="_blank" rel="noopener">直播中</a>'
+            : '<span class="dm-aside-now-badge">' + (c.online ? '直播中' : '上課中') + '</span>';
+        }
         html += '<div class="dm-aside-class' + (inSession ? ' is-today' : '') + '">' +
                   '<span class="dm-aside-class-grade">' + c.grade + '</span>' +
                   '<span class="dm-aside-class-course">' +
