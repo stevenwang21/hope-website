@@ -10623,13 +10623,18 @@ document.addEventListener('DOMContentLoaded', function () {
       var pos = { x: 0, y: 0 }, timer = null, holding = false, noticed = false;
       var state = { walking: false, face: 0, faceTarget: 0, wave: 0, blink: 0, nextBlink: 2 };
 
-      function size() { return host.clientWidth; }
+      // 只在右下角一塊區域裡活動
       function bounds() {
         var w = window.innerWidth, h = window.innerHeight;
-        var bottomSafe = w <= 720 ? 92 : 18;   // 手機底部導覽列
-        return { minX: 10, maxX: Math.max(10, w - host.clientWidth - 10),
-                 minY: 96,                      // 避開上方導覽列
-                 maxY: Math.max(96, h - host.clientHeight - bottomSafe), w: w, h: h };
+        var bottomSafe = w <= 720 ? 92 : 18;            // 手機底部導覽列
+        var maxX = Math.max(10, w - host.clientWidth - 10);
+        var maxY = Math.max(96, h - host.clientHeight - bottomSafe);
+        var zoneW = Math.min(340, w * 0.40);            // 右側活動範圍
+        var zoneH = Math.min(280, h * 0.38);            // 下方活動範圍
+        return { minX: Math.max(10, maxX - zoneW),
+                 maxX: maxX,
+                 minY: Math.max(96, maxY - zoneH),      // 96 = 避開上方導覽列
+                 maxY: maxY, w: w, h: h };
       }
       function place() { host.style.transform = 'translate(' + pos.x + 'px,' + pos.y + 'px)'; }
 
@@ -10821,7 +10826,7 @@ document.addEventListener('DOMContentLoaded', function () {
       host.setAttribute('tabindex', '0');
       host.setAttribute('aria-label', '小飛，點一下問問題');
       var b0 = bounds();
-      pos = { x: b0.maxX * 0.78, y: b0.maxY * 0.62 }; place();
+      pos = { x: b0.maxX - 12, y: b0.maxY - 10 }; place();
       if (reduced) { var b1 = bounds(); pos = { x: b1.maxX - 8, y: b1.maxY - 8 }; place(); }
       else { schedule(); setTimeout(function () { state.wave = 1.8; }, 900); }
 
