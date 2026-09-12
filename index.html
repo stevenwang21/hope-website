@@ -4880,6 +4880,8 @@
     grid-template-columns: repeat(4, 1fr);
     gap: 16px;
   }
+  /* 滿級分卡片補滿最後一列，不留空格 */
+  .schools-grid .school-card.star { grid-column: span 2; }
 
   .school-card {
     background: var(--surface);
@@ -9747,11 +9749,6 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="school-rank">TOP 06</div>
         <div class="school-name">政大附中</div>
         <div class="school-en">NCCU Affiliated Senior</div>
-      </div>
-      <div class="school-card fade-up">
-        <div class="school-rank">TOP 07</div>
-        <div class="school-name">景美女中</div>
-        <div class="school-en">Jingmei Girls High</div>
       </div>
       <div class="school-card star fade-up">
         <div class="school-rank">★ 滿級分</div>
