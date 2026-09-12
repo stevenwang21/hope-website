@@ -7686,6 +7686,27 @@
     background: none; border: 0; padding: 2px 4px; cursor: pointer; line-height: 1;
   }
   #hopeBubble .hb-x:hover { color: #1b1633; }
+  /* 打字問問題 */
+  #hopeBubble .hb-ask { display: flex; gap: 6px; margin-top: 10px; }
+  #hopeBubble .hb-ask-in {
+    flex: 1; min-width: 0; font-family: inherit; font-size: .84rem; color: #1b1633;
+    background: #fff; border: 1px solid #d6dcec; border-radius: 10px;
+    padding: 9px 11px; outline: none;
+    transition: border-color .15s ease, box-shadow .15s ease;
+  }
+  #hopeBubble .hb-ask-in::placeholder { color: #9aa1b4; }
+  #hopeBubble .hb-ask-in:focus {
+    border-color: #3f95f5; box-shadow: 0 0 0 3px rgba(63,149,245,.18);
+  }
+  #hopeBubble .hb-ask-go {
+    flex: none; font-family: inherit; font-size: .82rem; font-weight: 800; color: #fff;
+    background: #17132c; border: 0; border-radius: 10px; padding: 0 14px; cursor: pointer;
+  }
+  #hopeBubble .hb-ask-go:hover { background: #2d2752; }
+  /* iOS 對小於 16px 的輸入框會自動放大整頁，手機上把字級拉到 16px */
+  @media (max-width: 720px) {
+    #hopeBubble .hb-ask-in { font-size: 16px; padding: 8px 10px; }
+  }
   #hopeBubble .hb-qs { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
   #hopeBubble .hb-q {
     text-align: left; font-family: inherit; font-size: .84rem; font-weight: 600; color: #1b1633;
@@ -10653,23 +10674,44 @@ document.addEventListener('DOMContentLoaded', function () {
 
       /* ---------- 問答內容（要改文字改這裡） ---------- */
       var HELLO = '我是小飛，理化是我的本行。想問什麼？';
+      // k = 打字發問時用來比對的關鍵字
       var QA = [
         { q: '幾點上課？',
           a: '各年級時段不一樣。國中晚上 6:30 開始，高中 6:30–9:30。完整課表在「課程DM」裡，每一科的時間都標好了。',
-          go: '看課表', to: '#dm' },
+          go: '看課表', to: '#dm',
+          k: ['幾點','時間','上課','課表','時段','星期','禮拜','週','幾時','什麼時候','開課','下課'] },
         { q: '可以免費試聽嗎？',
           a: '可以，我們提供一堂完整的免費試聽。先用 LINE 或電話預約，我們會依孩子的年級和科目安排最適合的班別。',
-          go: '預約試聽', to: '#contact' },
+          go: '預約試聽', to: '#contact',
+          k: ['試聽','免費','體驗','報名','預約','插班','名額'] },
         { q: '補習班在哪裡？',
           a: '台北市松山區南京東路四段 25 號 3 樓。捷運小巨蛋站 1 號出口走幾步就到。電話 (02) 8770-5578。',
-          go: '看聯絡方式', to: '#contact' },
+          go: '看聯絡方式', to: '#contact',
+          k: ['哪裡','地址','地點','位置','怎麼去','交通','捷運','電話','聯絡','在哪','停車'] },
         { q: '今天上到哪裡？',
           a: '聯絡簿每天更新。點「聯絡簿」選年級和科目，就能看到老師當天寫的進度和作業。',
-          go: '看聯絡簿', to: '#courses' },
-        { q: '考得怎麼樣？',
-          a: '115 會考有 5 位同學拿到 5A++，建中北一女錄取率 25%，三十年下來累積滿級分 30 人。',
-          go: '看榜單', to: '#honor' }
+          go: '看聯絡簿', to: '#courses',
+          k: ['今天','進度','上到','作業','功課','聯絡簿','複習','考試範圍','範圍','小考'] },
+        { q: '升學率好嗎？',
+          a: '115 會考有 5 位同學拿到 5A++，建中、北一女錄取率 25%，三十年下來累積滿級分 30 人。錄取學校包含建中、北一女、師大附中、中山女中、成功、政大附中、松山。',
+          go: '看榜單', to: '#honor',
+          k: ['升學','錄取','考上','榜單','成績','5a','滿級分','會考','學測','建中','北一女','附中','高中','表現','成效','效果'] },
+        { hide: true,                                   // 只給打字比對用，選單不列出
+          q: '學費多少？',
+          a: '學費依年級、科目數和報名時間而不同，也有早鳥與多科優惠。正確金額請直接問我們：(02) 8770-5578，或用 LINE 詢問，會依孩子的狀況幫你算。',
+          go: '聯絡我們', to: '#contact',
+          k: ['學費','費用','多少錢','價格','收費','繳費','優惠','折扣','獎學金','便宜','貴'] },
+        { hide: true,
+          q: '有哪些老師？',
+          a: '理化是汪飛白老師與旺哲老師，數學有侯昇、連晨、呂碩老師，英文是方昊老師 (Steven)。每位老師的專長和帶班風格在「師資」裡都寫得很清楚。',
+          go: '看師資', to: '#teachers',
+          k: ['老師','師資','誰教','教師','汪飛白','旺哲','侯昇','連晨','呂碩','方昊','steven','理化','數學','英文','物理','化學'] }
       ];
+      // 比對不到時的回覆
+      var MISS = {
+        a: '這題我還答不出來，直接問真人最快 —— 電話 (02) 8770-5578，或用 LINE 傳訊息給我們，通常很快就會回。',
+          go: '聯絡我們', to: '#contact'
+      };
 
       var away = false;
 
@@ -10741,19 +10783,61 @@ document.addEventListener('DOMContentLoaded', function () {
         return '<div class="hb-head"><span>' + title + '</span>' +
                '<button type="button" class="hb-x" data-act="off">不要再出現</button></div>';
       }
-      function openMenu() {
+      var ASK_BOX =
+        '<form class="hb-ask" autocomplete="off">' +
+          '<input type="text" class="hb-ask-in" placeholder="直接打字問我…" ' +
+                 'aria-label="輸入你的問題" maxlength="60">' +
+          '<button type="submit" class="hb-ask-go" aria-label="送出問題">問</button>' +
+        '</form>';
+
+      function openMenu(focusInput) {
         holding = true; clearTimeout(timer); clearTimeout(bubble._t);
         state.wave = 1.4;
-        shell(head2('小飛') + HELLO + '<div class="hb-qs">' +
+        shell(head2('小飛') + HELLO + ASK_BOX + '<div class="hb-qs">' +
           QA.map(function (it, i) {
+            if (it.hide) return '';
             return '<button type="button" class="hb-q" data-i="' + i + '">' + it.q + '</button>';
           }).join('') + '</div>');
+        if (focusInput) {
+          var el = bubble.querySelector('.hb-ask-in');
+          if (el) el.focus();
+        }
       }
       function openAnswer(i) {
         var it = QA[i];
         holding = true; clearTimeout(timer); clearTimeout(bubble._t);
         shell(head2(it.q) + '<div>' + it.a + '</div>' +
           '<button type="button" class="hb-go" data-to="' + it.to + '">' + it.go + ' →</button>' +
+          '<button type="button" class="hb-back">← 其他問題</button>');
+      }
+
+      /* 打字發問：用關鍵字比對，挑出最接近的一題 */
+      function normalize(s) {
+        return (s || '').toLowerCase().replace(/\s+/g, '');
+      }
+      function matchQuestion(text) {
+        var t = normalize(text);
+        if (!t) return -1;
+        var best = -1, bestScore = 0;
+        QA.forEach(function (it, i) {
+          var score = 0;
+          (it.k || []).forEach(function (w) {
+            if (t.indexOf(normalize(w)) !== -1) score += normalize(w).length;
+          });
+          if (normalize(it.q).indexOf(t) !== -1 && t.length >= 2) score += 3;
+          if (score > bestScore) { bestScore = score; best = i; }
+        });
+        return bestScore > 0 ? best : -1;
+      }
+      function askAnswer(text) {
+        var i = matchQuestion(text);
+        if (i >= 0) { openAnswer(i); return; }
+        holding = true; clearTimeout(timer); clearTimeout(bubble._t);
+        var safe = String(text).replace(/[<>&"]/g, function (c) {
+          return { '<': '&lt;', '>': '&gt;', '&': '&amp;', '"': '&quot;' }[c];
+        });
+        shell(head2('「' + safe + '」') + '<div>' + MISS.a + '</div>' +
+          '<button type="button" class="hb-go" data-to="' + MISS.to + '">' + MISS.go + ' →</button>' +
           '<button type="button" class="hb-back">← 其他問題</button>');
       }
       function hideBubble() { bubble.classList.remove('show'); holding = false; }
@@ -10769,10 +10853,22 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         var q = t.closest('.hb-q');
         if (q) { openAnswer(+q.getAttribute('data-i')); return; }
-        if (t.closest('.hb-back')) { openMenu(); return; }
+        if (t.closest('.hb-back')) { openMenu(true); return; }
+        if (t.closest('.hb-ask')) return;          // 輸入框內的點擊不處理
         var go = t.closest('.hb-go');
         if (go) { hideBubble(); location.hash = go.getAttribute('data-to'); schedule(); }
       });
+
+      // 打字送出（Enter 或按「問」）
+      bubble.addEventListener('submit', function (e) {
+        if (!e.target.classList.contains('hb-ask')) return;
+        e.preventDefault(); e.stopPropagation();
+        var el = e.target.querySelector('.hb-ask-in');
+        var v = el ? el.value.trim() : '';
+        if (v) askAnswer(v);
+      });
+      // 在輸入框裡打字時不要讓泡泡被其他邏輯收掉
+      bubble.addEventListener('keydown', function (e) { e.stopPropagation(); });
 
       host.addEventListener('keydown', function (e) {
         if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openMenu(); }
