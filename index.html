@@ -10657,8 +10657,8 @@ document.addEventListener('DOMContentLoaded', function () {
         if (isPinned()) {                               // 左下角單一定點
           return { minX: 10, maxX: 10, minY: maxY, maxY: maxY, w: w, h: h };
         }
-        var zoneW = Math.min(340, w * 0.40);            // 右側活動範圍
-        var zoneH = Math.min(280, h * 0.38);            // 下方活動範圍
+        var zoneW = Math.min(200, w * 0.22);            // 右側活動範圍（小範圍）
+        var zoneH = Math.min(160, h * 0.22);            // 下方活動範圍（小範圍）
         return { minX: Math.max(10, maxX - zoneW),
                  maxX: maxX,
                  minY: Math.max(96, maxY - zoneH),      // 96 = 避開上方導覽列
