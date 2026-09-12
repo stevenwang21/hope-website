@@ -981,7 +981,10 @@
   }
 
   /* ========== Section 共用 ========== */
-  section { padding: 140px 0; position: relative; z-index: 1; }
+  /* 不設 z-index：避免建立堆疊脈絡，否則小飛（固定定位）無法排在
+     section 內部的背景圖之上、文字容器之下。位置在 DOM 後方，
+     仍會正常蓋過 .page-bg。 */
+  section { padding: 140px 0; position: relative; }
 
   .section-header {
     text-align: center;
@@ -7603,7 +7606,7 @@
   /* ========== 小飛 · 3D 吉祥物 ========== */
   #hopeSprite {
     position: fixed; left: 0; top: 0;
-    z-index: 0;                    /* 背景裝飾之上、section 內容之下 → 會從文字後面經過 */
+    z-index: 1;                    /* 背景圖之上、文字容器之下 → 從文字後面經過但看得見 */
     width: 120px; height: 150px;
     pointer-events: none;          /* 完全不擋任何按鈕；點擊改由座標判斷 */
     will-change: transform;
