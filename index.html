@@ -2613,14 +2613,14 @@
     border: 1px solid rgba(13,7,38,0.10) !important;
     border-radius: 18px !important;
     overflow: hidden !important;
-    height: 100% !important;
-    min-height: 100% !important;
+    height: auto !important;
+    min-height: 0 !important;
     display: block !important;
   }
   .dm-schedule-clean::before { display: none !important; }
   .dm-schedule-clean img {
     width: 100%;
-    height: 100%;
+    height: auto;
     object-fit: contain;
     background: #fff;
     display: block;
@@ -2709,16 +2709,20 @@
   /* ===== DM 2 欄版面：左 tiers / 右 schedule ===== */
   .dm-layout {
     display: grid;
-    grid-template-columns: 1.4fr 1fr;
+    grid-template-columns: 1.05fr 1fr;
     gap: 28px;
     align-items: start;
     max-width: 1180px;
     margin: 0 auto;
   }
   .dm-layout .dm-tiers { margin: 0; }
+  /* 課表面板依圖片比例決定高度，不再拉滿整欄（避免大片留白）；
+     用 sticky 讓它跟著左欄一起往下看 */
   .dm-layout .dm-schedule {
-    height: 100%;
-    align-self: stretch;
+    height: auto;
+    align-self: start;
+    position: sticky;
+    top: 110px;
   }
   .dm-layout .dm-schedule-preview img {
     aspect-ratio: 4/3;
