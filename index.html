@@ -7568,6 +7568,18 @@
   }
 
 
+  /* 手機底部導覽列：滑動時變半透明，停下來就恢復 */
+  .mobile-bottom-nav {
+    transition: opacity .28s ease, transform .28s ease;
+  }
+  .mobile-bottom-nav.is-scrolling {
+    opacity: 0.42;
+    transform: translateY(4px);
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .mobile-bottom-nav.is-scrolling { opacity: 0.6; transform: none; }
+  }
+
   /* ===== 手機縮放安全設定（避免雙指放大時破圖）===== */
   @media (hover: none), (max-width: 900px) {
     /* 雜訊層用 mix-blend-mode 全頁混色，手機放大時會整頁變色／破圖 */
@@ -10869,8 +10881,24 @@ document.addEventListener('DOMContentLoaded', function () {
         }
         lastY = y;
       }
+
+      // 手機底部導覽列：滑動中變半透明，停下 650ms 後恢復
+      var nav = getBottomNav();
+      if (nav) {
+        nav.classList.add('is-scrolling');
+        clearTimeout(idleTimer);
+        idleTimer = setTimeout(function () {
+          nav.classList.remove('is-scrolling');
+        }, 650);
+      }
     }
     var lastY = window.scrollY;
+    // 這段腳本比底部導覽列的 HTML 早執行，所以要延遲查找
+    var bottomNav = null, idleTimer = null;
+    function getBottomNav() {
+      if (!bottomNav) bottomNav = document.getElementById('mobileBottomNav');
+      return bottomNav;
+    }
     window.addEventListener('scroll', update, { passive: true });
     update();
   })();
