@@ -7607,7 +7607,7 @@
   #hopeSprite {
     position: fixed; left: 0; top: 0;
     z-index: 1;                    /* 背景圖之上、文字容器之下 → 從文字後面經過但看得見 */
-    width: 120px; height: 150px;
+    width: 164px; height: 150px;   /* 寬度要容得下電子軌道，比身體寬 */
     pointer-events: none;          /* 完全不擋任何按鈕；點擊改由座標判斷 */
     will-change: transform;
     -webkit-tap-highlight-color: transparent;
@@ -7621,7 +7621,7 @@
     /* 手機：固定在左下角的小角落元件，浮在內容之上才點得到
        （桌機是漫遊的，維持在文字後面） */
     #hopeSprite {
-      width: 82px; height: 102px;
+      width: 112px; height: 102px;  /* 同上，要容得下電子軌道 */
       z-index: 900;                /* 低於導覽列 1000 與底部列 9999 */
       pointer-events: auto;
     }
@@ -9380,6 +9380,12 @@ document.addEventListener('DOMContentLoaded', function () {
           <div class="teacher-sub">數學 · 高中</div>
           <p class="teacher-desc">高中數學系統化教學，函數、微積分、機率統計章節分段拆解，讓孩子面對段考、學測都游刃有餘。</p>
         </div>
+        <div class="teacher-card fade-up">
+          <div class="teacher-avatar"><img src="teacher-lu.jpg" alt="呂碩老師" loading="lazy" decoding="async"></div>
+          <h4>呂碩 老師</h4>
+          <div class="teacher-sub">數學 · 高一</div>
+          <p class="teacher-desc">國立台灣大學土木碩士、現任高中數學教師。高一數學從解題到應試全面提升，每次段考提供講義、精編題本、各校歷屆試題與考前猜題。</p>
+        </div>
       </div>
       <div class="teachers-dots" id="teachersDots" aria-hidden="true">
         <button class="dot active" data-idx="0" aria-label="第 1 位老師"></button>
@@ -9388,6 +9394,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <button class="dot" data-idx="3" aria-label="第 4 位老師"></button>
         <button class="dot" data-idx="4" aria-label="第 5 位老師"></button>
         <button class="dot" data-idx="5" aria-label="第 6 位老師"></button>
+        <button class="dot" data-idx="6" aria-label="第 7 位老師"></button>
       </div>
       <div class="teachers-hint" aria-hidden="true">← 滑動查看更多老師 →</div>
     </div>
@@ -10514,7 +10521,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var scene = new THREE.Scene();
       var camera = new THREE.PerspectiveCamera(26, W / H, 0.1, 100);
       camera.position.set(0, 1.30, 5.15);
-      camera.lookAt(0, 0.88, 0);
+      camera.lookAt(0, 0.82, 0);
 
       var root = new THREE.Group(); scene.add(root);
       var rig = new THREE.Group(); root.add(rig);
