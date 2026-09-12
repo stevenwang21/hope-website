@@ -7587,6 +7587,72 @@
     .orb, .quote-card::before, .quote-card::after,
     .cta-card::before, .cta-card::after { filter: none; opacity: 0.55; }
   }
+
+  /* ========== 小飛 · 3D 吉祥物 ========== */
+  #hopeSprite {
+    position: fixed; left: 0; top: 0;
+    z-index: 0;                    /* 背景裝飾之上、section 內容之下 → 會從文字後面經過 */
+    width: 120px; height: 150px;
+    pointer-events: none;          /* 完全不擋任何按鈕；點擊改由座標判斷 */
+    will-change: transform;
+    -webkit-tap-highlight-color: transparent;
+    transition: transform 1.2s cubic-bezier(.34,.72,.28,1), opacity .35s ease;
+  }
+  #hopeSprite canvas { width: 100%; height: 100%; display: block; }
+  #hopeSprite.is-away { opacity: 0; }
+  body.hope-hover { cursor: pointer; }   /* 滑鼠正好在小飛身上時的提示 */
+  #hopeSprite:focus-visible { outline: 3px solid #5aa8ff; outline-offset: 4px; border-radius: 14px; }
+  @media (max-width: 720px) { #hopeSprite { width: 88px; height: 110px; } }
+
+  #hopeBubble {
+    position: fixed; z-index: 1200; max-width: 290px;
+    background: #fff; color: #1b1633; border-radius: 16px; padding: 14px 16px;
+    font-size: 0.86rem; line-height: 1.65;
+    box-shadow: 0 20px 46px -14px rgba(20,20,50,.45);
+    opacity: 0; transform: translateY(6px) scale(.94);
+    pointer-events: none; transform-origin: 50% 100%;
+    transition: opacity .24s ease, transform .24s cubic-bezier(.34,1.4,.5,1);
+  }
+  #hopeBubble.show { opacity: 1; transform: translateY(0) scale(1); pointer-events: auto; }
+  #hopeBubble::after {
+    content: ''; position: absolute; bottom: -7px; left: var(--tail, 50%);
+    margin-left: -7px; width: 14px; height: 14px; background: #fff;
+    transform: rotate(45deg); border-radius: 0 0 3px 0;
+  }
+  #hopeBubble .hb-head {
+    display: flex; align-items: baseline; justify-content: space-between; gap: 10px;
+    font-size: .74rem; letter-spacing: .08em; color: #7b8299; font-weight: 800; margin-bottom: 6px;
+  }
+  #hopeBubble .hb-x {
+    font-family: inherit; font-size: .7rem; font-weight: 700; color: #9aa1b4;
+    background: none; border: 0; padding: 2px 4px; cursor: pointer; line-height: 1;
+  }
+  #hopeBubble .hb-x:hover { color: #1b1633; }
+  #hopeBubble .hb-qs { display: flex; flex-direction: column; gap: 6px; margin-top: 8px; }
+  #hopeBubble .hb-q {
+    text-align: left; font-family: inherit; font-size: .84rem; font-weight: 600; color: #1b1633;
+    background: #f1f3f9; border: 1px solid #e2e6f0; border-radius: 10px;
+    padding: 9px 12px; cursor: pointer; transition: background .15s ease, border-color .15s ease;
+  }
+  #hopeBubble .hb-q:hover { background: #e6ebfa; border-color: #c9d4ee; }
+  #hopeBubble .hb-go {
+    display: inline-block; margin-top: 11px; font-family: inherit;
+    font-size: .8rem; font-weight: 700; color: #fff; background: #17132c;
+    padding: 8px 15px; border-radius: 999px; border: 0; cursor: pointer;
+  }
+  #hopeBubble .hb-back {
+    display: block; margin-top: 10px; font-family: inherit; font-size: .78rem; font-weight: 700;
+    color: #5a6377; background: none; border: 0; padding: 0; cursor: pointer;
+  }
+  #hopeBubble .hb-back:hover { color: #1b1633; }
+  #hopeBubble .hb-q:focus-visible, #hopeBubble .hb-go:focus-visible,
+  #hopeBubble .hb-back:focus-visible, #hopeBubble .hb-x:focus-visible {
+    outline: 2px solid #3f95f5; outline-offset: 2px;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    #hopeSprite { transition: opacity .3s ease; }
+  }
+
   </style>
 
 <!-- ╔══════════════════════════════════════════════════════════╗ -->
@@ -7795,6 +7861,10 @@ document.addEventListener('DOMContentLoaded', function () {
     </svg>
   </div>
 </div>
+
+<!-- 小飛 · 3D 吉祥物（放在背景層之後、內容之前）-->
+<div id="hopeSprite"></div>
+<div id="hopeBubble" role="status" aria-live="polite"></div>
 
 
 <!-- 導覽列 -->
@@ -10364,6 +10434,407 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if (document.readyState === 'complete') whenIdle();
     else window.addEventListener('load', whenIdle);
+  })();
+
+
+  /* ================= 小飛 · 3D 吉祥物 =================
+     · 圖層在內容底下，會從文字後面經過，不擋閱讀
+     · 滑鼠靠近會停下來轉頭看你（不會躲），方便點擊發問
+     · 點它跳出常見問題選單
+     · 3D 函式庫等網頁其他東西都載完才在背景載入，不影響開啟速度
+     · 彈窗打開、切到別的分頁、使用者選擇「減少動態效果」時自動停用
+  ==================================================== */
+  (function initHopeSprite() {
+    var KEY = 'hope_sprite_off_v1';
+    try { if (localStorage.getItem(KEY) === '1') return; } catch (e) {}
+
+    var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
+    if (conn.saveData) return;
+    if (/(^|-)2g$/.test(conn.effectiveType || '')) return;
+
+    var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+    function start() {
+      var s = document.createElement('script');
+      s.src = 'https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js';
+      s.async = true;
+      s.onload = boot;
+      s.onerror = function () {};          // 載不到就安靜放棄，不影響網站
+      document.head.appendChild(s);
+    }
+    if (document.readyState === 'complete') setTimeout(warm, 600);
+    else window.addEventListener('load', function () { setTimeout(warm, 600); });
+    function warm() {
+      if (window.requestIdleCallback) requestIdleCallback(start, { timeout: 3000 });
+      else setTimeout(start, 400);
+    }
+
+    function boot() {
+      if (!window.THREE) return;
+
+      var host = document.getElementById('hopeSprite');
+      var bubble = document.getElementById('hopeBubble');
+      if (!host || !bubble) return;
+
+      /* ---------- 建模 ---------- */
+      var canvas = document.createElement('canvas');
+      host.appendChild(canvas);
+      var W = host.clientWidth, H = host.clientHeight;
+
+      var renderer;
+      try { renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true }); }
+      catch (e) { host.style.display = 'none'; return; }
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setSize(W, H, false);
+      if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
+
+      var scene = new THREE.Scene();
+      var camera = new THREE.PerspectiveCamera(26, W / H, 0.1, 100);
+      camera.position.set(0, 1.30, 5.15);
+      camera.lookAt(0, 0.88, 0);
+
+      var root = new THREE.Group(); scene.add(root);
+      var rig = new THREE.Group(); root.add(rig);
+
+      var white = new THREE.MeshStandardMaterial({
+        color: 0xf6f7f9, roughness: 0.58, metalness: 0.0, side: THREE.DoubleSide });
+
+      function lathe(pts, seg) {
+        return new THREE.LatheGeometry(
+          pts.map(function (p) { return new THREE.Vector2(p[0], p[1]); }), seg || 56);
+      }
+
+      var torso = new THREE.Mesh(lathe([
+        [0.00,0.00],[0.16,0.015],[0.27,0.07],[0.33,0.18],[0.345,0.32],
+        [0.325,0.45],[0.27,0.55],[0.15,0.60],[0.00,0.61]
+      ]), white);
+      torso.position.y = 0.16; rig.add(torso);
+
+      var head = new THREE.Group();
+      head.position.set(0, 0.58, 0);
+      head.rotation.z = -0.09; head.rotation.x = -0.04;
+      rig.add(head);
+
+      var headMat = white.clone();
+      head.add(new THREE.Mesh(lathe([
+        [0.000,0.000],[0.150,0.010],[0.270,0.045],[0.375,0.100],[0.455,0.180],
+        [0.520,0.285],[0.565,0.400],[0.590,0.520],[0.600,0.640],[0.592,0.762],
+        [0.566,0.878],[0.512,0.986],[0.432,1.078],[0.322,1.150],[0.176,1.193],
+        [0.000,1.206]
+      ], 96), headMat));
+
+      /* 電子軌道 */
+      var atom = new THREE.Group(); rig.add(atom); atom.position.y = 0.68;
+      var orbits = [];
+      [[0x5aa8ff, 0.30, 0.0], [0x3fd6a0, -0.42, 1.15]].forEach(function (o) {
+        var g = new THREE.Group();
+        g.rotation.x = Math.PI / 2 + o[1]; g.rotation.z = o[2];
+        g.add(new THREE.Mesh(new THREE.TorusGeometry(1.03, 0.019, 10, 96),
+          new THREE.MeshStandardMaterial({ color: o[0], emissive: o[0],
+            emissiveIntensity: 0.85, roughness: 0.35 })));
+        var el = new THREE.Mesh(new THREE.SphereGeometry(0.062, 16, 12),
+          new THREE.MeshStandardMaterial({ color: 0xffffff, emissive: o[0],
+            emissiveIntensity: 2.4, roughness: 0.3 }));
+        el.position.set(1.03, 0, 0); g.add(el);
+        atom.add(g); orbits.push(g);
+      });
+
+      /* 眼睛（群組原點在眼睛高度，眨眼才會原地閉合） */
+      var dark = new THREE.MeshStandardMaterial({ color: 0x232a55, roughness: 0.16, metalness: 0.08 });
+      var gloss = new THREE.MeshBasicMaterial({ color: 0xffffff });
+      var eyes = new THREE.Group(); eyes.position.set(0, 0.585, 0); head.add(eyes);
+      [-1, 1].forEach(function (s) {
+        var e = new THREE.Mesh(new THREE.SphereGeometry(1, 30, 24), dark);
+        e.scale.set(0.118, 0.158, 0.075);
+        e.position.set(s * 0.245, 0, 0.520);
+        e.rotation.y = s * 0.40; e.rotation.z = s * 0.07;
+        eyes.add(e);
+        var hl = new THREE.Mesh(new THREE.SphereGeometry(1, 12, 10), gloss);
+        hl.scale.set(0.034, 0.042, 0.02);
+        hl.position.set(s * 0.245 + 0.030, 0.063, 0.572);
+        eyes.add(hl);
+      });
+
+      /* 麵條手 · 小短腿 */
+      function noodle(len) {
+        return new THREE.Mesh(lathe([
+          [0.000,0.000],[0.085,0.014],[0.120,0.060],[0.134,0.17*len],
+          [0.128,0.44*len],[0.106,0.72*len],[0.072,0.91*len],[0.000,len]
+        ], 28), white);
+      }
+      var armL = new THREE.Group(); armL.add(noodle(0.52));
+      armL.position.set(0.330, 0.560, 0.10);
+      armL.rotation.z = -0.98; armL.rotation.x = -0.22; rig.add(armL);
+
+      var armR = new THREE.Group(); armR.add(noodle(0.48));
+      armR.position.set(-0.325, 0.545, 0.09);
+      armR.rotation.z = Math.PI * 0.90; armR.rotation.x = 0.14; rig.add(armR);
+
+      [-1, 1].forEach(function (s) {
+        var leg = new THREE.Mesh(lathe([
+          [0.000,0.000],[0.085,0.012],[0.118,0.055],[0.124,0.14],
+          [0.112,0.24],[0.085,0.31],[0.000,0.335]
+        ], 28), white);
+        leg.position.set(s * 0.145, 0.0, 0.03); leg.rotation.z = s * -0.10; rig.add(leg);
+      });
+
+      /* 落地陰影 */
+      var shc = document.createElement('canvas'); shc.width = shc.height = 128;
+      var sc = shc.getContext('2d');
+      var gr = sc.createRadialGradient(64, 64, 2, 64, 64, 62);
+      gr.addColorStop(0, 'rgba(20,26,52,.42)'); gr.addColorStop(0.55, 'rgba(20,26,52,.16)');
+      gr.addColorStop(1, 'rgba(20,26,52,0)');
+      sc.fillStyle = gr; sc.fillRect(0, 0, 128, 128);
+      var shadow = new THREE.Mesh(new THREE.PlaneGeometry(1.7, 1.7),
+        new THREE.MeshBasicMaterial({ map: new THREE.CanvasTexture(shc),
+          transparent: true, depthWrite: false }));
+      shadow.rotation.x = -Math.PI / 2; shadow.position.y = 0.004;
+      shadow.scale.set(0.62, 0.38, 1); root.add(shadow);
+
+      scene.add(new THREE.HemisphereLight(0xffffff, 0xc2cfe2, 0.62));
+      var key = new THREE.DirectionalLight(0xffffff, 0.92); key.position.set(2.4, 3.6, 2.8); scene.add(key);
+      var fill = new THREE.DirectionalLight(0xd8ecff, 0.42); fill.position.set(-3, 1.6, 1.2); scene.add(fill);
+      var rim = new THREE.DirectionalLight(0xbcd9ff, 0.55); rim.position.set(-1.2, 2.2, -3); scene.add(rim);
+
+      /* ---------- 問答內容（要改文字改這裡） ---------- */
+      var HELLO = '我是小飛，理化是我的本行。想問什麼？';
+      var QA = [
+        { q: '幾點上課？',
+          a: '各年級時段不一樣。國中晚上 6:30 開始，高中 6:30–9:30。完整課表在「課程DM」裡，每一科的時間都標好了。',
+          go: '看課表', to: '#dm' },
+        { q: '可以免費試聽嗎？',
+          a: '可以，我們提供一堂完整的免費試聽。先用 LINE 或電話預約，我們會依孩子的年級和科目安排最適合的班別。',
+          go: '預約試聽', to: '#contact' },
+        { q: '補習班在哪裡？',
+          a: '台北市松山區南京東路四段 25 號 3 樓。捷運小巨蛋站 1 號出口走幾步就到。電話 (02) 8770-5578。',
+          go: '看聯絡方式', to: '#contact' },
+        { q: '今天上到哪裡？',
+          a: '聯絡簿每天更新。點「聯絡簿」選年級和科目，就能看到老師當天寫的進度和作業。',
+          go: '看聯絡簿', to: '#courses' },
+        { q: '考得怎麼樣？',
+          a: '115 會考有 5 位同學拿到 5A++，建中北一女錄取率 25%，三十年下來累積滿級分 30 人。',
+          go: '看榜單', to: '#honor' }
+      ];
+
+      var away = false;
+
+      /* ---------- 漫遊 ---------- */
+      var SPEED = 12, REST = 26;               // 速度 / 停留（0.1 秒為單位）
+      var pos = { x: 0, y: 0 }, timer = null, holding = false, noticed = false;
+      var state = { walking: false, face: 0, faceTarget: 0, wave: 0, blink: 0, nextBlink: 2 };
+
+      function size() { return host.clientWidth; }
+      function bounds() {
+        var w = window.innerWidth, h = window.innerHeight;
+        var bottomSafe = w <= 720 ? 92 : 18;   // 手機底部導覽列
+        return { minX: 10, maxX: Math.max(10, w - host.clientWidth - 10),
+                 minY: 96,                      // 避開上方導覽列
+                 maxY: Math.max(96, h - host.clientHeight - bottomSafe), w: w, h: h };
+      }
+      function place() { host.style.transform = 'translate(' + pos.x + 'px,' + pos.y + 'px)'; }
+
+      function pick() {
+        var b = bounds();
+        return { x: b.minX + Math.random() * (b.maxX - b.minX),
+                 y: b.minY + Math.random() * (b.maxY - b.minY) };
+      }
+      function moveTo(t) {
+        var dx = t.x - pos.x;
+        if (Math.abs(dx) > 5) state.faceTarget = dx > 0 ? 0.85 : -0.85;
+        var dur = Math.max(0.5, Math.hypot(dx, t.y - pos.y) / (SPEED * 12));
+        host.style.transitionDuration = dur + 's';
+        pos = t; state.walking = true; hideBubble(); place();
+        clearTimeout(timer);
+        timer = setTimeout(function () {
+          state.walking = false; state.faceTarget = 0;
+          if (Math.random() < 0.35) state.wave = 1.6;
+          schedule();
+        }, dur * 1000);
+      }
+      function schedule() {
+        clearTimeout(timer);
+        if (reduced || holding) return;
+        timer = setTimeout(function () { moveTo(pick()); },
+          (REST / 10) * 1000 * (0.6 + Math.random() * 0.9));
+      }
+
+      /* ---------- 對話泡泡 ---------- */
+      function shell(inner) {
+        bubble.innerHTML = inner;
+        bubble.classList.add('show');
+        var b = bounds(), bw = bubble.offsetWidth, bh = bubble.offsetHeight;
+        var cx = pos.x + host.clientWidth / 2;
+        var left = Math.min(Math.max(10, cx - bw / 2), Math.max(10, b.w - bw - 10));
+        var top = pos.y - bh - 8;
+        if (top < 96) top = pos.y + host.clientHeight - 4;
+        top = Math.min(top, Math.max(96, b.h - bh - 12));
+        top = Math.max(top, 96);
+        bubble.style.left = left + 'px'; bubble.style.top = top + 'px';
+        bubble.style.setProperty('--tail', (cx - left) + 'px');
+      }
+      function head2(title) {
+        return '<div class="hb-head"><span>' + title + '</span>' +
+               '<button type="button" class="hb-x" data-act="off">不要再出現</button></div>';
+      }
+      function openMenu() {
+        holding = true; clearTimeout(timer); clearTimeout(bubble._t);
+        state.wave = 1.4;
+        shell(head2('小飛') + HELLO + '<div class="hb-qs">' +
+          QA.map(function (it, i) {
+            return '<button type="button" class="hb-q" data-i="' + i + '">' + it.q + '</button>';
+          }).join('') + '</div>');
+      }
+      function openAnswer(i) {
+        var it = QA[i];
+        holding = true; clearTimeout(timer); clearTimeout(bubble._t);
+        shell(head2(it.q) + '<div>' + it.a + '</div>' +
+          '<button type="button" class="hb-go" data-to="' + it.to + '">' + it.go + ' →</button>' +
+          '<button type="button" class="hb-back">← 其他問題</button>');
+      }
+      function hideBubble() { bubble.classList.remove('show'); holding = false; }
+
+      bubble.addEventListener('click', function (e) {
+        e.stopPropagation();                   // 內容會被換掉，別讓事件冒到 document 被誤判
+        var t = e.target;
+        if (t.closest('[data-act="off"]')) {
+          try { localStorage.setItem(KEY, '1'); } catch (err) {}
+          hideBubble(); host.classList.add('is-away');
+          setTimeout(function () { host.remove(); bubble.remove(); }, 400);
+          return;
+        }
+        var q = t.closest('.hb-q');
+        if (q) { openAnswer(+q.getAttribute('data-i')); return; }
+        if (t.closest('.hb-back')) { openMenu(); return; }
+        var go = t.closest('.hb-go');
+        if (go) { hideBubble(); location.hash = go.getAttribute('data-to'); schedule(); }
+      });
+
+      host.addEventListener('keydown', function (e) {
+        if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); openMenu(); }
+      });
+
+      // 小飛在內容底下收不到事件，所以用座標判斷。
+      // 真正的連結、按鈕、表單一律讓給它們，小飛絕不搶點擊。
+      function overSprite(x, y) {
+        var r = host.getBoundingClientRect();
+        var ix = r.width * 0.22, iy = r.height * 0.16;      // 只算角色本體，不含空白邊
+        return x >= r.left + ix && x <= r.right - ix &&
+               y >= r.top + iy && y <= r.bottom - iy * 0.4;
+      }
+      var CONTROLS = 'a, button, input, select, textarea, label, summary, [role="button"], [onclick]';
+
+      document.addEventListener('click', function (e) {
+        if (away) return;
+        if (overSprite(e.clientX, e.clientY) && !e.target.closest(CONTROLS)) {
+          openMenu(); return;
+        }
+        if (holding) { hideBubble(); schedule(); }
+      });
+
+      /* 滑鼠靠近：停下來轉頭看你，不會躲 */
+      var hovering = false;
+      document.addEventListener('mousemove', function (e) {
+        if (away) return;
+        var on = overSprite(e.clientX, e.clientY) && !e.target.closest(CONTROLS);
+        if (on !== hovering) {
+          hovering = on;
+          document.body.classList.toggle('hope-hover', on);
+        }
+        if (reduced || holding) return;
+        var cx = pos.x + host.clientWidth / 2, cy = pos.y + host.clientHeight / 2;
+        var near = Math.hypot(e.clientX - cx, e.clientY - cy) < host.clientWidth * 1.35;
+        if (near && !noticed) {
+          noticed = true; clearTimeout(timer);
+          state.faceTarget = (e.clientX > cx) ? 0.55 : -0.55;
+          state.wave = 1.2;
+        } else if (!near && noticed) {
+          noticed = false; state.faceTarget = 0; schedule();
+        }
+      }, { passive: true });
+
+      /* 偶爾提醒一次 */
+      (function nudge() {
+        setTimeout(function () {
+          if (!holding && !bubble.classList.contains('show') && !hidden()) {
+            state.wave = 1.5;
+            shell(head2('小飛') + '有問題想問嗎？點我一下。');
+            clearTimeout(bubble._t);
+            bubble._t = setTimeout(hideBubble, 4500);
+          }
+          nudge();
+        }, 38000 + Math.random() * 16000);
+      })();
+
+      /* ---------- 該安靜的時候 ---------- */
+      function hidden() {
+        return document.body.classList.contains('dm-lightbox-open') ||
+               document.body.classList.contains('bento-modal-open') ||
+               !!document.querySelector('[role="dialog"]:not([hidden]), .champion-lightbox:not([hidden])');
+      }
+      setInterval(function () {
+        var h = hidden();
+        if (h !== away) {
+          away = h;
+          host.classList.toggle('is-away', h);
+          if (h) { hideBubble(); clearTimeout(timer); } else schedule();
+        }
+      }, 400);
+
+      /* ---------- 動畫 ---------- */
+      var t0 = performance.now(), visible = true;
+      document.addEventListener('visibilitychange', function () { visible = !document.hidden; });
+
+      function frame(now) {
+        requestAnimationFrame(frame);
+        if (!visible || away) return;
+        var t = (now - t0) / 1000, dt = 1 / 60;
+
+        state.face += (state.faceTarget - state.face) * 0.12;
+        rig.rotation.y = state.face;
+
+        var bob, lean;
+        if (state.walking && !reduced) { bob = Math.abs(Math.sin(t * 9)) * 0.13; lean = Math.sin(t * 9) * 0.06; }
+        else { bob = (Math.sin(t * 1.7) + 1) * 0.012; lean = Math.sin(t * 1.3) * 0.012; }
+        rig.position.y = bob; rig.rotation.z = lean;
+        shadow.scale.set(0.62 * (1 - bob * 1.1), 0.38 * (1 - bob * 1.1), 1);
+        shadow.material.opacity = 1 - bob * 1.6;
+
+        var sp = state.walking ? 2.6 : 1.0;
+        orbits[0].children[1].position.set(Math.cos(t * 2.4 * sp) * 1.03, Math.sin(t * 2.4 * sp) * 1.03, 0);
+        orbits[1].children[1].position.set(Math.cos(-t * 1.9 * sp + 1.2) * 1.03, Math.sin(-t * 1.9 * sp + 1.2) * 1.03, 0);
+        atom.rotation.y = t * 0.5 * sp;
+
+        if (state.wave > 0) { state.wave -= dt; armL.rotation.z = -0.98 + Math.sin(t * 15) * 0.42; }
+        else armL.rotation.z += (-0.98 - armL.rotation.z) * 0.1;
+
+        state.nextBlink -= dt;
+        if (state.nextBlink <= 0) { state.blink = 0.13; state.nextBlink = 2.2 + Math.random() * 4.2; }
+        if (state.blink > 0) { state.blink -= dt; eyes.scale.y = 0.12; }
+        else eyes.scale.y += (1 - eyes.scale.y) * 0.35;
+
+        renderer.render(scene, camera);
+      }
+      requestAnimationFrame(frame);
+
+      /* ---------- 啟動 ---------- */
+      host.setAttribute('role', 'button');
+      host.setAttribute('tabindex', '0');
+      host.setAttribute('aria-label', '小飛，點一下問問題');
+      var b0 = bounds();
+      pos = { x: b0.maxX * 0.78, y: b0.maxY * 0.62 }; place();
+      if (reduced) { var b1 = bounds(); pos = { x: b1.maxX - 8, y: b1.maxY - 8 }; place(); }
+      else { schedule(); setTimeout(function () { state.wave = 1.8; }, 900); }
+
+      window.addEventListener('resize', function () {
+        var b = bounds();
+        W = host.clientWidth; H = host.clientHeight;
+        renderer.setSize(W, H, false);
+        camera.aspect = W / H; camera.updateProjectionMatrix();
+        pos.x = Math.min(Math.max(b.minX, pos.x), b.maxX);
+        pos.y = Math.min(Math.max(b.minY, pos.y), b.maxY);
+        place(); hideBubble();
+      });
+    }
   })();
 
   // 滾動進度 + Navbar 狀態

@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="zh-Hant">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<meta name="robots" content="noindex, nofollow" />
+<title>Bug 修正測試頁 · 2026-09-12 · 希望文理補習班</title>
+<style>
+  * { box-sizing: border-box; }
+  body {
+    margin: 0;
+    font-family: 'Noto Sans TC', 'Microsoft JhengHei', system-ui, sans-serif;
+    background: #14141c;
+    color: #eee;
+  }
+  .bar {
+    position: sticky; top: 0; z-index: 10;
+    display: flex; flex-wrap: wrap; align-items: center; gap: 10px;
+    padding: 12px 16px;
+    background: #1d1d28;
+    border-bottom: 1px solid #33334a;
+  }
+  .bar strong { font-size: 0.95rem; letter-spacing: 0.5px; }
+  .bar .sep { width: 1px; height: 22px; background: #3a3a52; }
+  button, select {
+    font: inherit;
+    padding: 7px 14px;
+    border-radius: 999px;
+    border: 1px solid #45456a;
+    background: #26263a;
+    color: #eee;
+    cursor: pointer;
+  }
+  button.on { background: #4ade80; color: #10241a; border-color: #4ade80; font-weight: 700; }
+  button.off { background: #26263a; }
+  .note { font-size: 0.78rem; color: #9a9ab5; padding: 8px 16px; line-height: 1.6; }
+  .note code { background: #26263a; padding: 1px 5px; border-radius: 4px; }
+  .stage { display: flex; justify-content: center; padding: 18px; }
+  iframe {
+    border: 1px solid #3a3a52;
+    background: #fff;
+    border-radius: 10px;
+    width: 100%;
+    height: calc(100vh - 170px);
+    transition: width 0.25s ease;
+  }
+  .stage.mobile iframe { width: 390px; }
+  .stage.tablet iframe { width: 820px; }
+  .err {
+    margin: 0 16px 16px;
+    padding: 12px 14px;
+    border-radius: 8px;
+    background: #4a1f24;
+    border: 1px solid #8a3a44;
+    color: #ffd7dc;
+    font-size: 0.85rem;
+    line-height: 1.7;
+    display: none;
+  }
+</style>
+</head>
+<body>
+
+<div class="bar">
+  <strong>Bug 修正測試頁 · 2026-09-12</strong>
+  <span class="sep"></span>
+  <button id="toggle" class="on">修正：已套用</button>
+  <span class="sep"></span>
+  <select id="size">
+    <option value="desktop">桌機（滿寬）</option>
+    <option value="tablet">平板 820px</option>
+    <option value="mobile" selected>手機 390px</option>
+  </select>
+  <button id="reload">重新載入</button>
+</div>
+
+<div class="note">
+  這一頁把正式版 <code>index.html</code> 嵌進來，再即時注入
+  <code>bugfix-patch.css</code> / <code>bugfix-patch.js</code>，
+  <strong>完全不會修改 index.html</strong>。切「手機 390px」可以看修好的漢堡選單。<br>
+  ※ 請用 <code>啟動本機伺服器.bat</code> 起本機伺服器後開這一頁（直接雙擊開檔會被瀏覽器的
+  file:// 安全限制擋住，無法注入）。
+</div>
+
+<div class="err" id="err"></div>
+
+<div class="stage mobile" id="stage">
+  <iframe id="frame" src="index.html" title="index.html 預覽"></iframe>
+</div>
+
+<script>
+(function () {
+  var frame  = document.getElementById('frame');
+  var stage  = document.getElementById('stage');
+  var toggle = document.getElementById('toggle');
+  var sizeEl = document.getElementById('size');
+  var errEl  = document.getElementById('err');
+  var patched = true;
+
+  function showErr(msg) {
+    errEl.style.display = 'block';
+    errEl.innerHTML = msg;
+  }
+
+  function inject() {
+    var doc;
+    try {
+      doc = frame.contentDocument;
+      if (!doc) throw new Error('no document');
+    } catch (e) {
+      showErr('無法存取 iframe 內容（跨來源限制）。請改用 <code>啟動本機伺服器.bat</code> 起 http 伺服器後再開這一頁。');
+      return;
+    }
+    if (!patched) return;
+
+    if (!doc.getElementById('bugfixPatchCss')) {
+      var link = doc.createElement('link');
+      link.id = 'bugfixPatchCss';
+      link.rel = 'stylesheet';
+      link.href = 'bugfix-patch.css';
+      doc.head.appendChild(link);
+    }
+    if (!doc.getElementById('bugfixPatchJs')) {
+      var s = doc.createElement('script');
+      s.id = 'bugfixPatchJs';
+      s.src = 'bugfix-patch.js';
+      doc.body.appendChild(s);
+    }
+  }
+
+  frame.addEventListener('load', inject);
+
+  toggle.addEventListener('click', function () {
+    patched = !patched;
+    toggle.textContent = patched ? '修正：已套用' : '修正：關閉（原始版）';
+    toggle.className = patched ? 'on' : 'off';
+    frame.contentWindow.location.reload();
+  });
+
+  sizeEl.addEventListener('change', function () {
+    stage.className = 'stage ' + sizeEl.value;
+  });
+
+  document.getElementById('reload').addEventListener('click', function () {
+    frame.contentWindow.location.reload();
+  });
+})();
+</script>
+
+</body>
+</html>
