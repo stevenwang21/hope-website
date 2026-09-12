@@ -7617,7 +7617,15 @@
   #hopeSprite.is-away { opacity: 0; }
   body.hope-hover { cursor: pointer; }   /* 滑鼠正好在小飛身上時的提示 */
   #hopeSprite:focus-visible { outline: 3px solid #5aa8ff; outline-offset: 4px; border-radius: 14px; }
-  @media (max-width: 720px) { #hopeSprite { width: 88px; height: 110px; } }
+  @media (max-width: 720px) {
+    /* 手機：固定在左下角的小角落元件，浮在內容之上才點得到
+       （桌機是漫遊的，維持在文字後面） */
+    #hopeSprite {
+      width: 82px; height: 102px;
+      z-index: 900;                /* 低於導覽列 1000 與底部列 9999 */
+      pointer-events: auto;
+    }
+  }
 
   #hopeBubble {
     position: fixed; z-index: 1200; max-width: 290px;
@@ -10638,12 +10646,17 @@ document.addEventListener('DOMContentLoaded', function () {
       var pos = { x: 0, y: 0 }, timer = null, holding = false, noticed = false;
       var state = { walking: false, face: 0, faceTarget: 0, wave: 0, blink: 0, nextBlink: 2 };
 
-      // 只在右下角一塊區域裡活動
+      // 手機：固定在左下角不動。桌機：在右下角一塊區域裡漫遊
+      function isPinned() { return window.innerWidth <= 720; }
+
       function bounds() {
         var w = window.innerWidth, h = window.innerHeight;
         var bottomSafe = w <= 720 ? 92 : 18;            // 手機底部導覽列
         var maxX = Math.max(10, w - host.clientWidth - 10);
         var maxY = Math.max(96, h - host.clientHeight - bottomSafe);
+        if (isPinned()) {                               // 左下角單一定點
+          return { minX: 10, maxX: 10, minY: maxY, maxY: maxY, w: w, h: h };
+        }
         var zoneW = Math.min(340, w * 0.40);            // 右側活動範圍
         var zoneH = Math.min(280, h * 0.38);            // 下方活動範圍
         return { minX: Math.max(10, maxX - zoneW),
@@ -10673,7 +10686,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       function schedule() {
         clearTimeout(timer);
-        if (reduced || holding) return;
+        if (reduced || holding || isPinned()) return;   // 手機定點，不漫遊
         timer = setTimeout(function () { moveTo(pick()); },
           (REST / 10) * 1000 * (0.6 + Math.random() * 0.9));
       }
@@ -10745,7 +10758,9 @@ document.addEventListener('DOMContentLoaded', function () {
 
       document.addEventListener('click', function (e) {
         if (away) return;
-        if (overSprite(e.clientX, e.clientY) && !e.target.closest(CONTROLS)) {
+        // 點到小飛自己一定算數；點到網站的連結/按鈕則讓給它們
+        var onSelf = host.contains(e.target);
+        if (overSprite(e.clientX, e.clientY) && (onSelf || !e.target.closest(CONTROLS))) {
           openMenu(); return;
         }
         if (holding) { hideBubble(); schedule(); }
@@ -10755,7 +10770,8 @@ document.addEventListener('DOMContentLoaded', function () {
       var hovering = false;
       document.addEventListener('mousemove', function (e) {
         if (away) return;
-        var on = overSprite(e.clientX, e.clientY) && !e.target.closest(CONTROLS);
+        var on = overSprite(e.clientX, e.clientY) &&
+                 (host.contains(e.target) || !e.target.closest(CONTROLS));
         if (on !== hovering) {
           hovering = on;
           document.body.classList.toggle('hope-hover', on);
@@ -10841,7 +10857,9 @@ document.addEventListener('DOMContentLoaded', function () {
       host.setAttribute('tabindex', '0');
       host.setAttribute('aria-label', '小飛，點一下問問題');
       var b0 = bounds();
-      pos = { x: b0.maxX - 12, y: b0.maxY - 10 }; place();
+      pos = isPinned() ? { x: b0.minX, y: b0.maxY }
+                       : { x: b0.maxX - 12, y: b0.maxY - 10 };
+      place();
       if (reduced) { var b1 = bounds(); pos = { x: b1.maxX - 8, y: b1.maxY - 8 }; place(); }
       else { schedule(); setTimeout(function () { state.wave = 1.8; }, 900); }
 
@@ -10853,6 +10871,7 @@ document.addEventListener('DOMContentLoaded', function () {
         pos.x = Math.min(Math.max(b.minX, pos.x), b.maxX);
         pos.y = Math.min(Math.max(b.minY, pos.y), b.maxY);
         place(); hideBubble();
+        if (isPinned()) clearTimeout(timer); else schedule();   // 桌機↔手機切換時接手
       });
     }
   })();
