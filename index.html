@@ -4437,6 +4437,27 @@
     z-index: 1;
   }
 
+  /* ---- 老師 IG ---- */
+  /* 卡片改成直向 flex，IG 按鈕才能統一貼在卡片底部（各張簡介長度不一） */
+  .teacher-card { display: flex; flex-direction: column; }
+  .teacher-ig-row { margin-top: auto; padding-top: 18px; position: relative; z-index: 1; }
+  .teacher-ig {
+    display: inline-flex; align-items: center; gap: 7px;
+    padding: 7px 14px; border-radius: 999px;
+    border: 1px solid var(--border); background: transparent;
+    color: var(--text-2); text-decoration: none;
+    font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    font-size: 0.76rem; font-weight: 700; letter-spacing: 0.3px;
+    transition: color .3s var(--ease), border-color .3s var(--ease),
+                background .3s var(--ease), transform .3s var(--ease);
+  }
+  .teacher-ig svg { width: 15px; height: 15px; flex: none; }
+  .teacher-ig:hover {
+    color: #fff; border-color: transparent; transform: translateY(-2px);
+    background: linear-gradient(135deg, #feda75, #fa7e1e, #d62976, #962fbf, #4f5bd5);
+  }
+  .teacher-ig:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+
   /* 可點擊老師卡片 + 試聽影片提示 */
   .teacher-card.is-clickable { cursor: pointer; }
   .teacher-card.is-clickable:focus-visible {
@@ -4448,7 +4469,7 @@
     display: inline-flex;
     align-items: center;
     gap: 8px;
-    align-self: flex-start;
+    align-self: center;
     padding: 8px 14px;
     background: linear-gradient(135deg, rgba(255,215,112,0.18), rgba(255,158,196,0.1));
     border: 1px solid rgba(255,215,112,0.35);
@@ -4564,6 +4585,50 @@
   .video-modal-grid.is-single {
     grid-template-columns: minmax(0, 560px);
     justify-content: center;
+  }
+  /* 汪老師：左邊 YouTube 試聽影片、右邊課堂實錄（靜音循環播放） */
+  .video-modal-grid.is-split {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    justify-content: center;
+    max-width: 980px;
+    margin: 0 auto;
+    align-items: start;
+  }
+  .wang-live {
+    display: flex; flex-direction: column; gap: 14px;
+    padding: 14px; border-radius: 16px;
+    background: rgba(255,255,255,0.025);
+    border: 1px solid var(--border);
+  }
+  .wang-live-frame {
+    position: relative; aspect-ratio: 16 / 9;
+    border-radius: 12px; overflow: hidden;
+    background: #0d0b1a;
+  }
+  .wang-live-frame video,
+  .wang-live-frame iframe {
+    position: absolute; inset: 0;
+    width: 100%; height: 100%;
+    border: 0; display: block; object-fit: cover;
+  }
+  .wang-live-tag {
+    position: absolute; left: 10px; top: 10px; z-index: 2;
+    display: inline-flex; align-items: center; gap: 6px;
+    padding: 5px 10px; border-radius: 999px;
+    background: rgba(13,11,26,0.72); backdrop-filter: blur(6px);
+    color: #fff; font-size: 0.68rem; font-weight: 700; letter-spacing: 0.06em;
+  }
+  .wang-live-tag::before {
+    content: ''; width: 6px; height: 6px; border-radius: 50%;
+    background: #3fd6a0; box-shadow: 0 0 8px #3fd6a0;
+  }
+  /* 還沒設定影片來源時，整個區塊不顯示，版面自動變回單張置中 */
+  .wang-live.is-empty { display: none; }
+  .video-modal-grid.is-split:has(.wang-live.is-empty) {
+    grid-template-columns: minmax(0, 560px);
+  }
+  @media (max-width: 820px) {
+    .video-modal-grid.is-split { grid-template-columns: 1fr; }
   }
   .video-card {
     display: flex;
@@ -9380,6 +9445,57 @@ document.addEventListener('DOMContentLoaded', function () {
     </div>
 
     <div class="teachers-carousel-wrap">
+<!-- 老師 IG：要加/改帳號只要動下面這個清單 -->
+<script>
+(function initTeacherIG() {
+  // 老師名字 → Instagram 帳號（不用打 @）。留空字串或整行刪掉 = 這位老師不顯示 IG
+  var TEACHER_IG = {
+    '汪飛白': '',
+    '呂碩':   '',
+    '侯昇':   '',
+    '連晨':   '',
+    '方昊':   '',
+    '旺哲':   '',
+    '楊傑':   ''
+  };
+
+  var ICON = '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" ' +
+    'stroke-linecap="round" stroke-linejoin="round" aria-hidden="true">' +
+    '<rect x="2" y="2" width="20" height="20" rx="5"></rect>' +
+    '<circle cx="12" cy="12" r="4"></circle>' +
+    '<circle cx="17.5" cy="6.5" r="1.2" fill="currentColor" stroke="none"></circle></svg>';
+
+  function boot() {
+    var grid = document.getElementById('teachersGrid');
+    if (!grid) return;
+    grid.querySelectorAll('.teacher-card').forEach(function (card) {
+      if (card.querySelector('.teacher-ig-row')) return;
+      var h = card.querySelector('h4');
+      if (!h) return;
+      var name = h.textContent.replace(/\s*老師\s*$/, '').trim();
+      var user = (TEACHER_IG[name] || '').replace(/^@/, '').trim();
+      if (!user) return;
+
+      var row = document.createElement('div');
+      row.className = 'teacher-ig-row';
+      var a = document.createElement('a');
+      a.className = 'teacher-ig';
+      a.href = 'https://www.instagram.com/' + encodeURIComponent(user) + '/';
+      a.target = '_blank';
+      a.rel = 'noopener noreferrer';
+      a.setAttribute('aria-label', name + ' 老師的 Instagram');
+      a.innerHTML = ICON + '<span>@' + user + '</span>';
+      // 有些老師卡片整張可以點（會開試聽影片），別讓點 IG 也把影片叫出來
+      a.addEventListener('click', function (e) { e.stopPropagation(); });
+      a.addEventListener('keydown', function (e) { e.stopPropagation(); });
+      row.appendChild(a);
+      card.appendChild(row);
+    });
+  }
+  if (document.readyState === 'loading') document.addEventListener('DOMContentLoaded', boot);
+  else boot();
+})();
+</script>
       <div class="teachers-grid" id="teachersGrid">
         <div class="teacher-card fade-up is-clickable" id="teacherWang" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="wangVideosModal">
           <div class="teacher-avatar"><img src="汪老師照片.jpg" alt="汪飛白老師" loading="lazy" decoding="async"></div>
@@ -9523,7 +9639,7 @@ document.addEventListener('DOMContentLoaded', function () {
       <!-- <p class="video-modal-sub">點擊下方影片，觀看升八理化說明會。</p> -->
     </header>
 
-    <div class="video-modal-grid is-single">
+    <div class="video-modal-grid is-split">
       <a class="video-card" href="https://youtu.be/4G4OEgbEwy0" target="_blank" rel="noopener" data-grade="8">
         <div class="video-card-frame">
           <img src="115升八理化-影片封面.jpg" alt="115 升八理化說明會 · 汪飛白老師" loading="lazy" decoding="async" />
@@ -9538,6 +9654,22 @@ document.addEventListener('DOMContentLoaded', function () {
           <span class="video-card-desc">國中理化章節分析 · 「國中理化」 vs 「高中物理」銜接關鍵。</span>
         </div>
       </a>
+
+      <!-- 右邊：課堂實錄，靜音循環播放
+           data-src 填法二選一：
+             1. 影片檔       data-src="汪老師上課.mp4"
+             2. YouTube 影片 data-src="https://youtu.be/影片ID"
+           留空 = 這一塊不顯示，版面自動變回單張置中 -->
+      <div class="wang-live is-empty" id="wangLive" data-src="" data-poster="汪飛白影片.jpg">
+        <div class="wang-live-frame">
+          <span class="wang-live-tag">課堂實錄</span>
+        </div>
+        <div class="video-card-body">
+          <span class="video-card-kicker">IN CLASS · 上課實況</span>
+          <span class="video-card-title">汪飛白老師的課堂</span>
+          <span class="video-card-desc">實際上課的樣子 · 靜音循環播放。</span>
+        </div>
+      </div>
     </div>
   </div>
 </div>
@@ -9600,6 +9732,53 @@ document.addEventListener('DOMContentLoaded', function () {
 
 <script>
   (function teacherVideoModalsInit(){
+    /* 課堂實錄：開窗才建立播放器，關窗就移除（不會在背景偷跑） */
+    function ytId(src) {
+      var m = String(src).match(/(?:youtu\.be\/|v=|embed\/|shorts\/)([\w-]{11})/);
+      if (m) return m[1];
+      return /^[\w-]{11}$/.test(src) ? src : '';
+    }
+    function mountLive(modal) {
+      var box = modal.querySelector('.wang-live');
+      if (!box) return;
+      var src = (box.getAttribute('data-src') || '').trim();
+      if (!src) { box.classList.add('is-empty'); return; }
+      box.classList.remove('is-empty');
+      var frame = box.querySelector('.wang-live-frame');
+      if (!frame || frame.querySelector('video, iframe')) return;
+
+      var id = ytId(src);
+      if (id) {
+        var f = document.createElement('iframe');
+        f.src = 'https://www.youtube.com/embed/' + id +
+                '?autoplay=1&mute=1&loop=1&playlist=' + id +
+                '&controls=0&modestbranding=1&rel=0&playsinline=1';
+        f.title = '汪飛白老師課堂實錄';
+        f.allow = 'autoplay; encrypted-media; picture-in-picture';
+        f.setAttribute('allowfullscreen', '');
+        frame.appendChild(f);
+      } else {
+        var v = document.createElement('video');
+        v.src = src;
+        v.autoplay = true; v.muted = true; v.loop = true;
+        v.playsInline = true; v.setAttribute('playsinline', '');
+        v.preload = 'metadata';
+        var poster = box.getAttribute('data-poster');
+        if (poster) v.poster = poster;
+        frame.appendChild(v);
+        var pr = v.play();
+        if (pr && pr.catch) pr.catch(function () {});
+      }
+    }
+    function unmountLive(modal) {
+      var frame = modal.querySelector('.wang-live-frame');
+      if (!frame) return;
+      var el = frame.querySelector('video, iframe');
+      if (!el) return;
+      if (el.tagName === 'VIDEO') { el.pause(); el.removeAttribute('src'); el.load(); }
+      el.remove();
+    }
+
     var pairs = [
       { triggerId: 'teacherWang', modalId: 'wangVideosModal', closeAttr: 'data-wang-close' },
       { triggerId: 'teacherFang', modalId: 'fangVideosModal', closeAttr: 'data-fang-close' },
@@ -9615,10 +9794,11 @@ document.addEventListener('DOMContentLoaded', function () {
         modal.hidden = false;
         requestAnimationFrame(function(){ modal.classList.add('is-open'); });
         document.body.style.overflow = 'hidden';
+        mountLive(modal);
       }
       function close(){
         modal.classList.remove('is-open');
-        setTimeout(function(){ modal.hidden = true; }, 250);
+        setTimeout(function(){ modal.hidden = true; unmountLive(modal); }, 250);
         document.body.style.overflow = '';
       }
       trigger.addEventListener('click', open);
