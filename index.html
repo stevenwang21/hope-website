@@ -2513,7 +2513,7 @@
   /* ===== DM 區 fan-stack 扇形堆疊 ===== */
   .dm-fan-stage {
     position: relative;
-    height: 360px;
+    height: 500px;
     display: flex;
     align-items: center;
     justify-content: center;
@@ -2522,15 +2522,15 @@
   }
   .dm-fan-stack {
     position: relative;
-    width: 240px;
-    height: 330px;
+    width: 320px;
+    height: 440px;
     transform-style: preserve-3d;
   }
   .dm-fan-stack .dm-card {
     position: absolute;
     inset: 0;
-    width: 240px;
-    height: 330px;
+    width: 320px;
+    height: 440px;
     background: #fff;
     border-radius: 16px;
     cursor: pointer;
@@ -2555,23 +2555,23 @@
   .dm-fan-stack.has-3 .dm-card:nth-child(2) { transform: translate(0, 5px) rotate(0deg);     z-index: 2; }
   .dm-fan-stack.has-3 .dm-card:nth-child(3) { transform: translate(3px, 2px) rotate(4deg);   z-index: 3; }
   /* 3 張卡 - hover 展開 */
-  .dm-fan-stack.has-3:hover .dm-card:nth-child(1) { transform: translate(-160px, -20px) rotate(-12deg); }
+  .dm-fan-stack.has-3:hover .dm-card:nth-child(1) { transform: translate(-126px, -20px) rotate(-12deg); }
   .dm-fan-stack.has-3:hover .dm-card:nth-child(2) { transform: translate(0, -36px) rotate(0deg); }
-  .dm-fan-stack.has-3:hover .dm-card:nth-child(3) { transform: translate(160px, -20px) rotate(12deg); }
+  .dm-fan-stack.has-3:hover .dm-card:nth-child(3) { transform: translate(126px, -20px) rotate(12deg); }
   /* 3 張卡 - 個別 hover 放大 */
-  .dm-fan-stack.has-3:hover .dm-card:nth-child(1):hover { --tx: -160px; --rot: -12deg; }
+  .dm-fan-stack.has-3:hover .dm-card:nth-child(1):hover { --tx: -126px; --rot: -12deg; }
   .dm-fan-stack.has-3:hover .dm-card:nth-child(2):hover { --tx: 0; --rot: 0deg; }
-  .dm-fan-stack.has-3:hover .dm-card:nth-child(3):hover { --tx: 160px; --rot: 12deg; }
+  .dm-fan-stack.has-3:hover .dm-card:nth-child(3):hover { --tx: 126px; --rot: 12deg; }
 
   /* 2 張卡 - 初始扇形 */
   .dm-fan-stack.has-2 .dm-card:nth-child(1) { transform: translate(-3px, 0) rotate(-3deg); z-index: 1; }
   .dm-fan-stack.has-2 .dm-card:nth-child(2) { transform: translate(3px, 0) rotate(3deg);   z-index: 2; }
   /* 2 張卡 - hover 展開 */
-  .dm-fan-stack.has-2:hover .dm-card:nth-child(1) { transform: translate(-110px, -16px) rotate(-10deg); }
-  .dm-fan-stack.has-2:hover .dm-card:nth-child(2) { transform: translate(110px, -16px) rotate(10deg); }
+  .dm-fan-stack.has-2:hover .dm-card:nth-child(1) { transform: translate(-130px, -16px) rotate(-10deg); }
+  .dm-fan-stack.has-2:hover .dm-card:nth-child(2) { transform: translate(130px, -16px) rotate(10deg); }
   /* 2 張卡 - 個別 hover 放大 */
-  .dm-fan-stack.has-2:hover .dm-card:nth-child(1):hover { --tx: -110px; --rot: -10deg; }
-  .dm-fan-stack.has-2:hover .dm-card:nth-child(2):hover { --tx: 110px; --rot: 10deg; }
+  .dm-fan-stack.has-2:hover .dm-card:nth-child(1):hover { --tx: -130px; --rot: -10deg; }
+  .dm-fan-stack.has-2:hover .dm-card:nth-child(2):hover { --tx: 130px; --rot: 10deg; }
 
   /* 個別 hover 共通效果：放大 + 提亮 */
   .dm-fan-stack:hover .dm-card:hover {
@@ -2736,7 +2736,8 @@
     aspect-ratio: 4/3;
     object-fit: cover;
   }
-  @media (max-width: 920px) {
+  /* 寬度不夠並排時（卡片攤開會互相打到），改回上下排 */
+  @media (max-width: 1080px) {
     .dm-layout {
       grid-template-columns: 1fr;
       gap: 28px;
@@ -8754,10 +8755,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
       </div>
 
-      <!-- 下排：完整課表 (純圖片，乾淨無文字) -->
-      <button type="button" class="dm-schedule dm-schedule-clean" id="dmScheduleBtn" data-src="115新課表(最新版).jpg" data-title="115 完整課表" aria-label="完整課表 點擊放大">
-        <img src="115新課表(最新版).jpg" alt="115 完整課表" loading="lazy" decoding="async" />
-      </button>
+      <!-- 完整課表暫時拿掉（手機版橫向滑動的最後一張仍然保留） -->
 
     </div>
 
