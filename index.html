@@ -5218,14 +5218,18 @@
   }
 
   .honor-board-title {
-    font-size: clamp(1.6rem, 3.2vw, 2.4rem);
+    /* 小一點：原本太大，「…第一次段/考」會被切成孤字 */
+    font-size: clamp(1.35rem, 2vw, 1.8rem);
     font-weight: 800;
-    letter-spacing: -0.02em;
-    margin-bottom: 10px;
+    letter-spacing: -0.01em;
+    line-height: 1.4;
+    margin-bottom: 12px;
     font-family: 'Noto Serif TC', serif;
   }
 
+  /* 主標各自一行，兩張卡片的標題高度才會一致 */
   .honor-board-title .accent {
+    display: block;
     background: var(--g-hero);
     -webkit-background-clip: text;
     background-clip: text;
@@ -5234,8 +5238,16 @@
 
   .honor-board-sub {
     color: var(--text-2);
-    font-size: 1rem;
+    font-size: 0.95rem;
     line-height: 1.7;
+    max-width: 28em;
+    margin: 0 auto;
+    text-wrap: balance;
+    /* 兩張卡片的說明文字都佔兩行，下面的內容才會對齊 */
+    min-height: 3.4em;
+    display: flex;
+    align-items: center;
+    justify-content: center;
   }
 
   /* ---- 理化成績圖表 ---- */
@@ -5676,12 +5688,9 @@
     background: #fff;
     box-shadow: 0 20px 60px rgba(0,0,0,0.35), 0 4px 16px rgba(139,166,255,0.08);
     transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
-    /* 兩張榜單外框一樣大（1:1 方框），裡面的字要全部看到所以用 contain 不裁切，
-       圖片置中、周圍以白底呈現，保留所有成績資訊 */
-    aspect-ratio: 1 / 1;
-    display: flex;
-    align-items: center;
-    justify-content: center;
+    /* 依圖片本身的比例決定高度：強制 1:1 會讓橫式的榜單上下留一大片白 */
+    display: block;
+    line-height: 0;
   }
 
   .honor-image-frame:hover {
@@ -5692,9 +5701,7 @@
   .honor-image-frame img {
     display: block;
     width: 100%;
-    height: 100%;
-    object-fit: contain;
-    object-position: center;
+    height: auto;
   }
 
   /* ========== 見證/心得 ========== */
