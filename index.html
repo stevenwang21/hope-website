@@ -4716,6 +4716,7 @@
     width: min(760px, 92%); max-height: 82%; overflow-y: auto;
     padding: 26px 24px 24px; border-radius: 20px;
     background: #14122a; border: 1px solid var(--border);
+    color: #fff;
     box-shadow: 0 30px 80px rgba(0,0,0,0.55);
     animation: dbPopIn .26s var(--ease);
   }
@@ -4725,7 +4726,7 @@
   }
   .db-pop-back {
     font-family: inherit; font-size: 0.8rem; font-weight: 700;
-    color: var(--text-1); background: rgba(255,255,255,0.07);
+    color: #fff; background: rgba(255,255,255,0.07);
     border: 1px solid var(--border); border-radius: 999px;
     padding: 7px 14px; cursor: pointer; margin-bottom: 16px;
     transition: background .2s var(--ease);
@@ -4733,9 +4734,9 @@
   .db-pop-back:hover { background: rgba(255,255,255,0.14); }
   .db-pop-head { display: flex; align-items: baseline; gap: 10px; margin-bottom: 18px; }
   .db-pop-no { font-family: 'Inter', sans-serif; font-weight: 800; color: var(--gold); }
-  .db-pop-title { font-size: 1.15rem; font-weight: 800; }
+  .db-pop-title { font-size: 1.15rem; font-weight: 800; color: #fff; }
   .db-pop-list { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 14px; }
-  .db-vid { display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: inherit; }
+  .db-vid { display: flex; flex-direction: column; gap: 8px; text-decoration: none; color: #fff; }
   .db-vid-frame {
     position: relative; aspect-ratio: 16 / 9; border-radius: 10px;
     overflow: hidden; background: #0d0b1a; border: 1px solid var(--border);
@@ -4748,8 +4749,8 @@
     transform: translate(-50%,-50%); border-radius: 50%;
     background: rgba(10,8,22,0.68) url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 24 24' fill='white'%3E%3Cpath d='M8 5v14l11-7z'/%3E%3C/svg%3E") center/18px no-repeat;
   }
-  .db-vid-title { font-size: 0.86rem; font-weight: 700; line-height: 1.45; }
-  .db-pop-empty { color: var(--text-2); font-size: 0.9rem; grid-column: 1 / -1; }
+  .db-vid-title { font-size: 0.86rem; font-weight: 700; line-height: 1.45; color: #fff; }
+  .db-pop-empty { color: rgba(255,255,255,0.65); font-size: 0.9rem; grid-column: 1 / -1; }
   @media (max-width: 640px) {
     .db-pop-list { grid-template-columns: 1fr; }
     .db-pop-card { padding: 22px 18px 20px; }
@@ -7762,15 +7763,24 @@
       position: relative;
     }
     .mob-nav-item svg {
-      width: 24px;
-      height: 24px;
+      width: 22px;
+      height: 22px;
       stroke-width: 2;
       transition: stroke-width 0.2s;
     }
+    /* 六個項目，字要小一點、不換行 */
     .mob-nav-item span {
-      font-size: 0.66rem;
+      font-size: 0.62rem;
       font-weight: 600;
-      letter-spacing: 0.02em;
+      letter-spacing: 0;
+      white-space: nowrap;
+    }
+    /* 很窄的手機（iPhone SE 等）再收一點 */
+    @media (max-width: 380px) {
+      .mobile-bottom-nav { padding: 7px 6px; gap: 2px; }
+      .mob-nav-item { padding: 7px 2px; }
+      .mob-nav-item svg { width: 20px; height: 20px; }
+      .mob-nav-item span { font-size: 0.58rem; }
     }
     .mob-nav-item:active {
       transform: scale(0.92);
@@ -7784,9 +7794,14 @@
       stroke-width: 2.4;
     }
 
-    /* 隱藏原本的漢堡選單 */
-    .menu-toggle { display: none !important; }
-    .nav-links { display: none !important; }
+    /* 手機右上角保留漢堡選單：底部列只放六項，完整九項在這裡 */
+    .menu-toggle {
+      display: flex !important; align-items: center; justify-content: center;
+      font-size: 1.15rem; width: 40px; height: 40px;
+    }
+    .menu-toggle.is-open { background: #fff; color: #0b0a18; border-color: #fff; }
+    .nav-links { display: none; }
+    .nav-links.active { display: flex !important; }
 
     /* 內容區下方留空間，避免被底部 nav 蓋住 */
     body { padding-bottom: 90px; }
@@ -9800,9 +9815,10 @@ document.addEventListener('DOMContentLoaded', function () {
   </div>
 
   <!-- 點資料庫項目後彈出的影片清單 -->
-  <div class="db-pop" id="wangDbPop" hidden>
+  <!-- role=dialog 要放在有 hidden 屬性的外層，否則小飛會一直以為有視窗開著而躲起來 -->
+  <div class="db-pop" id="wangDbPop" role="dialog" aria-modal="true" aria-label="影片清單" hidden>
     <div class="db-pop-backdrop" data-db-close></div>
-    <div class="db-pop-card" role="dialog" aria-modal="true" aria-label="影片清單">
+    <div class="db-pop-card">
       <button type="button" class="db-pop-back" data-db-close>← 返回</button>
       <div class="db-pop-head">
         <span class="db-pop-no"></span>
@@ -11682,9 +11698,28 @@ document.addEventListener('DOMContentLoaded', function () {
     var toggle = document.getElementById('menuToggle');
     var nav = document.getElementById('navLinks');
     if (!toggle || !nav) return;
-    toggle.addEventListener('click', function () { nav.classList.toggle('active'); });
+    function setOpen(on) {
+      nav.classList.toggle('active', on);
+      toggle.classList.toggle('is-open', on);
+      toggle.textContent = on ? '\u2715' : '\u2630';
+      toggle.setAttribute('aria-expanded', on ? 'true' : 'false');
+    }
+    toggle.setAttribute('aria-expanded', 'false');
+    toggle.addEventListener('click', function (e) {
+      e.stopPropagation();
+      setOpen(!nav.classList.contains('active'));
+    });
     document.querySelectorAll('.nav-links a').forEach(function (a) {
-      a.addEventListener('click', function () { nav.classList.remove('active'); });
+      a.addEventListener('click', function () { setOpen(false); });
+    });
+    // 點選單以外的地方就收起來
+    document.addEventListener('click', function (e) {
+      if (!nav.classList.contains('active')) return;
+      if (nav.contains(e.target) || toggle.contains(e.target)) return;
+      setOpen(false);
+    });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape') setOpen(false);
     });
   })();
 
@@ -12297,6 +12332,10 @@ document.addEventListener('DOMContentLoaded', function () {
   <a href="#dm" class="mob-nav-item" data-page="dm">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
     <span>課程</span>
+  </a>
+  <a href="#teachers" class="mob-nav-item" data-page="teachers">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c0-3.9 3.4-6.3 7.5-6.3s7.5 2.4 7.5 6.3"/></svg>
+    <span>師資</span>
   </a>
   <a href="#online" class="mob-nav-item" data-page="online">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 18 12 6 20 6 4" fill="currentColor" stroke="none"/></svg>

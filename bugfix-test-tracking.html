@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex, nofollow" />
-<title>Bug 修正測試頁 · 2026-09-14 · 希望文理補習班</title>
+<title>家長後台 修正測試頁 · 2026-09-14 · 希望文理補習班</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -32,8 +32,7 @@
     cursor: pointer;
   }
   button.on { background: #4ade80; color: #10241a; border-color: #4ade80; font-weight: 700; }
-  button.off { background: #26263a; }
-  .note { font-size: 0.78rem; color: #9a9ab5; padding: 8px 16px; line-height: 1.6; }
+  .note { font-size: 0.78rem; color: #9a9ab5; padding: 8px 16px; line-height: 1.7; }
   .note code { background: #26263a; padding: 1px 5px; border-radius: 4px; }
   .stage { display: flex; justify-content: center; padding: 18px; }
   iframe {
@@ -41,28 +40,22 @@
     background: #fff;
     border-radius: 10px;
     width: 100%;
-    height: calc(100vh - 170px);
+    height: calc(100vh - 190px);
     transition: width 0.25s ease;
   }
   .stage.mobile iframe { width: 390px; }
   .stage.tablet iframe { width: 820px; }
   .err {
-    margin: 0 16px 16px;
-    padding: 12px 14px;
-    border-radius: 8px;
-    background: #4a1f24;
-    border: 1px solid #8a3a44;
-    color: #ffd7dc;
-    font-size: 0.85rem;
-    line-height: 1.7;
-    display: none;
+    margin: 0 16px 16px; padding: 12px 14px; border-radius: 8px;
+    background: #4a1f24; border: 1px solid #8a3a44; color: #ffd7dc;
+    font-size: 0.85rem; line-height: 1.7; display: none;
   }
 </style>
 </head>
 <body>
 
 <div class="bar">
-  <strong>Bug 修正測試頁 · 2026-09-14</strong>
+  <strong>家長後台 修正測試頁 · 2026-09-14</strong>
   <span class="sep"></span>
   <button id="toggle" class="on">修正：已套用</button>
   <span class="sep"></span>
@@ -72,15 +65,14 @@
     <option value="mobile" selected>手機 390px</option>
   </select>
   <button id="reload">重新載入</button>
+  <button id="logout">清掉登入狀態</button>
 </div>
 
 <div class="note">
-  這一頁把正式版 <code>index.html</code> 嵌進來，再即時注入
-  <code>bugfix-patch.css</code> / <code>bugfix-patch.js</code>，
-  <strong>完全不會修改 index.html</strong>。切「手機 390px」可以看修好的漢堡選單，
-  以及底部導覽列「目前所在頁」會不會亮成黑底白字。<br>
-  首頁故事區那張影片縮圖點下去，也可以比較彈窗裡的影片有沒有真的出現。<br>
-  家長後台（tracking.html）的修正在另一頁：<code>bugfix-test-tracking.html</code>。<br>
+  這一頁把正式版 <code>tracking.html</code> 嵌進來，再即時注入
+  <code>bugfix-patch-tracking.js</code>，<strong>完全不會修改 tracking.html</strong>。<br>
+  按「修正：已套用 / 關閉」來回切，就能看出有沒有「示範版」標示的差別。
+  隨便打一個 email 和任意 6 個字就能登入 —— 這正是要修的問題之一。<br>
   ※ 請用 <code>啟動本機伺服器.bat</code> 起本機伺服器後開這一頁（直接雙擊開檔會被瀏覽器的
   file:// 安全限制擋住，無法注入）。
 </div>
@@ -88,7 +80,7 @@
 <div class="err" id="err"></div>
 
 <div class="stage mobile" id="stage">
-  <iframe id="frame" src="index.html" title="index.html 預覽"></iframe>
+  <iframe id="frame" src="tracking.html" title="tracking.html 預覽"></iframe>
 </div>
 
 <script>
@@ -115,18 +107,10 @@
       return;
     }
     if (!patched) return;
-
-    if (!doc.getElementById('bugfixPatchCss')) {
-      var link = doc.createElement('link');
-      link.id = 'bugfixPatchCss';
-      link.rel = 'stylesheet';
-      link.href = 'bugfix-patch.css';
-      doc.head.appendChild(link);
-    }
-    if (!doc.getElementById('bugfixPatchJs')) {
+    if (!doc.getElementById('trackingPatchJs')) {
       var s = doc.createElement('script');
-      s.id = 'bugfixPatchJs';
-      s.src = 'bugfix-patch.js';
+      s.id = 'trackingPatchJs';
+      s.src = 'bugfix-patch-tracking.js';
       doc.body.appendChild(s);
     }
   }
@@ -136,7 +120,7 @@
   toggle.addEventListener('click', function () {
     patched = !patched;
     toggle.textContent = patched ? '修正：已套用' : '修正：關閉（原始版）';
-    toggle.className = patched ? 'on' : 'off';
+    toggle.className = patched ? 'on' : '';
     frame.contentWindow.location.reload();
   });
 
@@ -145,6 +129,11 @@
   });
 
   document.getElementById('reload').addEventListener('click', function () {
+    frame.contentWindow.location.reload();
+  });
+
+  document.getElementById('logout').addEventListener('click', function () {
+    try { frame.contentWindow.localStorage.removeItem('wfb_parent_v1'); } catch (e) {}
     frame.contentWindow.location.reload();
   });
 })();
