@@ -11034,8 +11034,15 @@ document.addEventListener('DOMContentLoaded', function () {
      · 彈窗打開、切到別的分頁、使用者選擇「減少動態效果」時自動停用
   ==================================================== */
   (function initHopeSprite() {
+    // 「今天不要出現」：存時間戳，24 小時後自動恢復。
+    // 舊版存的是 '1'（永久關閉），這裡一併清掉，避免一按就再也叫不回來。
     var KEY = 'hope_sprite_off_v1';
-    try { if (localStorage.getItem(KEY) === '1') return; } catch (e) {}
+    try {
+      var off = localStorage.getItem(KEY);
+      if (off === '1') { localStorage.removeItem(KEY); }      // 舊的永久旗標：直接失效
+      else if (off && Date.now() - Number(off) < 864e5) { return; }
+      else if (off) { localStorage.removeItem(KEY); }
+    } catch (e) {}
 
     var conn = navigator.connection || navigator.mozConnection || navigator.webkitConnection || {};
     if (conn.saveData) return;
@@ -11384,7 +11391,7 @@ document.addEventListener('DOMContentLoaded', function () {
       }
       function head2(title) {
         return '<div class="hb-head"><span>' + title + '</span>' +
-               '<button type="button" class="hb-x" data-act="off">不要再出現</button></div>';
+               '<button type="button" class="hb-x" data-act="off">今天不要出現</button></div>';
       }
       var ASK_BOX =
         '<form class="hb-ask" autocomplete="off">' +
@@ -11449,7 +11456,7 @@ document.addEventListener('DOMContentLoaded', function () {
         e.stopPropagation();                   // 內容會被換掉，別讓事件冒到 document 被誤判
         var t = e.target;
         if (t.closest('[data-act="off"]')) {
-          try { localStorage.setItem(KEY, '1'); } catch (err) {}
+          try { localStorage.setItem(KEY, String(Date.now())); } catch (err) {}
           hideBubble(); host.classList.add('is-away');
           setTimeout(function () { host.remove(); bubble.remove(); }, 400);
           return;
