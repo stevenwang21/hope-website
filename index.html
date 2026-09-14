@@ -4639,7 +4639,7 @@
   .db-hub-in { display: flex; flex-direction: column; gap: 2px; line-height: 1.15; }
   .db-hub-t {
     font-family: 'Noto Sans TC', sans-serif; font-weight: 900;
-    color: var(--text-1); font-size: clamp(0.95rem, 2.1vw, 1.35rem);
+    color: #fff; font-size: clamp(0.95rem, 2.1vw, 1.35rem);
     letter-spacing: 0.02em;
   }
   .db-hub-en {
@@ -4653,7 +4653,7 @@
     padding: 13px 16px; border-radius: 999px; text-align: left;
     background: rgba(255,255,255,0.03);
     border: 1px dashed rgba(255,255,255,0.26);
-    font-family: inherit; color: var(--text-1); cursor: pointer;
+    font-family: inherit; color: #fff; cursor: pointer;
     transition: background .28s var(--ease), border-color .28s var(--ease),
                 transform .28s var(--ease);
   }
@@ -4689,7 +4689,7 @@
   .wang-db.is-fan .db-item-no { width: 18px; font-size: 0.72rem; }
   .db-item-no {
     font-family: 'Inter', sans-serif; font-size: 0.8rem; font-weight: 800;
-    color: var(--text-2); flex: none; width: 22px;
+    color: rgba(255,255,255,0.72); flex: none; width: 22px;
   }
   .db-item-icon {
     flex: none; width: 40px; height: 40px; border-radius: 50%;
@@ -4697,12 +4697,15 @@
   }
   .db-item-icon svg { width: 20px; height: 20px; }
   .db-item-text { display: flex; flex-direction: column; gap: 2px; min-width: 0; }
-  .db-item-name { font-size: 0.95rem; font-weight: 700; }
-  .db-item-meta { font-size: 0.72rem; color: var(--text-2); letter-spacing: 0.04em; }
-  .db-item-arrow { margin-left: auto; color: var(--text-2); flex: none; }
-  .db-item.is-soon { cursor: default; opacity: 0.55; }
+  .db-item-name { font-size: 0.95rem; font-weight: 700; color: #fff; }
+  .db-item-meta { font-size: 0.72rem; color: rgba(255,255,255,0.62); letter-spacing: 0.04em; }
+  .db-item-arrow { margin-left: auto; color: rgba(255,255,255,0.7); flex: none; }
+  /* 內容準備中：只把圖示壓暗一點，文字維持白色看得清楚 */
+  .db-item.is-soon { cursor: default; }
+  .db-item.is-soon .db-item-icon { opacity: 0.72; }
+  .db-item.is-soon .db-item-meta { color: rgba(255,255,255,0.5); }
   .db-item.is-soon:hover { transform: none; background: rgba(255,255,255,0.03);
-    border-color: var(--border); }
+    border-color: rgba(255,255,255,0.26); }
 
   /* ---- 點下去彈出的影片清單 ---- */
   .db-pop { position: absolute; inset: 0; z-index: 5; display: grid; place-items: center; }
