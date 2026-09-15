@@ -510,10 +510,8 @@
 
   .float-item {
     position: absolute;
-    background: rgba(20, 22, 34, 0.82);
+    background: rgba(20, 22, 34, 0.94);
     border: 1px solid rgba(255,255,255,0.18);
-    backdrop-filter: blur(20px);
-    -webkit-backdrop-filter: blur(20px);
     border-radius: 14px;
     padding: 11px 18px;
     font-size: 0.86rem;
@@ -981,6 +979,28 @@
   }
 
   /* ========== Section 共用 ========== */
+  /* 畫面外的卡片先不畫（132 張聯絡簿卡是最大宗）。
+     contain-intrinsic-size 給一個預估高度，捲軸才不會亂跳。 */
+  .homework-subject { content-visibility: auto; contain-intrinsic-size: auto 96px; }
+  .teacher-card     { content-visibility: auto; contain-intrinsic-size: auto 360px; }
+  .school-card      { content-visibility: auto; contain-intrinsic-size: auto 150px; }
+  .honor-board      { content-visibility: auto; contain-intrinsic-size: auto 900px; }
+  .testimonial-card { content-visibility: auto; contain-intrinsic-size: auto 260px; }
+  .faq-item         { content-visibility: auto; contain-intrinsic-size: auto 80px; }
+
+  /* ===== 效能 =====
+     1) 捲動時暫停裝飾性動畫：捲的當下看不出來，但省掉整頁重繪
+     2) 看不到的區塊不畫：content-visibility 讓瀏覽器跳過畫面外的排版與繪製 */
+  /* 捲動中暫停所有 CSS 動畫（fade-up 用的是 transition，不受影響） */
+  html.is-scrolling *,
+  html.is-scrolling *::before,
+  html.is-scrolling *::after {
+    animation-play-state: paused !important;
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .float-item, .orb, .news-pill, .marquee-track { animation: none !important; }
+  }
+
   /* 不設 z-index：避免建立堆疊脈絡，否則小飛（固定定位）無法排在
      section 內部的背景圖之上、文字容器之下。位置在 DOM 後方，
      仍會正常蓋過 .page-bg。 */
@@ -4502,13 +4522,15 @@
     pointer-events: none;
     transition: opacity 0.25s var(--ease);
   }
+  /* 只有真的打開時才做模糊 */
+  .video-modal.is-open .video-modal-backdrop {
+    backdrop-filter: blur(8px); -webkit-backdrop-filter: blur(8px);
+  }
   .video-modal.is-open { opacity: 1; pointer-events: auto; }
   .video-modal-backdrop {
     position: absolute;
     inset: 0;
     background: rgba(6, 8, 16, 0.78);
-    backdrop-filter: blur(8px);
-    -webkit-backdrop-filter: blur(8px);
   }
   .video-modal-card {
     position: relative;
@@ -11348,7 +11370,12 @@ document.addEventListener('DOMContentLoaded', function () {
       bucket.push(url);
     }
 
-    // 各分頁一眼就會看到的圖 → 先抓
+    // 目前這一頁的圖最優先，其他分頁的排後面
+    var here = document.querySelector('section[data-page="' +
+      (document.body.getAttribute('data-current') || 'home') + '"]');
+    if (here) {
+      here.querySelectorAll('img[src]').forEach(function (im) { add(im.getAttribute('src'), soon); });
+    }
     document.querySelectorAll('img[src]').forEach(function (im) {
       var u = im.getAttribute('src');
       add(u, /^scholarship\//.test(u) ? later : soon);
@@ -11361,12 +11388,26 @@ document.addEventListener('DOMContentLoaded', function () {
       el.getAttribute('data-images').split('|').forEach(function (u) { add(u, later); });
     });
 
-    var queue = soon.concat(later), idx = 0, LANES = 3;
+    // 一次只開兩條線，而且每抓一張都等瀏覽器閒下來再抓下一張，
+    // 不跟捲動、動畫搶資源（原本三條連發會讓剛進站的那幾秒很卡）
+    var queue = soon.concat(later), idx = 0, LANES = 2;
+    var busy = false, bt = null;
+    window.addEventListener('scroll', function () {
+      busy = true; clearTimeout(bt);
+      bt = setTimeout(function () { busy = false; }, 250);
+    }, { passive: true });
+
+    function nextTick(fn) {
+      if (window.requestIdleCallback) requestIdleCallback(fn, { timeout: 1200 });
+      else setTimeout(fn, 60);
+    }
     function pump() {
       if (idx >= queue.length) return;
+      if (busy) { setTimeout(pump, 300); return; }   // 使用者正在捲動 → 先讓路
       var img = new Image();
       img.decoding = 'async';
-      img.onload = img.onerror = pump;   // 成功失敗都往下一張
+      if ('fetchPriority' in img) img.fetchPriority = 'low';
+      img.onload = img.onerror = function () { nextTick(pump); };
       img.src = queue[idx++];
     }
     function start() { for (var i = 0; i < LANES; i++) pump(); }
@@ -11432,9 +11473,11 @@ document.addEventListener('DOMContentLoaded', function () {
       var W = host.clientWidth, H = host.clientHeight;
 
       var renderer;
-      try { renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: true }); }
+      // 手機和高密度螢幕不開抗鋸齒，省下不少 GPU
+      var wantAA = (window.devicePixelRatio || 1) < 2 && window.innerWidth > 720;
+      try { renderer = new THREE.WebGLRenderer({ canvas: canvas, alpha: true, antialias: wantAA }); }
       catch (e) { host.style.display = 'none'; return; }
-      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 2));
+      renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.5));
       renderer.setSize(W, H, false);
       if (THREE.sRGBEncoding) renderer.outputEncoding = THREE.sRGBEncoding;
 
@@ -11912,9 +11955,20 @@ document.addEventListener('DOMContentLoaded', function () {
       var t0 = performance.now(), visible = true;
       document.addEventListener('visibilitychange', function () { visible = !document.hidden; });
 
+      // 捲動中先不畫，捲完 180ms 再繼續（捲動時本來就看不清楚）
+      var scrolling = false, scrollTimer = null;
+      window.addEventListener('scroll', function () {
+        scrolling = true;
+        clearTimeout(scrollTimer);
+        scrollTimer = setTimeout(function () { scrolling = false; }, 180);
+      }, { passive: true });
+
+      var lastDraw = 0, FRAME_MS = 1000 / 30;   // 最多 30fps，肉眼看不出差別但省一半
       function frame(now) {
         requestAnimationFrame(frame);
-        if (!visible || away) return;
+        if (!visible || away || scrolling) return;
+        if (now - lastDraw < FRAME_MS) return;
+        lastDraw = now;
         var t = (now - t0) / 1000, dt = 1 / 60;
 
         state.face += (state.faceTarget - state.face) * 0.12;
@@ -12052,6 +12106,16 @@ document.addEventListener('DOMContentLoaded', function () {
       });
     }, { threshold: 0.1, rootMargin: '0px 0px -50px 0px' });
     els.forEach(function (el) { io.observe(el); });
+  })();
+
+  // 捲動時暫停裝飾動畫（捲完 160ms 再恢復）
+  (function pauseAnimWhileScrolling() {
+    var root = document.documentElement, t = null;
+    window.addEventListener('scroll', function () {
+      if (!root.classList.contains('is-scrolling')) root.classList.add('is-scrolling');
+      clearTimeout(t);
+      t = setTimeout(function () { root.classList.remove('is-scrolling'); }, 160);
+    }, { passive: true });
   })();
 
   // 手機選單切換
