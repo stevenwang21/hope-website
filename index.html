@@ -4634,11 +4634,35 @@
     border: 1px solid rgba(255,255,255,0.10);
   }
   #wangVideosModal .video-modal-header { display: none; }
+  .wang-top {
+    display: flex; align-items: center; justify-content: space-between;
+    gap: 16px; flex-wrap: wrap; padding: 0 56px 18px 4px;
+  }
+  .grade-tabs {
+    display: inline-flex; gap: 4px; padding: 4px;
+    background: rgba(255,255,255,0.05);
+    border: 1px solid rgba(255,255,255,0.08);
+    border-radius: 999px;
+  }
+  .grade-tab {
+    font-family: inherit; font-size: 0.84rem; font-weight: 700;
+    color: rgba(255,255,255,0.55); background: none; border: 0;
+    padding: 7px 16px; border-radius: 999px; cursor: pointer;
+    transition: color .22s var(--ease), background .22s var(--ease);
+    white-space: nowrap;
+  }
+  .grade-tab:hover { color: #fff; }
+  .grade-tab.is-on { background: var(--gold); color: #14121f; }
+  .grade-tab:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
+  @media (max-width: 480px) {
+    .grade-tab { font-size: 0.78rem; padding: 6px 11px; }
+  }
+
   .wang-who {
     font-family: 'Inter', 'Noto Sans TC', sans-serif;
     font-size: 0.72rem; font-weight: 800; letter-spacing: 0.14em;
     color: rgba(255,255,255,0.5);
-    padding: 0 4px 18px;
+    padding: 0;
   }
   .video-modal-grid.is-split {
     grid-template-columns: 1fr;
@@ -4758,6 +4782,11 @@
                   transform .3s cubic-bezier(.2,.8,.2,1);
     }
     #wangVideosModal .db-item:nth-child(5) { grid-column: span 2; }
+    /* 這個年級還沒有試聽影片：資料庫佔滿整排，改三欄 */
+    #wangVideosModal .video-modal-grid.no-trial .wang-db {
+      grid-column: span 6; grid-template-columns: repeat(3, minmax(0, 1fr));
+    }
+    #wangVideosModal .video-modal-grid.no-trial .db-item { min-height: 132px; }
     #wangVideosModal .db-item:hover {
       background: #16161f; border-color: rgba(255,215,112,0.5); transform: translateY(-3px);
     }
@@ -10015,37 +10044,15 @@ document.addEventListener('DOMContentLoaded', function () {
     <header class="video-modal-header">
       <span class="video-modal-kicker">汪飛白 老師</span>
     </header>
-    <div class="wang-who">汪飛白 老師 · PHYSICS &amp; CHEMISTRY</div>
+    <div class="wang-top">
+      <span class="wang-who">汪飛白 老師</span>
+      <div class="grade-tabs" id="wangGrades" role="tablist" aria-label="年級"></div>
+    </div>
 
     <div class="video-modal-grid is-split">
 
-      <!-- 左邊：影片 -->
-      <div class="wang-col">
-        <div class="wang-col-head">
-          <span class="wang-col-name">試聽影片</span>
-        </div>
-        <a class="video-card is-trial" href="https://youtu.be/4G4OEgbEwy0" target="_blank" rel="noopener" data-grade="8">
-          <div class="video-card-frame">
-            <img src="115升八理化-影片封面.jpg" alt="115 升八理化說明會 · 汪飛白老師" loading="lazy" decoding="async" />
-            <span class="video-card-play" aria-hidden="true">
-              <svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>
-            </span>
-            <span class="video-card-grade">國八</span>
-          </div>
-          <div class="video-card-body">
-            <span class="video-card-kicker">GRADE 8 · SCIENCE</span>
-            <span class="video-card-title">升八理化說明會</span>
-            <span class="video-card-desc">國中理化章節分析 · 「國中理化」 vs 「高中物理」銜接關鍵。</span>
-          </div>
-        </a>
-
-        <!-- 課堂實錄（循環播放）先拿掉了。要放回來就把下面這段解除註解，
-             data-src 填影片檔名或 YouTube 網址即可：
-        <div class="wang-live is-empty" id="wangLive" data-src="https://youtu.be/Z2FGEQKHNS0" data-poster="汪飛白影片.jpg">
-          <div class="wang-live-frame"><span class="wang-live-tag">課堂實錄</span></div>
-        </div>
-        -->
-      </div>
+      <!-- 左邊：試聽影片（依年級，由 WANG_DB.trial 產生） -->
+      <div class="wang-col"></div>
 
       <!-- 右邊：理化 DATABASE（內容由下方 WANG_DB 產生） -->
       <div class="wang-db" id="wangDb"></div>
@@ -10128,51 +10135,85 @@ document.addEventListener('DOMContentLoaded', function () {
      要改文字、加影片，只要動這個 WANG_DB。
      videos 每一筆：{ id: 'YouTube 影片ID 或完整網址', title: '影片標題' }
      videos 留空陣列 = 這一項顯示「內容準備中」，點了不會有反應。 */
+  /* ===== 汪老師資料庫 =====
+     年級可切換。每個項目的 byGrade 依年級分開放內容：
+       byGrade: { '國八': [ 單元… ], '國九': [ … ] }
+     單元 = { unit:'8 下 · 第三章', name:'酸鹼鹽', cover:'', lessons:[ … ] }
+     小節 = { no:'3-1', title:'電解質', id:'YouTube影片ID' }   ← 影片
+            { no:'3-1', title:'電解質', url:'講義.pdf' }        ← 講義／連結
+     留空 = 顯示「準備中」，點不動。 */
   var WANG_DB = {
     title: '理化',
     en: 'DATABASE',
+    grades: ['國八', '國九', '高一', '高二'],
+
+    /* 各年級的試聽影片（左邊那張大卡）。沒設定的年級就不顯示那張卡。 */
+    trial: {
+      '國八': {
+        id: '4G4OEgbEwy0',
+        cover: '115升八理化-影片封面.jpg',
+        kicker: 'GRADE 8 · SCIENCE',
+        title: '升八理化說明會',
+        desc: '國中理化章節分析 ·「國中理化」 vs 「高中物理」銜接關鍵。'
+      }
+    },
+
     items: [
-      { no: '01', name: '課堂外的汪飛白', color: '#a3bf35', icon: 'user',  videos: [
-        { id: 'stA_fFTscWc', title: '蠟燭的一生' }
-      ] },
-      { no: '02', name: '課程影片',       color: '#2ec4a6', icon: 'film',
-        /* 課程影片用「單元 → 小節」的結構。
-           cover 是單元封面圖（放資料夾裡的檔名，可留空）；
-           lessons 每一筆：{ no:'3-1', title:'電解質', id:'YouTube 影片ID 或網址' }
-           id 留空 = 那一節顯示「準備中」，點不動。 */
-        groups: [
-          { unit: '8 下 · 第三章', name: '酸鹼鹽', cover: '', lessons: [
-            { no: '3-1', title: '電解質',            id: 'FM7couwqQUQ' },
-            { no: '3-2', title: '酸與鹼',            id: 'DKi0bnZd-sw' },
-            { no: '3-3', title: '酸鹼的濃度與 pH 值', id: 'V1wntKUAv7A' }
+      { no: '01', name: '課堂外的汪飛白', icon: 'user',
+        /* 這一項不分年級，四個年級都看得到 */
+        shared: [
+          { unit: '課堂外', name: '汪飛白的日常', cover: '', lessons: [
+            { no: '01', title: '蠟燭的一生', id: 'stA_fFTscWc' }
           ] }
         ] },
-      { no: '03', name: '題型解析',       color: '#c93bb0', icon: 'mega',
-        groups: [
-          { unit: '8 下 · 第三章', name: '酸鹼鹽', cover: '', lessons: [
-            { no: '3-1', title: '電解質',           id: '' },
-            { no: '3-2', title: '酸和鹼',           id: '' },
-            { no: '3-3', title: '酸鹼的濃度與 pH 值', id: '' }
-          ] }
-        ] },
-      { no: '04', name: '課程教材',       color: '#f0b429', icon: 'book',
-        /* 教材是講義不是影片，所以每一節填 url（PDF 檔名或連結）而不是 id */
-        groups: [
-          { unit: '8 下 · 第三章', name: '酸鹼鹽', cover: '', lessons: [
-            { no: '3-1', title: '電解質',           url: '' },
-            { no: '3-2', title: '酸和鹼',           url: '' },
-            { no: '3-3', title: '酸鹼的濃度與 pH 值', url: '' }
-          ] }
-        ] },
-      { no: '05', name: '筆記及詳解',     color: '#2a9fe0', icon: 'note',
-        /* 筆記是掃描檔／PDF，所以填 url */
-        groups: [
-          { unit: '8 下 · 第三章', name: '酸鹼鹽', cover: '', lessons: [
-            { no: '3-1', title: '電解質',           url: '' },
-            { no: '3-2', title: '酸和鹼',           url: '' },
-            { no: '3-3', title: '酸鹼的濃度與 pH 值', url: '' }
-          ] }
-        ] }
+
+      { no: '02', name: '課程影片', icon: 'film',
+        byGrade: {
+          '國八': [
+            { unit: '8 下 · 第三章', name: '酸鹼鹽', cover: '', lessons: [
+              { no: '3-1', title: '電解質',            id: 'FM7couwqQUQ' },
+              { no: '3-2', title: '酸與鹼',            id: 'DKi0bnZd-sw' },
+              { no: '3-3', title: '酸鹼的濃度與 pH 值', id: 'V1wntKUAv7A' }
+            ] }
+          ],
+          '國九': [], '高一': [], '高二': []
+        } },
+
+      { no: '03', name: '題型解析', icon: 'mega',
+        byGrade: {
+          '國八': [
+            { unit: '8 下 · 第三章', name: '酸鹼鹽', cover: '', lessons: [
+              { no: '3-1', title: '電解質',           id: 'cCYW9R_0img' },
+              { no: '3-2', title: '酸和鹼',           id: 'mCfwc6EcdJc' },
+              { no: '3-3', title: '酸鹼的濃度與 pH 值', id: '-6uQU_wBOrY' }
+            ] }
+          ],
+          '國九': [], '高一': [], '高二': []
+        } },
+
+      { no: '04', name: '課程教材', icon: 'book',
+        byGrade: {
+          '國八': [
+            { unit: '8 下 · 第三章', name: '酸鹼鹽', cover: '', lessons: [
+              { no: '3-1', title: '電解質',           url: '' },
+              { no: '3-2', title: '酸和鹼',           url: '' },
+              { no: '3-3', title: '酸鹼的濃度與 pH 值', url: '' }
+            ] }
+          ],
+          '國九': [], '高一': [], '高二': []
+        } },
+
+      { no: '05', name: '筆記及詳解', icon: 'note',
+        byGrade: {
+          '國八': [
+            { unit: '8 下 · 第三章', name: '酸鹼鹽', cover: '', lessons: [
+              { no: '3-1', title: '電解質',           url: '' },
+              { no: '3-2', title: '酸和鹼',           url: '' },
+              { no: '3-3', title: '酸鹼的濃度與 pH 值', url: '' }
+            ] }
+          ],
+          '國九': [], '高一': [], '高二': []
+        } }
     ]
   };
 
@@ -10205,37 +10246,90 @@ document.addEventListener('DOMContentLoaded', function () {
     }
 
     // 影片用「部影片」，講義／PDF 用「份講義」
-    function unitWord(it) {
-      if (it.groups) {
-        var lessons = it.groups.reduce(function (a, g) { return a.concat(g.lessons || []); }, []);
-        var anyVideo = lessons.some(function (l) { return l.id !== undefined; });
-        return anyVideo ? '部影片' : '份講義';
-      }
-      return '部影片';
+    /* ---- 目前年級 ---- */
+    var grades = WANG_DB.grades || ['國八'];
+    var current = grades[0];
+
+    // 取某一項在目前年級的單元
+    function groupsOf(it) {
+      if (it.shared) return it.shared;
+      return (it.byGrade && it.byGrade[current]) || [];
     }
     function countOf(it) {
-      if (it.groups) {
-        return it.groups.reduce(function (a, g) { return a + (g.lessons || []).length; }, 0);
-      }
-      return (it.videos || []).length;
+      return groupsOf(it).reduce(function (a, g) { return a + (g.lessons || []).length; }, 0);
+    }
+    function unitWord(it) {
+      var lessons = groupsOf(it).reduce(function (a, g) { return a.concat(g.lessons || []); }, []);
+      return lessons.some(function (l) { return l.id !== undefined; }) ? '部影片' : '份講義';
     }
 
-    var html = '<div class="db-list-head">理化資料庫</div><div class="db-list"></div>';
-    grid.innerHTML = html;
-    var list = grid.querySelector('.db-list');
-    WANG_DB.items.forEach(function (it, i) {
-      var n = countOf(it);
-      list.insertAdjacentHTML('beforeend',
-        '<button type="button" class="db-item' + (n ? '' : ' is-soon') + '" data-i="' + i + '">' +
-          '<span class="db-item-no" aria-hidden="true">' + esc(it.no) + '</span>' +
-          '<span class="db-item-icon">' + icon(it.icon) + '</span>' +
-          '<span class="db-item-text">' +
-            '<span class="db-item-name">' + esc(it.name) + '</span>' +
-            '<span class="db-item-meta">' + (n ? n + ' ' + unitWord(it) : '內容準備中') + '</span>' +
-          '</span>' +
-          (n ? '<span class="db-item-arrow" aria-hidden="true">\u203A</span>' : '') +
-        '</button>');
-    });
+    /* ---- 左邊試聽影片卡（依年級） ---- */
+    var col = document.querySelector('#wangVideosModal .wang-col');
+    function renderTrial() {
+      if (!col) return;
+      var t = (WANG_DB.trial || {})[current];
+      var gridWrap = document.querySelector('#wangVideosModal .video-modal-grid');
+      if (gridWrap) gridWrap.classList.toggle('no-trial', !t);
+      if (!t) { col.hidden = true; col.innerHTML = ''; return; }
+      col.hidden = false;
+      var vid = vidId(t.id || '');
+      col.innerHTML =
+        '<div class="wang-col-head"><span class="wang-col-name">試聽影片</span></div>' +
+        '<a class="video-card is-trial" href="' + (vid ? 'https://www.youtube.com/watch?v=' + vid : '#') +
+          '" target="_blank" rel="noopener">' +
+          '<div class="video-card-frame">' +
+            '<img src="' + esc(t.cover || '') + '" alt="' + esc(t.title || '') + '" loading="lazy" decoding="async">' +
+            '<span class="video-card-play" aria-hidden="true">' +
+              '<svg width="24" height="24" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>' +
+            '</span>' +
+          '</div>' +
+          '<div class="video-card-body">' +
+            '<span class="video-card-kicker">' + esc(t.kicker || '') + '</span>' +
+            '<span class="video-card-title">' + esc(t.title || '') + '</span>' +
+            '<span class="video-card-desc">' + esc(t.desc || '') + '</span>' +
+          '</div>' +
+        '</a>';
+    }
+
+    /* ---- 年級切換列 ---- */
+    var tabsBox = document.getElementById('wangGrades');
+    function renderTabs() {
+      if (!tabsBox) return;
+      tabsBox.innerHTML = grades.map(function (g) {
+        return '<button type="button" class="grade-tab' + (g === current ? ' is-on' : '') +
+               '" data-g="' + esc(g) + '">' + esc(g) + '</button>';
+      }).join('');
+    }
+    if (tabsBox) {
+      tabsBox.addEventListener('click', function (e) {
+        var btn = e.target.closest('.grade-tab');
+        if (!btn) return;
+        var g = btn.getAttribute('data-g');
+        if (g === current) return;
+        current = g;
+        renderTabs(); renderTrial(); renderItems();
+      });
+    }
+
+    /* ---- 五個項目 ---- */
+    function renderItems() {
+      grid.innerHTML = '<div class="db-list-head">理化資料庫</div><div class="db-list"></div>';
+      var list = grid.querySelector('.db-list');
+      WANG_DB.items.forEach(function (it, i) {
+        var n = countOf(it);
+        list.insertAdjacentHTML('beforeend',
+          '<button type="button" class="db-item' + (n ? '' : ' is-soon') + '" data-i="' + i + '">' +
+            '<span class="db-item-no" aria-hidden="true">' + esc(it.no) + '</span>' +
+            '<span class="db-item-icon">' + icon(it.icon) + '</span>' +
+            '<span class="db-item-text">' +
+              '<span class="db-item-name">' + esc(it.name) + '</span>' +
+              '<span class="db-item-meta">' + (n ? n + ' ' + unitWord(it) : '內容準備中') + '</span>' +
+            '</span>' +
+            (n ? '<span class="db-item-arrow" aria-hidden="true">\u203A</span>' : '') +
+          '</button>');
+      });
+    }
+    renderTabs(); renderTrial(); renderItems();
 
     var popNo    = pop.querySelector('.db-pop-no');
     var popTitle = pop.querySelector('.db-pop-title');
@@ -10247,10 +10341,10 @@ document.addEventListener('DOMContentLoaded', function () {
       popNo.textContent = it.no;
       popTitle.textContent = it.name;
 
-      // 有單元分組（課程影片）：單元標題 + 一排小節卡
-      if (it.groups) {
+      // 單元標題 + 一排小節卡
+      {
         popList.className = 'db-pop-list is-units';
-        popList.innerHTML = it.groups.map(function (g) {
+        popList.innerHTML = groupsOf(it).map(function (g) {
           var cover = g.cover
             ? '<span class="unit-cover"><img src="' + esc(g.cover) + '" alt="" loading="lazy" decoding="async"></span>'
             : '';
@@ -10301,17 +10395,6 @@ document.addEventListener('DOMContentLoaded', function () {
         return;
       }
 
-      popList.className = 'db-pop-list';
-      popList.innerHTML = it.videos.map(function (v) {
-        var id = vidId(v.id || v.url || '');
-        var thumb = v.thumb || (id ? 'https://i.ytimg.com/vi/' + id + '/hqdefault.jpg' : '');
-        var href = id ? 'https://www.youtube.com/watch?v=' + id : (v.url || '#');
-        return '<a class="db-vid" href="' + href + '" target="_blank" rel="noopener">' +
-                 '<span class="db-vid-frame"><img src="' + thumb + '" alt="" loading="lazy" decoding="async"></span>' +
-                 '<span class="db-vid-title">' + esc(v.title || '') + '</span>' +
-               '</a>';
-      }).join('');
-      pop.hidden = false;
     }
     function closePop() { pop.hidden = true; }
 
