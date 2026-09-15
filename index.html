@@ -4688,6 +4688,123 @@
   .db-list > .db-item:last-child { box-shadow: none; }
   .db-item:hover, .db-item:focus-visible { background: rgba(255,255,255,0.07); outline: none; }
   .db-item-no { display: none; }
+  /* ===== 電腦版：Bento 格狀（手機維持上面的分組清單） ===== */
+  @media (min-width: 880px) {
+    #wangVideosModal .video-modal-card {
+      max-width: 1000px; padding: 30px 30px 34px; border-radius: 28px;
+      background: #0c0c10; overflow: hidden;
+    }
+    /* 底層極淡網格，給資料庫一點系統感 */
+    #wangVideosModal .video-modal-card::after {
+      content: ''; position: absolute; inset: 0; pointer-events: none; z-index: 0;
+      background-image:
+        linear-gradient(rgba(255,255,255,0.028) 1px, transparent 1px),
+        linear-gradient(90deg, rgba(255,255,255,0.028) 1px, transparent 1px);
+      background-size: 44px 44px;
+      -webkit-mask-image: radial-gradient(ellipse at 50% 0%, #000 30%, transparent 78%);
+      mask-image: radial-gradient(ellipse at 50% 0%, #000 30%, transparent 78%);
+    }
+    #wangVideosModal .video-modal-card > * { position: relative; z-index: 1; }
+    /* 關閉鈕本來是 relative，要 absolute 才會貼右上角 */
+    #wangVideosModal .video-modal-close {
+      position: absolute; left: auto; right: 18px; top: 18px; z-index: 3;
+    }
+    #wangVideosModal .wang-who {
+      font-family: 'Inter', monospace; font-size: 0.64rem; letter-spacing: 0.32em;
+      text-transform: uppercase; color: rgba(255,255,255,0.32);
+      padding: 6px 56px 20px 2px;
+    }
+    #wangVideosModal .wang-col-head, #wangVideosModal .db-list-head { display: none; }
+
+    #wangVideosModal .video-modal-grid.is-split {
+      grid-template-columns: repeat(6, minmax(0, 1fr));
+      max-width: none; gap: 12px;
+    }
+    #wangVideosModal .wang-col { grid-column: span 3; gap: 0; }
+    #wangVideosModal .wang-db {
+      grid-column: span 3; display: grid;
+      grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 12px;
+    }
+    #wangVideosModal .db-list { display: contents; }
+
+    /* 影片主格 */
+    #wangVideosModal .video-card.is-trial {
+      position: relative; height: 100%;
+      border: 1px solid rgba(255,255,255,0.10); border-radius: 20px; overflow: hidden;
+      background: #111116; padding: 0; gap: 0;
+      transition: border-color .35s cubic-bezier(.2,.8,.2,1);
+    }
+    #wangVideosModal .video-card.is-trial:hover { border-color: rgba(255,215,112,0.55); }
+    #wangVideosModal .video-card.is-trial .video-card-frame { border-radius: 0; }
+    #wangVideosModal .video-card.is-trial .video-card-body { padding: 16px 18px 18px; gap: 5px; }
+    #wangVideosModal .video-card-kicker {
+      font-family: 'Inter', monospace; font-size: 0.6rem; letter-spacing: 0.3em;
+    }
+    #wangVideosModal .video-card.is-trial .video-card-title {
+      font-size: 1.5rem; font-weight: 800; letter-spacing: -0.02em;
+    }
+    #wangVideosModal .video-card.is-trial .video-card-desc { font-size: 0.82rem; }
+
+    /* 五個方格 */
+    #wangVideosModal .db-item {
+      position: relative; overflow: hidden;
+      flex-direction: column; align-items: flex-start; justify-content: flex-end;
+      min-height: 116px; gap: 2px;
+      padding: 14px 15px; border-radius: 18px;
+      background: #121219; border: 1px solid rgba(255,255,255,0.08);
+      box-shadow: none;
+      transition: border-color .3s cubic-bezier(.2,.8,.2,1),
+                  background .3s cubic-bezier(.2,.8,.2,1),
+                  transform .3s cubic-bezier(.2,.8,.2,1);
+    }
+    #wangVideosModal .db-item:nth-child(5) { grid-column: span 2; }
+    #wangVideosModal .db-item:hover {
+      background: #16161f; border-color: rgba(255,215,112,0.5); transform: translateY(-3px);
+    }
+    #wangVideosModal .db-item.is-soon:hover {
+      border-color: rgba(255,255,255,0.16); transform: none; background: #121219;
+    }
+    /* 巨大幽靈編號 */
+    #wangVideosModal .db-item-no {
+      display: block; position: absolute; right: -6px; top: -18px;
+      font-family: 'Inter', sans-serif; font-weight: 900; font-size: 4.6rem;
+      line-height: 1; color: rgba(255,255,255,0.05); width: auto;
+      letter-spacing: -0.04em; pointer-events: none;
+      transition: color .3s cubic-bezier(.2,.8,.2,1);
+    }
+    #wangVideosModal .db-item:hover .db-item-no { color: rgba(255,215,112,0.14); }
+    #wangVideosModal .db-item-icon {
+      position: absolute; left: 15px; top: 14px;
+      width: 26px; height: 26px; border-radius: 7px;
+    }
+    #wangVideosModal .db-item-icon svg { width: 14px; height: 14px; }
+    #wangVideosModal .db-item-name { font-weight: 700; letter-spacing: -0.01em; }
+    #wangVideosModal .db-item-meta {
+      font-family: 'Inter', monospace; font-size: 0.62rem;
+      letter-spacing: 0.16em; text-transform: uppercase;
+    }
+    #wangVideosModal .db-item-arrow { display: none; }
+
+    /* 錯位進場 */
+    @keyframes bentoIn {
+      from { opacity: 0; transform: translateY(14px) scale(.985); }
+      to   { opacity: 1; transform: none; }
+    }
+    #wangVideosModal.is-open .video-card.is-trial,
+    #wangVideosModal.is-open .db-item {
+      animation: bentoIn .5s cubic-bezier(.2,.8,.2,1) backwards;
+    }
+    #wangVideosModal.is-open .video-card.is-trial { animation-delay: .02s; }
+    #wangVideosModal.is-open .db-item:nth-child(1) { animation-delay: .06s; }
+    #wangVideosModal.is-open .db-item:nth-child(2) { animation-delay: .10s; }
+    #wangVideosModal.is-open .db-item:nth-child(3) { animation-delay: .14s; }
+    #wangVideosModal.is-open .db-item:nth-child(4) { animation-delay: .18s; }
+    #wangVideosModal.is-open .db-item:nth-child(5) { animation-delay: .22s; }
+
+    #wangDbPop .db-pop-card { background: #0c0c10; border-radius: 24px; }
+    #wangDbPop .unit-kicker { font-family: 'Inter', monospace; letter-spacing: 0.24em; }
+  }
+
   /* 圖示：圓角方塊。顏色代表「有內容可以點」，不是裝飾 */
   .db-item-icon {
     flex: none; width: 30px; height: 30px; border-radius: 8px;
@@ -10110,6 +10227,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var n = countOf(it);
       list.insertAdjacentHTML('beforeend',
         '<button type="button" class="db-item' + (n ? '' : ' is-soon') + '" data-i="' + i + '">' +
+          '<span class="db-item-no" aria-hidden="true">' + esc(it.no) + '</span>' +
           '<span class="db-item-icon">' + icon(it.icon) + '</span>' +
           '<span class="db-item-text">' +
             '<span class="db-item-name">' + esc(it.name) + '</span>' +
