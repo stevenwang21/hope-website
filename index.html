@@ -5431,8 +5431,29 @@
   .calendar-boards {
     margin-top: 60px;
     display: grid;
-    grid-template-columns: repeat(2, minmax(0, 1fr));
-    gap: 28px;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 26px;
+    align-items: start;
+  }
+  /* 國中部 / 高中部 的分隔標題，佔滿整排 */
+  .calendar-boards-head {
+    grid-column: 1 / -1;
+    display: flex; align-items: center; gap: 14px;
+    font-family: 'Noto Sans TC', sans-serif;
+    font-size: 0.92rem; font-weight: 800; color: #fff;
+    letter-spacing: 0.06em;
+    margin-top: 6px;
+  }
+  .calendar-boards-head::after {
+    content: ''; flex: 1; height: 1px;
+    background: linear-gradient(90deg, rgba(255,255,255,0.18), transparent);
+  }
+  .calendar-boards-head:first-child { margin-top: 0; }
+  @media (max-width: 1100px) {
+    .calendar-boards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
+  }
+  @media (max-width: 680px) {
+    .calendar-boards { grid-template-columns: 1fr; gap: 20px; }
   }
   .calendar-board {
     margin: 0;
@@ -10535,6 +10556,7 @@ document.addEventListener('DOMContentLoaded', function () {
 
     <!-- 段考行事曆圖片 -->
     <div class="calendar-boards fade-up">
+      <div class="calendar-boards-head">國中部</div>
       <figure class="calendar-board">
         <figcaption class="calendar-board-caption">
           <span class="calendar-board-kicker">GRADE 7 · 國七</span>
@@ -10556,6 +10578,49 @@ document.addEventListener('DOMContentLoaded', function () {
         </figcaption>
         <a class="calendar-board-frame" href="115國八行事曆.jpg" target="_blank" rel="noopener" aria-label="點擊放大 國八行事曆">
           <img src="115國八行事曆.jpg" alt="115 國八 英數理行事曆（開學～一段）" loading="lazy" decoding="async" />
+          <span class="calendar-board-zoom" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            點擊放大
+          </span>
+        </a>
+      </figure>
+
+      <figure class="calendar-board">
+        <figcaption class="calendar-board-caption">
+          <span class="calendar-board-kicker">GRADE 9 · 國九</span>
+          <span class="calendar-board-title">115 國九 一段行事曆</span>
+        </figcaption>
+        <a class="calendar-board-frame" href="115G9一段行事曆.jpg" target="_blank" rel="noopener" aria-label="點擊放大 國九行事曆">
+          <img src="115G9一段行事曆.jpg" alt="115 國九 一段行事曆" loading="lazy" decoding="async" />
+          <span class="calendar-board-zoom" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            點擊放大
+          </span>
+        </a>
+      </figure>
+
+      <div class="calendar-boards-head">高中部</div>
+      <figure class="calendar-board">
+        <figcaption class="calendar-board-caption">
+          <span class="calendar-board-kicker">SENIOR 1 · 高一</span>
+          <span class="calendar-board-title">115 高一 一段行事曆</span>
+        </figcaption>
+        <a class="calendar-board-frame" href="115高一1段行事曆.jpg" target="_blank" rel="noopener" aria-label="點擊放大 高一行事曆">
+          <img src="115高一1段行事曆.jpg" alt="115 高一 一段行事曆" loading="lazy" decoding="async" />
+          <span class="calendar-board-zoom" aria-hidden="true">
+            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+            點擊放大
+          </span>
+        </a>
+      </figure>
+
+      <figure class="calendar-board">
+        <figcaption class="calendar-board-caption">
+          <span class="calendar-board-kicker">SENIOR 2 · 高二</span>
+          <span class="calendar-board-title">115 高二 一段行事曆</span>
+        </figcaption>
+        <a class="calendar-board-frame" href="115高二1段行事曆.jpg" target="_blank" rel="noopener" aria-label="點擊放大 高二行事曆">
+          <img src="115高二1段行事曆.jpg" alt="115 高二 一段行事曆" loading="lazy" decoding="async" />
           <span class="calendar-board-zoom" aria-hidden="true">
             <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
             點擊放大
