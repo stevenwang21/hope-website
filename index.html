@@ -981,11 +981,10 @@
   /* ========== Section 共用 ========== */
   /* 畫面外的卡片先不畫（132 張聯絡簿卡是最大宗）。
      contain-intrinsic-size 給一個預估高度，捲軸才不會亂跳。 */
+  /* 只用在「沒有圖片」的卡片上。有圖片的區塊不能用，
+     否則圖片會等到快捲到才開始載，反而變慢。 */
   .homework-subject { content-visibility: auto; contain-intrinsic-size: auto 96px; }
-  .teacher-card     { content-visibility: auto; contain-intrinsic-size: auto 360px; }
   .school-card      { content-visibility: auto; contain-intrinsic-size: auto 150px; }
-  .honor-board      { content-visibility: auto; contain-intrinsic-size: auto 900px; }
-  .testimonial-card { content-visibility: auto; contain-intrinsic-size: auto 260px; }
   .faq-item         { content-visibility: auto; contain-intrinsic-size: auto 80px; }
 
   /* ===== 效能 =====
@@ -11466,16 +11465,37 @@ document.addEventListener('DOMContentLoaded', function () {
       if (window.requestIdleCallback) requestIdleCallback(fn, { timeout: 1200 });
       else setTimeout(fn, 60);
     }
+    var soonCount = soon.length;
     function pump() {
       if (idx >= queue.length) return;
-      if (busy) { setTimeout(pump, 300); return; }   // 使用者正在捲動 → 先讓路
+      var i = idx++;
+      var isHere = i < soonCount;                    // 目前這一頁的圖
+      if (!isHere && busy) { idx = i; setTimeout(pump, 300); return; }  // 別頁的圖才讓路
       var img = new Image();
       img.decoding = 'async';
-      if ('fetchPriority' in img) img.fetchPriority = 'low';
-      img.onload = img.onerror = function () { nextTick(pump); };
-      img.src = queue[idx++];
+      if (!isHere && 'fetchPriority' in img) img.fetchPriority = 'low';
+      img.onload = img.onerror = function () {
+        if (isHere) pump();                          // 本頁的圖一張接一張，不等閒置
+        else nextTick(pump);
+      };
+      img.src = queue[i];
     }
     function start() { for (var i = 0; i < LANES; i++) pump(); }
+
+    // 切到某一頁時，先把那一頁還沒抓的圖補上（換頁後圖片才不會慢半拍）
+    window.addEventListener('hashchange', function () {
+      setTimeout(function () {
+        var sec = document.querySelector('section[data-page="' +
+          (document.body.getAttribute('data-current') || 'home') + '"]');
+        if (!sec) return;
+        sec.querySelectorAll('img[src]').forEach(function (im) {
+          var u = im.getAttribute('src');
+          if (!u || seen[u] === 2) return;
+          seen[u] = 2;
+          var g = new Image(); g.decoding = 'async'; g.src = u;
+        });
+      }, 0);
+    });
 
     function whenIdle() {
       if (window.requestIdleCallback) requestIdleCallback(start, { timeout: 2000 });
