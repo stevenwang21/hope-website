@@ -1,59 +1,28 @@
 /* ============================================================
-   bugfix-patch.css  ·  2026-09-12
+   bugfix-patch.css  ·  2026-09-15 更新（原 2026-09-12 / 09-14）
    希望文理補習班網站 bug 修正（測試用，未套進 index.html）
+
    用法：在 index.html 的 </head> 前加一行
          <link rel="stylesheet" href="bugfix-patch.css" />
-   或直接開 bugfix-test.html 預覽效果。
+   或直接開 bugfix-test.html 預覽。
+
+   ------------------------------------------------------------
+   本次（09-15）複查後的異動：
+   · 舊 #1（手機漢堡選單被 display:none 關掉）→ 正式版已自行修好
+     （index.html 7798–7804 行），本檔已移除該段，不再重複覆寫。
+   · 舊 #3（.hero 的 display:flex 被特異性蓋掉）→ 複查後判定「不是 bug」。
+     .hero > .container 是 position:absolute（403–409 行），
+     父層是 flex 還是 block 對它的位置沒有影響，本檔已移除該段。
+   · 新增 #5：手機首屏按鈕被底部導覽列壓到。
    ============================================================ */
 
 /* ------------------------------------------------------------
-   #1【嚴重】手機版（≤720px）漢堡選單與 nav-links 都被
-      `display:none !important` 關掉，底部導覽列只有
-      首頁／聯絡簿／課程／線上／預約 五項，
-      導致「關於我們、師資、行事曆、榜單、好評」在手機上
-      完全沒有入口可以進去。
-      → 把漢堡選單放回來，點開後顯示完整選單。
-   ------------------------------------------------------------ */
-@media (max-width: 720px) {
-  .menu-toggle {
-    display: flex !important;
-    align-items: center;
-    justify-content: center;
-  }
-
-  /* 收起時仍然隱藏 */
-  .nav-links { display: none !important; }
-
-  /* 點漢堡後展開（原本的 .nav-links.active 沒有 !important，
-     會被 7558 行的 display:none !important 蓋掉） */
-  .nav-links.active {
-    display: flex !important;
-    position: absolute;
-    top: calc(100% + 8px);
-    left: 0;
-    right: 0;
-    flex-direction: column;
-    gap: 4px;
-    padding: 14px;
-    background: rgba(8, 8, 20, 0.96);
-    backdrop-filter: blur(18px) saturate(1.4);
-    -webkit-backdrop-filter: blur(18px) saturate(1.4);
-    border: 1px solid rgba(255, 255, 255, 0.14);
-    border-radius: 18px;
-    box-shadow: 0 20px 50px -20px rgba(0, 0, 0, 0.7);
-    max-height: 72vh;
-    overflow-y: auto;
-    z-index: 1001;
-  }
-  .nav-links.active li { width: 100%; }
-  .nav-links.active > li > a { display: block; width: 100%; }
-  .nav-links.active .nav-cta { margin-left: 0; text-align: center; }
-}
-
-/* ------------------------------------------------------------
-   #2【中】`body.is-paged footer { display:none }`（6812 行）
-      讓頁尾在「每個」分頁都看不到 —— 桌機也一樣。
-      頁尾裡的電話、地址、營業時間、FB／LINE、版權全部消失。
+   #2【中】`body.is-paged footer { display:none }`（index.html 7044 行）
+      因為 is-paged 是「所有螢幕、所有分頁」都會加上去的
+      （11909 行 document.body.classList.add('is-paged')），
+      所以頁尾等於「全站都看不到」——桌機也一樣。
+      裡面的 Facebook 連結、營業時間、版權宣告全部消失，
+      其中 Facebook 連結在整個網站的其他地方都沒有出現。
       → 保守修法：只在「預約諮詢」分頁把頁尾放回來。
         （若想每頁都顯示，把選擇器換成 body.is-paged footer）
    ------------------------------------------------------------ */
@@ -62,23 +31,15 @@ body.is-paged[data-current="contact"] footer {
 }
 
 /* ------------------------------------------------------------
-   #3【中】首屏排版：`.hero { display:flex !important }`（354 行）
-      特異性低於 `body.is-paged[data-current="home"]
-      section[data-page="home"] { display:block !important }`
-      （6800–6811 行），所以 hero 實際變成 display:block，
-      `align-items:flex-end` 失效，首屏內容的垂直對齊會跑掉。
-      → 用更高特異性把 flex 拿回來。
-   ------------------------------------------------------------ */
-body.is-paged[data-current="home"] section.hero[data-page="home"] {
-  display: flex !important;
-  align-items: flex-end !important;
-}
-
-/* ------------------------------------------------------------
-   #4【小】未開放的聯絡簿卡片（href="javascript:void(0)"）
-      看起來可以點，點了卻沒反應。
-      → 做成明顯的「停用」外觀，避免家長以為壞掉。
-      （行為部分在 bugfix-patch.js）
+   #4【小】未開放的聯絡簿卡片（href="javascript:void(0)"，
+      index.html 8792 / 8827 / 8852 / 8862 / 8872 / 8882 行）
+      提示文字已經由正式版改成「尚未上線」（7995 行），
+      但卡片本身仍然是 data-status="active"：
+      外觀、hover 效果、右側箭頭都跟可以點的卡片一模一樣，
+      點下去卻完全沒反應。
+      index.html 其實已經有現成的停用樣式
+      `.homework-subject[data-status="empty"]`（2367 行），只是沒被套上。
+      → 做成明顯的「停用」外觀。（行為部分在 bugfix-patch.js）
    ------------------------------------------------------------ */
 .homework-subject[aria-disabled="true"] {
   opacity: 0.5;
@@ -88,4 +49,27 @@ body.is-paged[data-current="home"] section.hero[data-page="home"] {
 }
 .homework-subject[aria-disabled="true"] .homework-subject-arrow {
   visibility: hidden;
+}
+
+/* ------------------------------------------------------------
+   #5【小・新】手機（≤720px）首屏按鈕會被底部導覽列壓到
+
+      index.html 7811–7813 行寫著：
+        .hero > .container .hero-buttons { bottom: 120px !important; }
+      註解說「hero 區的 hero-buttons 位置往上推」，
+      但 .hero-buttons 是 `display:flex` 的一般（static）元素，
+      static 元素吃不到 bottom，這一行完全沒有作用。
+
+      真正被定位的是它的父層 `.hero > .container`
+      （403–409 行：position:absolute; bottom:80px !important）。
+      而手機底部導覽列是 fixed、bottom:14px、高度約 56px，
+      也就是從畫面底部算起大約佔到 70px —— 和 80px 幾乎貼在一起，
+      按鈕下緣很容易被導覽列蓋住。
+
+      → 把 80px 改成 120px（即原本註解想要的效果）。
+   ------------------------------------------------------------ */
+@media (max-width: 720px) {
+  .hero > .container {
+    bottom: 120px !important;
+  }
 }

@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex, nofollow" />
-<title>Bug 修正測試頁 · 2026-09-14 · 希望文理補習班</title>
+<title>Bug 修正測試頁 · 2026-09-15 · 希望文理補習班</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -62,7 +62,7 @@
 <body>
 
 <div class="bar">
-  <strong>Bug 修正測試頁 · 2026-09-14</strong>
+  <strong>Bug 修正測試頁 · 2026-09-15</strong>
   <span class="sep"></span>
   <button id="toggle" class="on">修正：已套用</button>
   <span class="sep"></span>
@@ -77,9 +77,13 @@
 <div class="note">
   這一頁把正式版 <code>index.html</code> 嵌進來，再即時注入
   <code>bugfix-patch.css</code> / <code>bugfix-patch.js</code>，
-  <strong>完全不會修改 index.html</strong>。切「手機 390px」可以看修好的漢堡選單，
-  以及底部導覽列「目前所在頁」會不會亮成黑底白字。<br>
-  首頁故事區那張影片縮圖點下去，也可以比較彈窗裡的影片有沒有真的出現。<br>
+  <strong>完全不會修改 index.html</strong>。切「手機 390px」，按開關比較前後差異：<br>
+  ① 底部導覽列「目前所在頁」會不會亮成黑底白字（#A）<br>
+  ② 首頁最下面那排按鈕有沒有被底部導覽列壓到（#5・本次新增）<br>
+  ③ 首頁故事區那張影片縮圖點下去，彈窗裡的影片有沒有真的出現（#B）<br>
+  ④ 切到「預約諮詢」分頁，頁尾（含 Facebook 連結、版權）會不會出現（#2）<br>
+  ⑤ 聯絡簿分頁裡未開放的那 6 張卡片會不會變淡、箭頭消失（#4）<br>
+  ※ 2026-09-15 複查：手機漢堡選單已由正式版自行修好，本次修正檔已移除該段。<br>
   家長後台（tracking.html）的修正在另一頁：<code>bugfix-test-tracking.html</code>。<br>
   ※ 請用 <code>啟動本機伺服器.bat</code> 起本機伺服器後開這一頁（直接雙擊開檔會被瀏覽器的
   file:// 安全限制擋住，無法注入）。
@@ -114,6 +118,17 @@
       showErr('無法存取 iframe 內容（跨來源限制）。請改用 <code>啟動本機伺服器.bat</code> 起 http 伺服器後再開這一頁。');
       return;
     }
+    // 把 iframe 裡的 JS 錯誤抓出來顯示（不論修正開關）
+    try {
+      frame.contentWindow.addEventListener('error', function (ev) {
+        showErr('內頁 JS 錯誤：' + (ev.message || ev.type) +
+                '<br>' + (ev.filename || '') + ' 第 ' + (ev.lineno || '?') + ' 行');
+      });
+      frame.contentWindow.addEventListener('unhandledrejection', function (ev) {
+        showErr('內頁未處理的 Promise 錯誤：' + (ev.reason && ev.reason.message || ev.reason));
+      });
+    } catch (e) { /* 跨來源就跳過 */ }
+
     if (!patched) return;
 
     if (!doc.getElementById('bugfixPatchCss')) {
