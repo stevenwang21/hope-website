@@ -1,19 +1,12 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <!-- 只列給外人看的公開頁面。
+       首頁只留「/」一個網址（原本同時列了 / 和 index.html，內容一樣會被判成重複）。
+       線上補課區與家長後台是給在學學生家長用的，已設 noindex，不列在這裡。 -->
   <url>
     <loc>https://new.ourhope.com.tw/</loc>
-    <lastmod>2026-09-09</lastmod>
-  </url>
-  <url>
-    <loc>https://new.ourhope.com.tw/index.html</loc>
-    <lastmod>2026-09-09</lastmod>
-  </url>
-  <url>
-    <loc>https://new.ourhope.com.tw/courses.html</loc>
-    <lastmod>2026-09-09</lastmod>
-  </url>
-  <url>
-    <loc>https://new.ourhope.com.tw/tracking.html</loc>
-    <lastmod>2026-09-09</lastmod>
+    <lastmod>2026-09-17</lastmod>
+    <changefreq>weekly</changefreq>
+    <priority>1.0</priority>
   </url>
 </urlset>

@@ -16,3 +16,14 @@ ziDmtgJA
 Thumbs.db
 .DS_Store
 Claude outputs/
+
+# ---- 2026-09-17 新增 ----
+# 檢查報告與測試用補丁不應該跟著上線。
+# 之前這些檔案沒被忽略，已經被推到 GitHub 並公開在 new.ourhope.com.tw，
+# 等於把「家長後台沒有驗證」「測試用假匯款帳號」這些細節公開寫成說明書。
+# 注意：加在這裡只擋「以後」的檔案，已經被 git 追蹤的要另外用
+#       git rm --cached 取消追蹤（見 _移除已公開的檢查檔.ps1）。
+BUG檢查報告*.md
+bugfix-patch.*
+bugfix-test*.html
+bugfix-sitemap.xml
