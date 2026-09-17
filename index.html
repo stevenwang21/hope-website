@@ -4910,18 +4910,19 @@
     background: linear-gradient(180deg, rgba(27,27,32,0.55), #1b1b20 92%);
   }
   .db-pop-hero-in {
-    position: relative; display: flex; gap: 14px; align-items: flex-end;
+    position: relative; display: flex; gap: 16px; align-items: flex-end;
+  }
+  /* 封面靠右，文字靠左 */
+  .db-pop-hero-covs {
+    display: flex; gap: 12px; margin-left: auto; flex: none;
   }
   .db-pop-hero-cov {
     width: 104px; flex: none; aspect-ratio: 3 / 4;
     border-radius: 12px; overflow: hidden;
-    border: 1px solid rgba(255,255,255,0.18);
     box-shadow: 0 14px 34px rgba(0,0,0,0.55);
-    background: rgba(255,255,255,0.05);
   }
   .db-pop-hero-cov img { width: 100%; height: 100%; object-fit: cover; display: block; }
   .db-pop-hero-txt { padding-bottom: 4px; min-width: 0; display: flex; flex-direction: column; }
-  .db-pop-hero-in > .db-pop-hero-cov { display: block; }
   .db-pop-hero .db-pop-back { display: inline-block; }
   .db-pop-hero-kicker {
     font-family: 'Inter', 'Noto Sans TC', sans-serif;
@@ -4939,7 +4940,8 @@
   @media (max-width: 560px) {
     .db-pop-hero { margin: -22px -18px 16px; padding: 18px 18px 16px; }
     .db-pop-hero-in { gap: 10px; }
-    .db-pop-hero-cov { width: 72px; }
+    .db-pop-hero-covs { gap: 8px; }
+    .db-pop-hero-cov { width: 68px; }
     .db-pop-hero-title { font-size: 1.2rem; }
     .db-pop-hero-sub { font-size: 0.74rem; }
   }
@@ -10465,15 +10467,17 @@ document.addEventListener('DOMContentLoaded', function () {
       hero.innerHTML =
         '<span class="db-pop-hero-bg" style="background-image:url(&quot;' + c.covers[0] + '&quot;)"></span>' +
         '<span class="db-pop-hero-in">' +
-          c.covers.map(function (src) {
-            return '<span class="db-pop-hero-cov">' +
-                     '<img src="' + esc(src) + '" alt="" loading="lazy" decoding="async">' +
-                   '</span>';
-          }).join('') +
           '<span class="db-pop-hero-txt">' +
             '<span class="db-pop-hero-kicker">' + esc(gradeEn + (gradeEn ? ' · ' : '') + subjEn) + '</span>' +
             '<span class="db-pop-hero-title">' + esc(it.name) + '</span>' +
             '<span class="db-pop-hero-sub">' + esc(sub) + '</span>' +
+          '</span>' +
+          '<span class="db-pop-hero-covs">' +
+            c.covers.map(function (src) {
+              return '<span class="db-pop-hero-cov">' +
+                       '<img src="' + esc(src) + '" alt="" loading="lazy" decoding="async">' +
+                     '</span>';
+            }).join('') +
           '</span>' +
         '</span>';
       popCard.insertBefore(hero, popCard.firstChild);
