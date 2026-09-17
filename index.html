@@ -4892,6 +4892,57 @@
     from { opacity: 0; transform: translateY(14px) scale(.97); }
     to   { opacity: 1; transform: none; }
   }
+  /* ---- 彈窗頂端的封面橫幅（單元有 covers 時才出現） ---- */
+  .db-pop-hero {
+    position: relative;
+    margin: -26px -24px 18px;
+    padding: 22px 24px 18px;
+    overflow: hidden;
+  }
+  .db-pop-hero-bg {
+    position: absolute; inset: -40px;
+    background-size: cover; background-position: center;
+    filter: blur(38px) saturate(1.45);
+    opacity: 0.5;
+  }
+  .db-pop-hero-bg::after {
+    content: ''; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(27,27,32,0.55), #1b1b20 92%);
+  }
+  .db-pop-hero-in {
+    position: relative; display: flex; gap: 14px; align-items: flex-end;
+  }
+  .db-pop-hero-cov {
+    width: 104px; flex: none; aspect-ratio: 3 / 4;
+    border-radius: 12px; overflow: hidden;
+    border: 1px solid rgba(255,255,255,0.18);
+    box-shadow: 0 14px 34px rgba(0,0,0,0.55);
+    background: rgba(255,255,255,0.05);
+  }
+  .db-pop-hero-cov img { width: 100%; height: 100%; object-fit: cover; display: block; }
+  .db-pop-hero-txt { padding-bottom: 4px; min-width: 0; display: flex; flex-direction: column; }
+  .db-pop-hero-in > .db-pop-hero-cov { display: block; }
+  .db-pop-hero .db-pop-back { display: inline-block; }
+  .db-pop-hero-kicker {
+    font-family: 'Inter', 'Noto Sans TC', sans-serif;
+    font-size: 0.66rem; font-weight: 800; letter-spacing: 0.16em; color: var(--gold);
+  }
+  .db-pop-hero-title {
+    font-size: 1.5rem; font-weight: 900; color: #fff; letter-spacing: 0.01em; margin-top: 4px;
+  }
+  .db-pop-hero-sub {
+    font-size: 0.8rem; color: rgba(255,255,255,0.62); margin-top: 6px;
+  }
+  /* 有橫幅時，原本的「02 課程影片」那行就不用了 */
+  .db-pop-card.has-hero .db-pop-head { display: none; }
+  .db-pop-card.has-hero .db-pop-back { position: relative; z-index: 2; }
+  @media (max-width: 560px) {
+    .db-pop-hero { margin: -22px -18px 16px; padding: 18px 18px 16px; }
+    .db-pop-hero-in { gap: 10px; }
+    .db-pop-hero-cov { width: 72px; }
+    .db-pop-hero-title { font-size: 1.2rem; }
+    .db-pop-hero-sub { font-size: 0.74rem; }
+  }
   .db-pop-back {
     font-family: inherit; font-size: 0.8rem; font-weight: 700;
     color: #fff; background: rgba(255,255,255,0.07);
@@ -10218,7 +10269,10 @@ document.addEventListener('DOMContentLoaded', function () {
       { no: '02', name: '課程影片', icon: 'film',
         byGrade: {
           '國八': [
-            { unit: '8 下 · 第三章', name: '酸鹼鹽', cover: '', lessons: [
+            { unit: '8 下 · 第三章', name: '酸鹼鹽', cover: '',
+              // covers：這個單元的封面，最多放兩張；留空陣列就不會出現封面橫幅
+              covers: ['汪飛白封面-酸鹼鹽.webp', '汪飛白封面-自然的奧秘.webp'],
+              lessons: [
               { no: '3-1', title: '電解質',            id: 'FM7couwqQUQ' },
               { no: '3-2', title: '酸與鹼',            id: 'DKi0bnZd-sw' },
               { no: '3-3', title: '酸鹼的濃度與 pH 值', id: 'V1wntKUAv7A' }
@@ -10382,12 +10436,57 @@ document.addEventListener('DOMContentLoaded', function () {
     var popNo    = pop.querySelector('.db-pop-no');
     var popTitle = pop.querySelector('.db-pop-title');
     var popList  = pop.querySelector('.db-pop-list');
+    var popCard  = pop.querySelector('.db-pop-card');
+    var popBack  = pop.querySelector('.db-pop-back');
+
+    /* ---- 封面橫幅：單元有 covers 就把它放到彈窗最上面，填掉原本那塊黑 ---- */
+    function coversOf(it) {
+      var gs = groupsOf(it);
+      for (var k = 0; k < gs.length; k++) {
+        if (gs[k].covers && gs[k].covers.length) return { covers: gs[k].covers.slice(0, 2), g: gs[k] };
+      }
+      return null;
+    }
+    function renderHero(it) {
+      var old = popCard.querySelector('.db-pop-hero');
+      if (old) { popCard.insertBefore(popBack, popCard.firstChild); old.parentNode.removeChild(old); }
+      popCard.classList.remove('has-hero');
+
+      var c = coversOf(it);
+      if (!c) return;
+
+      var gradeEn = { '國七': 'GRADE 7', '國八': 'GRADE 8', '國九': 'GRADE 9',
+                      '高一': 'SENIOR 1', '高二': 'SENIOR 2', '高三': 'SENIOR 3' }[current] || '';
+      var sub = [WANG_DB.title ? '汪飛白' + WANG_DB.title : '', c.g.unit || ''].filter(Boolean).join(' · ');
+      var subjEn = 'SCIENCE';
+
+      var hero = document.createElement('div');
+      hero.className = 'db-pop-hero';
+      hero.innerHTML =
+        '<span class="db-pop-hero-bg" style="background-image:url(&quot;' + c.covers[0] + '&quot;)"></span>' +
+        '<span class="db-pop-hero-in">' +
+          c.covers.map(function (src) {
+            return '<span class="db-pop-hero-cov">' +
+                     '<img src="' + esc(src) + '" alt="" loading="lazy" decoding="async">' +
+                   '</span>';
+          }).join('') +
+          '<span class="db-pop-hero-txt">' +
+            '<span class="db-pop-hero-kicker">' + esc(gradeEn + (gradeEn ? ' · ' : '') + subjEn) + '</span>' +
+            '<span class="db-pop-hero-title">' + esc(it.name) + '</span>' +
+            '<span class="db-pop-hero-sub">' + esc(sub) + '</span>' +
+          '</span>' +
+        '</span>';
+      popCard.insertBefore(hero, popCard.firstChild);
+      hero.insertBefore(popBack, hero.firstChild);
+      popCard.classList.add('has-hero');
+    }
 
     function openPop(i) {
       var it = WANG_DB.items[i];
       if (!it || !countOf(it)) return;
       popNo.textContent = it.no;
       popTitle.textContent = it.name;
+      renderHero(it);
 
       // 單元標題 + 一排小節卡
       {
