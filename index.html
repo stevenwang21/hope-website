@@ -5479,115 +5479,147 @@
     position: relative;
   }
 
-  /* 段考行事曆圖片 */
+  /* ================= 段考行事曆：年級切換 + 一次看一張大圖 ================= */
+  .cal-switch { margin-top: 56px; }
+
+  /* 年級切換列 */
+  .cal-tabs {
+    display: flex; align-items: center; gap: 4px;
+    width: max-content; max-width: 100%;
+    margin: 0 auto;
+    padding: 6px;
+    background: var(--surface-2);
+    border: 1px solid var(--border);
+    border-radius: 999px;
+    box-shadow: 0 12px 34px -18px rgba(60, 40, 140, 0.35);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+    overflow-x: auto;
+    scrollbar-width: none;
+  }
+  .cal-tabs::-webkit-scrollbar { display: none; }
+  .cal-tabs-group {
+    flex: none;
+    padding: 0 8px 0 12px;
+    font-size: 0.72rem; font-weight: 800; letter-spacing: 0.12em;
+    color: var(--text-3); opacity: 0.7;
+  }
+  .cal-tabs-sep {
+    flex: none; width: 1px; height: 22px; margin: 0 6px;
+    background: var(--border-strong);
+  }
+  .cal-tab {
+    flex: none;
+    font-family: inherit; font-size: 0.95rem; font-weight: 700;
+    color: var(--text-2);
+    background: transparent; border: 0; cursor: pointer;
+    padding: 10px 20px; border-radius: 999px;
+    transition: background .25s var(--ease), color .25s var(--ease), box-shadow .25s var(--ease);
+  }
+  .cal-tab:hover { background: rgba(91, 71, 188, 0.08); }
+  .cal-tab:focus-visible { outline: 2px solid var(--brand-2); outline-offset: 2px; }
+  .cal-tab.is-on {
+    background: var(--text-2); color: #fff;
+    box-shadow: 0 8px 20px -8px rgba(21, 16, 42, 0.55);
+  }
+
+  /* 大卡片：一次只顯示一個年級 */
   .calendar-boards {
-    margin-top: 60px;
-    display: grid;
-    grid-template-columns: repeat(3, minmax(0, 1fr));
-    gap: 26px;
-    align-items: start;
-  }
-  /* 國中部 / 高中部 的分隔標題，佔滿整排 */
-  .calendar-boards-head {
-    grid-column: 1 / -1;
-    display: flex; align-items: center; gap: 14px;
-    font-family: 'Noto Sans TC', sans-serif;
-    font-size: 0.92rem; font-weight: 800; color: #fff;
-    letter-spacing: 0.06em;
-    margin-top: 6px;
-  }
-  .calendar-boards-head::after {
-    content: ''; flex: 1; height: 1px;
-    background: linear-gradient(90deg, rgba(255,255,255,0.18), transparent);
-  }
-  .calendar-boards-head:first-child { margin-top: 0; }
-  @media (max-width: 1100px) {
-    .calendar-boards { grid-template-columns: repeat(2, minmax(0, 1fr)); }
-  }
-  @media (max-width: 680px) {
-    .calendar-boards { grid-template-columns: 1fr; gap: 20px; }
+    max-width: 920px;
+    margin: 28px auto 0;
   }
   .calendar-board {
+    display: none;
     margin: 0;
-    display: flex;
     flex-direction: column;
-    gap: 18px;
-    background: linear-gradient(180deg, rgba(255,255,255,0.035) 0%, rgba(255,255,255,0.01) 100%);
+    gap: 22px;
+    background: var(--surface-3);
     border: 1px solid var(--border);
-    border-radius: var(--r-lg);
-    padding: 24px;
-    transition: transform 0.3s var(--ease), border-color 0.3s var(--ease), box-shadow 0.3s var(--ease);
+    border-radius: 28px;
+    padding: 28px;
+    box-shadow: 0 40px 90px -40px rgba(60, 40, 140, 0.40);
   }
-  .calendar-board:hover {
-    transform: translateY(-4px);
-    border-color: rgba(255,215,112,0.35);
-    box-shadow: 0 30px 70px -20px rgba(0,0,0,0.55);
+  .calendar-board.is-on { display: flex; animation: calIn .45s var(--ease); }
+  @keyframes calIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to   { opacity: 1; transform: none; }
   }
   .calendar-board-caption {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
+    display: flex; align-items: flex-end; justify-content: space-between;
+    gap: 18px; flex-wrap: wrap;
     padding: 0 4px;
   }
+  .calendar-board-text { display: flex; flex-direction: column; gap: 6px; min-width: 0; }
   .calendar-board-kicker {
     font-family: 'Inter', sans-serif;
-    font-size: 0.7rem;
-    font-weight: 800;
-    letter-spacing: 3.2px;
-    color: var(--gold);
+    font-size: 0.72rem; font-weight: 800; letter-spacing: 0.22em;
+    color: var(--brand-2);
   }
   .calendar-board-title {
     font-family: 'Noto Serif TC', serif;
-    font-size: 1.08rem;
-    font-weight: 700;
-    color: #fff;
-    letter-spacing: 0.01em;
+    font-size: 1.6rem; font-weight: 700; line-height: 1.25;
+    color: var(--text);
   }
+  .calendar-board-meta { font-size: 0.88rem; color: var(--text-3); opacity: 0.8; }
+  .calendar-board-actions { display: flex; gap: 10px; flex: none; }
+  .cal-btn {
+    display: inline-flex; align-items: center; gap: 7px;
+    font-size: 0.86rem; font-weight: 700; text-decoration: none;
+    padding: 10px 16px; border-radius: 999px;
+    transition: transform .2s var(--ease), background .2s var(--ease), box-shadow .2s var(--ease);
+  }
+  .cal-btn svg { width: 16px; height: 16px; }
+  .cal-btn:hover { transform: translateY(-1px); }
+  .cal-btn.is-ghost {
+    color: var(--text-2); background: #fff; border: 1px solid var(--border-strong);
+  }
+  .cal-btn.is-solid {
+    color: #fff; background: var(--text-2); border: 1px solid var(--text-2);
+    box-shadow: 0 10px 22px -10px rgba(21, 16, 42, 0.6);
+  }
+
   .calendar-board-frame {
-    position: relative;
-    display: block;
-    border-radius: 14px;
-    overflow: hidden;
+    position: relative; display: block;
+    border-radius: 18px; overflow: hidden;
     border: 1px solid var(--border);
     background: #fff;
     cursor: zoom-in;
-    transition: transform 0.4s var(--ease), box-shadow 0.4s var(--ease);
   }
   .calendar-board-frame picture { display: block; }
   .calendar-board-frame img {
-    display: block;
-    width: 100%;
-    height: auto;
+    display: block; width: 100%; height: auto;
     transition: transform 0.6s var(--ease);
   }
-  .calendar-board-frame:hover img { transform: scale(1.02); }
+  .calendar-board-frame:hover img { transform: scale(1.012); }
   .calendar-board-zoom {
-    position: absolute;
-    right: 14px;
-    bottom: 14px;
-    display: inline-flex;
-    align-items: center;
-    gap: 6px;
+    position: absolute; right: 14px; bottom: 14px;
+    display: inline-flex; align-items: center; gap: 6px;
     padding: 8px 14px;
-    background: rgba(20,22,34,0.82);
-    backdrop-filter: blur(12px);
-    -webkit-backdrop-filter: blur(12px);
-    border: 1px solid rgba(255,255,255,0.18);
+    background: rgba(21, 16, 42, 0.82);
+    backdrop-filter: blur(12px); -webkit-backdrop-filter: blur(12px);
     border-radius: 999px;
     font-family: 'Inter', 'Noto Sans TC', sans-serif;
-    font-size: 0.78rem;
-    font-weight: 600;
-    color: #fff;
-    letter-spacing: 0.5px;
-    opacity: 0;
-    transform: translateY(4px);
+    font-size: 0.78rem; font-weight: 600; color: #fff; letter-spacing: 0.5px;
+    opacity: 0; transform: translateY(4px);
     transition: opacity 0.3s var(--ease), transform 0.3s var(--ease);
     pointer-events: none;
   }
   .calendar-board-frame:hover .calendar-board-zoom,
   .calendar-board-frame:focus-visible .calendar-board-zoom {
-    opacity: 1;
-    transform: translateY(0);
+    opacity: 1; transform: translateY(0);
+  }
+
+  @media (max-width: 680px) {
+    .cal-switch { margin-top: 36px; }
+    .cal-tabs { width: 100%; justify-content: flex-start; }
+    .cal-tabs-group { display: none; }
+    .cal-tab { padding: 9px 16px; font-size: 0.9rem; }
+    .calendar-boards { margin-top: 18px; }
+    .calendar-board { padding: 16px; gap: 16px; border-radius: 22px; }
+    .calendar-board-title { font-size: 1.3rem; }
+    .calendar-board-actions { width: 100%; }
+    .cal-btn { flex: 1; justify-content: center; }
+    .calendar-board-frame { border-radius: 14px; }
   }
 
   .calendar-grid {
@@ -5698,7 +5730,6 @@
 
   @media (max-width: 900px) {
     .calendar-section { padding: 90px 0; }
-    .calendar-boards { grid-template-columns: 1fr; gap: 20px; margin-top: 40px; }
     .calendar-grid { grid-template-columns: 1fr; gap: 18px; margin-top: 32px; }
     .calendar-board-zoom { opacity: 1; transform: translateY(0); }
   }
@@ -10662,79 +10693,106 @@ document.addEventListener('DOMContentLoaded', function () {
       </p>
     </div>
 
-    <!-- 段考行事曆圖片 -->
-    <div class="calendar-boards fade-up">
-      <div class="calendar-boards-head">國中部</div>
-      <figure class="calendar-board">
-        <figcaption class="calendar-board-caption">
-          <span class="calendar-board-kicker">GRADE 7 · 國七</span>
-          <span class="calendar-board-title">115 國七 英數行事曆（開學～一段）</span>
-        </figcaption>
-        <a class="calendar-board-frame" href="115國七行事曆.webp" target="_blank" rel="noopener" aria-label="點擊放大 國七行事曆">
-          <picture><source srcset="115國七行事曆.webp" type="image/webp" /><img src="115國七行事曆.jpg" alt="115 國七 英數行事曆（開學～一段）" width="1131" height="1600" loading="lazy" decoding="async" /></picture>
-          <span class="calendar-board-zoom" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-            點擊放大
-          </span>
-        </a>
-      </figure>
+    <!-- 段考行事曆：上面切年級，下面一次顯示一張大圖 -->
+    <div class="cal-switch fade-up">
+      <div class="cal-tabs" role="tablist" aria-label="選擇年級">
+      <span class="cal-tabs-group">國中部</span>
+      <button type="button" class="cal-tab is-on" role="tab" id="calTab-g7" aria-controls="calPanel-g7" aria-selected="true" data-cal="g7">國七</button>
+      <button type="button" class="cal-tab" role="tab" id="calTab-g8" aria-controls="calPanel-g8" aria-selected="false" data-cal="g8">國八</button>
+      <button type="button" class="cal-tab" role="tab" id="calTab-g9" aria-controls="calPanel-g9" aria-selected="false" data-cal="g9">國九</button>
+      <span class="cal-tabs-sep" aria-hidden="true"></span>
+      <span class="cal-tabs-group">高中部</span>
+      <button type="button" class="cal-tab" role="tab" id="calTab-s1" aria-controls="calPanel-s1" aria-selected="false" data-cal="s1">高一</button>
+      <button type="button" class="cal-tab" role="tab" id="calTab-s2" aria-controls="calPanel-s2" aria-selected="false" data-cal="s2">高二</button>
+      </div>
 
-      <figure class="calendar-board">
-        <figcaption class="calendar-board-caption">
-          <span class="calendar-board-kicker">GRADE 8 · 國八</span>
-          <span class="calendar-board-title">115 國八 英數理行事曆（開學～一段）</span>
-        </figcaption>
-        <a class="calendar-board-frame" href="115國八行事曆.webp" target="_blank" rel="noopener" aria-label="點擊放大 國八行事曆">
-          <picture><source srcset="115國八行事曆.webp" type="image/webp" /><img src="115國八行事曆.jpg" alt="115 國八 英數理行事曆（開學～一段）" width="1131" height="1600" loading="lazy" decoding="async" /></picture>
-          <span class="calendar-board-zoom" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-            點擊放大
-          </span>
-        </a>
-      </figure>
-
-      <figure class="calendar-board">
-        <figcaption class="calendar-board-caption">
-          <span class="calendar-board-kicker">GRADE 9 · 國九</span>
-          <span class="calendar-board-title">115 國九 一段行事曆</span>
-        </figcaption>
-        <a class="calendar-board-frame" href="115G9一段行事曆.webp" target="_blank" rel="noopener" aria-label="點擊放大 國九行事曆">
-          <picture><source srcset="115G9一段行事曆.webp" type="image/webp" /><img src="115G9一段行事曆.jpg" alt="115 國九 一段行事曆" width="957" height="953" loading="lazy" decoding="async" /></picture>
-          <span class="calendar-board-zoom" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-            點擊放大
-          </span>
-        </a>
-      </figure>
-
-      <div class="calendar-boards-head">高中部</div>
-      <figure class="calendar-board">
-        <figcaption class="calendar-board-caption">
-          <span class="calendar-board-kicker">SENIOR 1 · 高一</span>
-          <span class="calendar-board-title">115 高一 一段行事曆</span>
-        </figcaption>
-        <a class="calendar-board-frame" href="115高一1段行事曆.webp" target="_blank" rel="noopener" aria-label="點擊放大 高一行事曆">
-          <picture><source srcset="115高一1段行事曆.webp" type="image/webp" /><img src="115高一1段行事曆.jpg" alt="115 高一 一段行事曆" width="937" height="1340" loading="lazy" decoding="async" /></picture>
-          <span class="calendar-board-zoom" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-            點擊放大
-          </span>
-        </a>
-      </figure>
-
-      <figure class="calendar-board">
-        <figcaption class="calendar-board-caption">
-          <span class="calendar-board-kicker">SENIOR 2 · 高二</span>
-          <span class="calendar-board-title">115 高二 一段行事曆</span>
-        </figcaption>
-        <a class="calendar-board-frame" href="115高二1段行事曆.webp" target="_blank" rel="noopener" aria-label="點擊放大 高二行事曆">
-          <picture><source srcset="115高二1段行事曆.webp" type="image/webp" /><img src="115高二1段行事曆.jpg" alt="115 高二 一段行事曆" width="861" height="1507" loading="lazy" decoding="async" /></picture>
-          <span class="calendar-board-zoom" aria-hidden="true">
-            <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
-            點擊放大
-          </span>
-        </a>
-      </figure>
+      <div class="calendar-boards">
+        <figure class="calendar-board is-on" role="tabpanel" id="calPanel-g7" aria-labelledby="calTab-g7" data-cal="g7">
+          <figcaption class="calendar-board-caption">
+            <span class="calendar-board-text">
+              <span class="calendar-board-kicker">GRADE 7 · 國七</span>
+              <span class="calendar-board-title">國七 英數行事曆</span>
+              <span class="calendar-board-meta">115 學年度 · 開學 ～ 第一次段考</span>
+            </span>
+            <span class="calendar-board-actions">
+              <a class="cal-btn is-ghost" href="115國七行事曆.webp" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>放大看</a>
+              <a class="cal-btn is-solid" href="115國七行事曆.jpg" download="115國七行事曆.jpg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>存到手機</a>
+            </span>
+          </figcaption>
+          <a class="calendar-board-frame" href="115國七行事曆.webp" target="_blank" rel="noopener" aria-label="點擊放大 國七行事曆">
+            <picture><source srcset="115國七行事曆.webp" type="image/webp" /><img src="115國七行事曆.jpg" alt="115 國七 英數行事曆" width="1131" height="1600" loading="lazy" decoding="async" /></picture>
+            <span class="calendar-board-zoom" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>點擊放大</span>
+          </a>
+        </figure>
+        <figure class="calendar-board" role="tabpanel" id="calPanel-g8" aria-labelledby="calTab-g8" data-cal="g8">
+          <figcaption class="calendar-board-caption">
+            <span class="calendar-board-text">
+              <span class="calendar-board-kicker">GRADE 8 · 國八</span>
+              <span class="calendar-board-title">國八 英數理行事曆</span>
+              <span class="calendar-board-meta">115 學年度 · 開學 ～ 第一次段考</span>
+            </span>
+            <span class="calendar-board-actions">
+              <a class="cal-btn is-ghost" href="115國八行事曆.webp" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>放大看</a>
+              <a class="cal-btn is-solid" href="115國八行事曆.jpg" download="115國八行事曆.jpg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>存到手機</a>
+            </span>
+          </figcaption>
+          <a class="calendar-board-frame" href="115國八行事曆.webp" target="_blank" rel="noopener" aria-label="點擊放大 國八行事曆">
+            <picture><source srcset="115國八行事曆.webp" type="image/webp" /><img src="115國八行事曆.jpg" alt="115 國八 英數理行事曆" width="1131" height="1600" loading="lazy" decoding="async" /></picture>
+            <span class="calendar-board-zoom" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>點擊放大</span>
+          </a>
+        </figure>
+        <figure class="calendar-board" role="tabpanel" id="calPanel-g9" aria-labelledby="calTab-g9" data-cal="g9">
+          <figcaption class="calendar-board-caption">
+            <span class="calendar-board-text">
+              <span class="calendar-board-kicker">GRADE 9 · 國九</span>
+              <span class="calendar-board-title">國九 一段行事曆</span>
+              <span class="calendar-board-meta">115 學年度 · 第一次段考</span>
+            </span>
+            <span class="calendar-board-actions">
+              <a class="cal-btn is-ghost" href="115G9一段行事曆.webp" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>放大看</a>
+              <a class="cal-btn is-solid" href="115G9一段行事曆.jpg" download="115G9一段行事曆.jpg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>存到手機</a>
+            </span>
+          </figcaption>
+          <a class="calendar-board-frame" href="115G9一段行事曆.webp" target="_blank" rel="noopener" aria-label="點擊放大 國九行事曆">
+            <picture><source srcset="115G9一段行事曆.webp" type="image/webp" /><img src="115G9一段行事曆.jpg" alt="115 國九 一段行事曆" width="957" height="953" loading="lazy" decoding="async" /></picture>
+            <span class="calendar-board-zoom" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>點擊放大</span>
+          </a>
+        </figure>
+        <figure class="calendar-board" role="tabpanel" id="calPanel-s1" aria-labelledby="calTab-s1" data-cal="s1">
+          <figcaption class="calendar-board-caption">
+            <span class="calendar-board-text">
+              <span class="calendar-board-kicker">SENIOR 1 · 高一</span>
+              <span class="calendar-board-title">高一 英數物化行事曆</span>
+              <span class="calendar-board-meta">115 學年度 · 第一次段考</span>
+            </span>
+            <span class="calendar-board-actions">
+              <a class="cal-btn is-ghost" href="115高一1段行事曆.webp" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>放大看</a>
+              <a class="cal-btn is-solid" href="115高一1段行事曆.jpg" download="115高一1段行事曆.jpg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>存到手機</a>
+            </span>
+          </figcaption>
+          <a class="calendar-board-frame" href="115高一1段行事曆.webp" target="_blank" rel="noopener" aria-label="點擊放大 高一行事曆">
+            <picture><source srcset="115高一1段行事曆.webp" type="image/webp" /><img src="115高一1段行事曆.jpg" alt="115 高一 英數物化行事曆" width="937" height="1340" loading="lazy" decoding="async" /></picture>
+            <span class="calendar-board-zoom" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>點擊放大</span>
+          </a>
+        </figure>
+        <figure class="calendar-board" role="tabpanel" id="calPanel-s2" aria-labelledby="calTab-s2" data-cal="s2">
+          <figcaption class="calendar-board-caption">
+            <span class="calendar-board-text">
+              <span class="calendar-board-kicker">SENIOR 2 · 高二</span>
+              <span class="calendar-board-title">高二 英數物化行事曆</span>
+              <span class="calendar-board-meta">115 學年度 · 第一次段考</span>
+            </span>
+            <span class="calendar-board-actions">
+              <a class="cal-btn is-ghost" href="115高二1段行事曆.webp" target="_blank" rel="noopener"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>放大看</a>
+              <a class="cal-btn is-solid" href="115高二1段行事曆.jpg" download="115高二1段行事曆.jpg"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 4v11"/><path d="M7 10l5 5 5-5"/><path d="M5 20h14"/></svg>存到手機</a>
+            </span>
+          </figcaption>
+          <a class="calendar-board-frame" href="115高二1段行事曆.webp" target="_blank" rel="noopener" aria-label="點擊放大 高二行事曆">
+            <picture><source srcset="115高二1段行事曆.webp" type="image/webp" /><img src="115高二1段行事曆.jpg" alt="115 高二 英數物化行事曆" width="861" height="1507" loading="lazy" decoding="async" /></picture>
+            <span class="calendar-board-zoom" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>點擊放大</span>
+          </a>
+        </figure>
+      </div>
     </div>
 
     <div class="calendar-grid fade-up">
@@ -12550,6 +12608,56 @@ document.addEventListener('DOMContentLoaded', function () {
     // 處理瀏覽器上一頁/下一頁
     window.addEventListener('hashchange', function () {
       setPage(HASH_TO_PAGE[window.location.hash] || 'home');
+    });
+  })();
+
+  // 段考行事曆：切年級（記住家長上次看的年級）
+  (function calendarSwitch() {
+    var tabs = document.querySelectorAll('.cal-tab');
+    var boards = document.querySelectorAll('.calendar-board[data-cal]');
+    if (!tabs.length || !boards.length) return;
+    var KEY = 'hope_cal_grade';
+    function show(k, focus) {
+      var found = false;
+      boards.forEach(function (b) {
+        var on = b.getAttribute('data-cal') === k;
+        if (on) found = true;
+        b.classList.toggle('is-on', on);
+      });
+      if (!found) return false;
+      tabs.forEach(function (t) {
+        var on = t.getAttribute('data-cal') === k;
+        t.classList.toggle('is-on', on);
+        t.setAttribute('aria-selected', on ? 'true' : 'false');
+        t.tabIndex = on ? 0 : -1;
+        if (on && focus) t.focus();
+        if (on && t.scrollIntoView && t.parentNode.scrollWidth > t.parentNode.clientWidth) {
+          t.parentNode.scrollLeft = t.offsetLeft - 24;
+        }
+      });
+      try { localStorage.setItem(KEY, k); } catch (e) {}
+      return true;
+    }
+    tabs.forEach(function (t, i) {
+      t.addEventListener('click', function () { show(t.getAttribute('data-cal')); });
+      t.addEventListener('keydown', function (e) {
+        var d = e.key === 'ArrowRight' ? 1 : e.key === 'ArrowLeft' ? -1 : 0;
+        if (!d) return;
+        e.preventDefault();
+        var n = tabs[(i + d + tabs.length) % tabs.length];
+        show(n.getAttribute('data-cal'), true);
+      });
+    });
+    var saved = null;
+    try { saved = localStorage.getItem(KEY); } catch (e) {}
+    if (!saved || !show(saved)) show(tabs[0].getAttribute('data-cal'));
+
+    // WebP 萬一沒上傳成功，<picture> 不會自己退回 JPG，這裡補上
+    document.querySelectorAll('.calendar-board picture img').forEach(function (img) {
+      img.addEventListener('error', function () {
+        var src = img.parentNode.querySelector('source');
+        if (src) { src.parentNode.removeChild(src); img.src = img.getAttribute('src'); }
+      }, { once: true });
     });
   })();
 

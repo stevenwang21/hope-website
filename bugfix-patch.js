@@ -1,5 +1,5 @@
 /* ============================================================
-   bugfix-patch.js  ·  2026-09-17 更新（原 09-12 / 09-14 / 09-15 / 09-16）
+   bugfix-patch.js  ·  2026-09-19 更新（原 09-12 / 09-14 / 09-15 / 09-16 / 09-17 / 09-18）
    希望文理補習班網站 bug 修正（測試用，未套進 index.html）
 
    用法：在 index.html 的 </body> 前加一行
@@ -7,15 +7,42 @@
    或直接開 bugfix-test.html 預覽效果。
 
    ------------------------------------------------------------
-   本次（09-17）的異動：
-   · index.html 仍是 09-15 的版本（12,861 行），#4/#5/#6/#A/#B/#C
-     全部複查過，確認「仍然存在」，原樣保留。
-   · 新增 #D：汪老師「理化 DATABASE」的「課程教材」「筆記及詳解」
-     顯示「3 份講義 ›」，點進去三筆卻全是準備中。
-   · 新增 #E：同一個小節 3-2 在 WANG_DB 裡有「酸與鹼」「酸和鹼」兩種寫法。
+   本次（09-19）的異動：
+   · index.html 仍是 12,989 行，與 9/18 完全相同（最後一個 commit 是 9/17）。
+     #4 / #5 / #6 / #A / #C / #D / #E / #F 全部複查後確認「仍然存在」，原樣保留。
+   · 新增 #G：所有彈窗共用的「關閉→立刻再打開就消失」競態。
+     這是這次唯一新增的**功能性**修正，六處彈窗都吃得到。
+   · courses.html 的登入密碼被寫進 console 這件事，因為不在 index.html，
+     另外開了一個檔：bugfix-patch-courses.js。
+
+   09-18 的紀錄（保留備查）：
+   · index.html 已被您更新到 12,989 行（9/17 那三個 commit：
+     SEO/noindex、行事曆改 WebP、移除老師課表面板、資料庫加封面橫幅）。
+   · #B（首頁故事區影片彈窗是空的）→ **您自己修好了**，本檔已移除該段。
+   · #4 / #5 / #6 / #A / #C / #D / #E 複查後確認「仍然存在」，原樣保留。
+   · 新增 #F：過期活動（7/3 升八開課）在首頁最新消息與行事曆都還掛著
+     「現在開始登記」，今天 9/18，過期兩個半月。
+
+   09-17 的紀錄（保留備查）：
+   · #D 理化 DATABASE「3 份講義」點進去一份都打不開。
+   · #E 同一個小節 3-2 有「酸與鹼」「酸和鹼」兩種寫法。
    ============================================================ */
 (function () {
   'use strict';
+
+  /* ============================================================
+     【要改文案的話，改這裡就好】
+     最新消息彈窗目前寫的是 7/3 升八開課，已經過期。
+     把下面改成新的消息，首頁的彈窗就會換掉；
+     維持 null 的話，程式只會在舊標題後面補一行「已過期」的提示，
+     不會擅自幫您編新文案。
+     例：
+       var NEWS_OVERRIDE = {
+         title: '10 月 6 日 國八理化第二次段考衝刺班',
+         body:  '兩週密集複習，現在開放登記。'
+       };
+     ============================================================ */
+  var NEWS_OVERRIDE = null;
 
   function ready(fn) {
     if (document.readyState !== 'loading') fn();
@@ -104,34 +131,16 @@
     })();
 
     /* --------------------------------------------------------
-       #B 首頁故事區的影片縮圖點下去，彈窗會開，但裡面是空的
-          ← 仍然存在
+       #B 首頁故事區的影片縮圖點下去，彈窗是空的  ← ✅ 已解決，本段移除
 
-       #storyVideoLink（8302 行）的 click 處理（12320 行）
-       只做了「modal.hidden = false」＋加上 is-open class，
-       沒有呼叫 teacherVideoModalsInit()（10063 行）裡的
-         · mountLive(modal)       → 建立課堂實錄的 YouTube iframe
-         · window.wangDbLayout()  → 重算「理化 DATABASE」扇形排版
-       （這兩個只有從師資頁點汪老師卡片進去時，
-         10126–10127 行才會被呼叫。）
-
-       結果：從首頁進去看到的是空白影片框 ＋ 沒排好的清單，
-       從師資頁進去卻是正常的。
-
-       → 讓 storyVideoLink 改為「轉交」給 #teacherWang 的完整流程。
+       這個問題的成因是：彈窗右側原本是「課堂實錄」影片框，
+       需要 mountLive() 建 iframe，而從首頁進去的路徑沒呼叫它。
+       您 9/17 把右側整個改成「理化 DATABASE」清單之後，
+       內容改由 wangDatabaseInit() 在頁面載入時就渲染好，
+       不再需要開啟時的初始化 → 兩條路徑現在結果一致。
+       複查 index.html 12947–12957 行與 10627–10633 行確認無誤，
+       這段補丁已經沒有作用，移除。
        -------------------------------------------------------- */
-    (function fixStoryVideoModal() {
-      var link = document.getElementById('storyVideoLink');
-      var teacherWang = document.getElementById('teacherWang');
-      if (!link || !teacherWang) return;
-
-      // 這個 listener 比 index.html 內建的晚註冊，所以會在它之後執行：
-      // 彈窗已經被打開，這裡只負責把缺掉的初始化補上。
-      link.addEventListener('click', function (e) {
-        e.preventDefault();
-        teacherWang.click();   // 走完整的 open()：mountLive + wangDbLayout
-      });
-    })();
 
     /* --------------------------------------------------------
        #C 聯絡簿卡片的日期會把「很舊的文章」講成像是今年的  ← 新
@@ -357,6 +366,224 @@
           walk(it.byGrade[g]);
         });
       });
+    })();
+
+    /* --------------------------------------------------------
+       #F 首頁最顯眼的兩個地方，都還掛著過期兩個半月的活動  ← 新
+
+       今天是 2026-09-18。但：
+
+       (a) 行事曆第一張卡（index.html 10741–10753 行）
+             JUL / 03 / 2026
+             「升八年級理化開課」
+             「七月正式開班，現在開始登記，預約劃位中。名額有限，先搶先贏。」
+             [LINE 立即預約 →]
+           而且它帶著 class="calendar-card highlight"，是整頁最亮的那張。
+
+       (b) 首頁 hero 的「最新消息」彈窗（index.html 8604–8605 行）
+             <h3 class="news-modal-title">7 月 3 日 升八年級理化開課</h3>
+             <p class="news-modal-body">現在開始登記，預約劃位中……</p>
+           這個更嚴重——它是 hero 上那顆 NEWS 膠囊點下去的內容，
+           是訪客進站後最可能點的第一個東西。
+           （前幾份報告只抓到 (a)，(b) 是這次才發現的。）
+
+       家長九月看到「現在開始登記」去點 LINE，得到的是七月的梯次。
+
+       → 程式只能做「誠實」的事，不能幫您編新消息：
+         · 行事曆：把已經過去的日期標成 data-past（外觀降級、
+           tag 改成「已結束」、CTA 從「立即預約」改成「詢問最新梯次」）。
+         · 最新消息：標題後面補一行「此消息已過期」的提示。
+         · 想直接換掉文案，把本檔最上面的 NEWS_OVERRIDE 填一填就好。
+
+       （正式版的根治做法：10741–10759 與 8604–8605 直接換成新文案。
+         這兩處只有您能決定要寫什麼。）
+       -------------------------------------------------------- */
+    (function markExpiredNews() {
+      var MONTHS = { JAN:0, FEB:1, MAR:2, APR:3, MAY:4, JUN:5,
+                     JUL:6, AUG:7, SEP:8, OCT:9, NOV:10, DEC:11 };
+      var today = new Date();
+      today.setHours(0, 0, 0, 0);
+
+      /* ---- (a) 行事曆卡片 ---- */
+      document.querySelectorAll('.calendar-card').forEach(function (card) {
+        var mEl = card.querySelector('.calendar-month');
+        var dEl = card.querySelector('.calendar-day');
+        var yEl = card.querySelector('.calendar-year');
+        if (!mEl || !dEl || !yEl) return;
+
+        var mo = MONTHS[(mEl.textContent || '').trim().toUpperCase()];
+        var day = parseInt((dEl.textContent || '').trim(), 10);
+        var yr = parseInt((yEl.textContent || '').trim(), 10);
+        // TBA / 敬請期待 之類的卡片解析不出來，直接跳過（那是「未定」不是「過期」）
+        if (mo === undefined || isNaN(day) || isNaN(yr)) return;
+
+        var when = new Date(yr, mo, day);
+        if (when >= today) return;
+
+        card.setAttribute('data-past', 'true');
+        card.classList.remove('highlight');
+
+        var tag = card.querySelector('.calendar-tag');
+        if (tag && tag.textContent.indexOf('已結束') === -1) {
+          tag.textContent = 'ENDED · 已結束';
+        }
+        var link = card.querySelector('.calendar-link');
+        if (link && link.textContent.indexOf('最新梯次') === -1) {
+          link.textContent = 'LINE 詢問最新梯次 →';
+        }
+      });
+
+      /* ---- (b) 最新消息彈窗 ---- */
+      var title = document.querySelector('.news-modal-title');
+      var body = document.querySelector('.news-modal-body');
+      if (!title) return;
+
+      if (NEWS_OVERRIDE && NEWS_OVERRIDE.title) {
+        title.textContent = NEWS_OVERRIDE.title;
+        if (body && NEWS_OVERRIDE.body) body.textContent = NEWS_OVERRIDE.body;
+        return;
+      }
+
+      // 標題像「7 月 3 日 …」→ 解析出月/日，判斷是否已經過去
+      var m = /(\d{1,2})\s*月\s*(\d{1,2})\s*日/.exec(title.textContent || '');
+      if (!m) return;
+
+      var when2 = new Date(today.getFullYear(), +m[1] - 1, +m[2]);
+      // 標題不寫年份，一律當成今年；離今天超過 14 天才算「過期」，
+      // 避免「下週開課」這種還沒到的消息被誤標。
+      var daysAgo = Math.floor((today - when2) / 86400000);
+      if (daysAgo < 14) return;
+
+      title.setAttribute('data-expired', 'true');
+      title.setAttribute('data-expired-note',
+        '⚠ 這則消息的日期已經過了 ' + daysAgo + ' 天（' +
+        (today.getFullYear()) + '/' + m[1] + '/' + m[2] +
+        '）。最新梯次請直接用下方 LINE 詢問。');
+
+      if (body && body.textContent.indexOf('現在開始登記') !== -1) {
+        body.textContent = '本梯次已開課。下一梯的時間與名額，請用下方 LINE 或電話詢問。';
+      }
+    })();
+
+    /* --------------------------------------------------------
+       #G 彈窗「關閉之後馬上再打開，會自己消失」  ← 新（09-19）
+
+       全站的彈窗關閉都是同一個寫法：先把 is-open 拿掉讓它淡出，
+       再用 setTimeout 等動畫跑完才真的 hidden = true。
+       例（index.html 8625–8629 行，最新消息）：
+
+         function close(){
+           modal.classList.remove('is-open');
+           setTimeout(function(){ modal.hidden = true; }, 250);
+           document.body.style.overflow = '';
+         }
+
+       問題是**那個 timer 沒有人取消**。
+       使用者按了「×」之後，在動畫跑完前（0.25～0.32 秒內）又點了
+       同一顆按鈕重新打開 —— open() 先把 hidden 設回 false、加上 is-open，
+       接著那個還在排隊的舊 timer 才燒到，又把 hidden 設成 true。
+       畫面上就是：點了、閃一下、不見了，要再點第三次才會出來。
+
+       同一個寫法在六個地方出現，行號與附帶災情：
+
+         8627  最新消息 newsModal              只有 hidden
+         9712  線上課程購物車（已停用的區塊）   只有 hidden
+        10637  四位老師的影片彈窗              hidden ＋ unmountLive()
+                 （wangVideosModal / fangVideosModal /
+                   lianVideosModal / houVideosModal）
+        12396  會考英雄榜 championLightbox     只有 hidden
+        12851  家長選擇我們的理由 bentoModal   hidden ＋ body.innerHTML = ''
+        12913  獎學金放大 scholarshipZoom      hidden ＋ img.src = ''
+
+       最後兩個比較嚴重：舊 timer 不只會把彈窗藏起來，還會把剛剛才
+       填好的內容清空 —— 所以就算硬把它顯示回來，也是一張白卡片。
+
+       0.25 秒聽起來很短，但「關錯了、馬上再點一次」正是最常見的操作，
+       手機上連點兩下更容易踩到。
+
+       → 這裡用 MutationObserver 監看所有彈窗的 hidden 屬性：
+         只要偵測到「還掛著 is-open，卻被設成 hidden」這個不可能的狀態，
+         就把它擋回去；bentoModal 與 scholarshipZoom 另外把被清掉的
+         內容補回來（開啟時先記下來）。
+
+       （正式版的根治做法：把 timer 存起來，open() 裡先 clearTimeout。
+         六處都一樣，例如最新消息那一段改成：
+
+           var closeTimer = null;
+           function open(){
+             clearTimeout(closeTimer);        // ← 加這一行
+             modal.hidden = false;
+             ...
+           }
+           function close(){
+             modal.classList.remove('is-open');
+             closeTimer = setTimeout(function(){ modal.hidden = true; }, 250);
+             ...
+           }
+       ）
+       -------------------------------------------------------- */
+    (function fixModalReopenRace() {
+      if (!window.MutationObserver) return;
+
+      /* ---- 先記住「內容會被舊 timer 清掉」的那兩個彈窗開啟時的狀態 ---- */
+      var lastBentoHTML = '';
+      var lastZoomSrc   = '';
+
+      // 家長選擇我們的理由：點卡片時，正式版會把卡片內容組進彈窗；
+      // 這裡在同一個時機把組好的結果抄一份起來。
+      document.querySelectorAll('.bento-card[data-bento]').forEach(function (card) {
+        card.addEventListener('click', function () {
+          // 等正式版的 handler 先跑完再抄
+          setTimeout(function () {
+            var body = document.getElementById('bentoModalBody');
+            if (body && body.innerHTML.trim()) lastBentoHTML = body.innerHTML;
+          }, 0);
+        });
+      });
+
+      var zoomImg = document.getElementById('scholarshipZoomImg');
+      if (zoomImg && window.MutationObserver) {
+        new MutationObserver(function () {
+          var s = zoomImg.getAttribute('src') || '';
+          if (s) lastZoomSrc = s;          // 只記有東西的時候，被清空不覆寫
+        }).observe(zoomImg, { attributes: true, attributeFilter: ['src'] });
+      }
+
+      /* ---- 主要守門員 ---- */
+      function guard(el) {
+        if (!el || el.__reopenGuarded) return;
+        el.__reopenGuarded = true;
+
+        new MutationObserver(function () {
+          // 「還在開著（is-open）卻被藏起來」＝ 一定是舊 timer 燒過頭了
+          if (!el.hidden || !el.classList.contains('is-open')) return;
+
+          el.hidden = false;
+
+          if (el.id === 'bentoModal') {
+            var body = document.getElementById('bentoModalBody');
+            if (body && !body.innerHTML.trim() && lastBentoHTML) {
+              body.innerHTML = lastBentoHTML;
+            }
+          }
+          if (el.id === 'scholarshipZoom') {
+            var img = document.getElementById('scholarshipZoomImg');
+            if (img && !img.getAttribute('src') && lastZoomSrc) {
+              img.setAttribute('src', lastZoomSrc);
+            }
+          }
+          // 彈窗還開著，捲動鎖不該被前一次的 close() 解掉
+          document.body.style.overflow = 'hidden';
+        }).observe(el, { attributes: true, attributeFilter: ['hidden'] });
+      }
+
+      [
+        'newsModal', 'championLightbox', 'bentoModal', 'scholarshipZoom',
+        'wangVideosModal', 'fangVideosModal', 'lianVideosModal', 'houVideosModal'
+      ].forEach(function (id) { guard(document.getElementById(id)); });
+
+      // 線上課程的購物車彈窗（目前入口已停用，一併保護以免日後開回來）
+      document.querySelectorAll('.shop-modal').forEach(guard);
     })();
 
   });

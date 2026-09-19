@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex, nofollow" />
-<title>Bug 修正測試頁 · 2026-09-17 · 希望文理補習班</title>
+<title>Bug 修正測試頁 · 2026-09-19 · 希望文理補習班</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -62,7 +62,7 @@
 <body>
 
 <div class="bar">
-  <strong>Bug 修正測試頁 · 2026-09-17</strong>
+  <strong>Bug 修正測試頁 · 2026-09-19</strong>
   <span class="sep"></span>
   <button id="toggle" class="on">修正：已套用</button>
   <span class="sep"></span>
@@ -78,20 +78,44 @@
   這一頁把正式版 <code>index.html</code> 嵌進來，再即時注入
   <code>bugfix-patch.css</code> / <code>bugfix-patch.js</code>，
   <strong>完全不會修改 index.html</strong>。切「手機 390px」，按開關比較前後差異：<br>
-  ① 底部導覽列「目前所在頁」會不會亮成黑底白字（#A）<br>
-  ② 首頁最下面那排按鈕有沒有被底部導覽列壓到（#5・本次新增）<br>
-  ③ 首頁故事區那張影片縮圖點下去，彈窗裡的影片有沒有真的出現（#B）<br>
+  ① 底部導覽列「目前所在頁」會不會亮起來（#A ＋ #10 的顏色提案）<br>
+  ② 首頁最下面那排按鈕有沒有被底部導覽列壓到（#5）<br>
+  ③ <strong>【本次新增】</strong>hero 上那顆「NEWS 最新消息」點下去 →
+     「7 月 3 日 升八年級理化開課」底下會不會多一行紅色的
+     「此消息已過期」提示（#F）<br>
   ④ 切到「預約諮詢」分頁，頁尾（含 Facebook 連結、版權）會不會出現（#2）<br>
   ⑤ 聯絡簿分頁裡未開放的那 6 張卡片會不會變淡、箭頭消失（#4）<br>
-  ⑥ 聯絡簿「高二化學」的日期會不會從「7/9 更新」變成「2024/7/9 更新」並淡掉（#C・本次新增）<br>
+  ⑥ 聯絡簿「高二化學」的日期會不會從「7/9 更新」變成「2024/7/9 更新」並淡掉（#C）<br>
   ⑦ 首頁故事區右側那段說明文字顏色有沒有變成淺一階的灰（#6）<br>
   ⑧ 師資頁點汪飛白老師 → 右側「理化 DATABASE」的
      <strong>「課程教材」「筆記及詳解」</strong>會不會從「3 份講義 ›」
-     變成灰掉的「內容準備中」（#D・本次新增）<br>
+     變成灰掉的「內容準備中」（#D）<br>
   ⑨ 同一個彈窗裡「02 課程影片」的 3-2 會不會從「酸<u>與</u>鹼」
-     統一成「酸<u>和</u>鹼」（#E・本次新增）<br>
+     統一成「酸<u>和</u>鹼」（#E）<br>
+  ⑩ <strong>【本次新增】</strong>切到「行事曆」分頁，第一張
+     「JUL 03 2026 升八年級理化開課」會不會從金色 highlight 變成
+     灰掉的「ENDED · 已結束」（#F）<br>
+  ⑪ <strong>【本次新增】</strong>把上面的尺寸選單改成
+     <strong>平板 820px</strong>，再把瀏覽器視窗慢慢縮到大約 600px 寬，
+     開汪老師的「02 課程影片」——關閉修正時，新做的封面橫幅會凸出卡片、
+     多一條橫向捲軸；套用修正後就會貼齊（#8・本次新增）<br>
+  ⑫ <strong>【本次新增・09-19】</strong>彈窗「關閉→立刻再開」會消失的問題（#G）：<br>
+  　　建議用<strong>桌機（滿寬）</strong>測。先「關閉修正」，點 hero 上的
+  　　「NEWS 最新消息」→ 按右上角「×」→ <strong>在半秒內</strong>再點一次
+  　　NEWS 膠囊 —— 彈窗會閃一下就不見，要再點第三次才出得來。<br>
+  　　再「套用修正」重做同樣動作，第二次點就會正常留在畫面上。<br>
+  　　同一招在「會考英雄榜」橫幅、「家長選擇我們的理由」卡片、
+  　　獎學金圖片放大、四位老師的影片彈窗都可以複製。
+  　　其中<strong>「家長選擇我們的理由」與獎學金放大</strong>最明顯 ——
+  　　關閉修正時，快速再開會得到一張<strong>空白卡片</strong>（內容被清掉了）。<br>
+  ※ 2026-09-19 複查：index.html 與 9/18 完全相同（12,989 行），
+  　 ①～⑪ 全部仍然有效，沒有任何一項被正式版修掉。<br>
+  ※ 2026-09-18 複查：首頁故事區影片彈窗（原 #B）已由正式版自行修好，本次修正檔已移除該段。<br>
   ※ 2026-09-15 複查：手機漢堡選單已由正式版自行修好，本次修正檔已移除該段。<br>
   家長後台（tracking.html）的修正在另一頁：<code>bugfix-test-tracking.html</code>。<br>
+  線上補課區（courses.html）本次新開一個修正檔 <code>bugfix-patch-courses.js</code>，
+  但它<strong>必須放在 courses.html 的 &lt;head&gt; 才有作用</strong>（要趕在內嵌 script 之前），
+  沒辦法像這一頁一樣用 iframe 注入，所以沒有對應的測試頁 —— 詳見檔案開頭說明。<br>
   ※ 請用 <code>啟動本機伺服器.bat</code> 起本機伺服器後開這一頁（直接雙擊開檔會被瀏覽器的
   file:// 安全限制擋住，無法注入）。
 </div>
