@@ -4421,6 +4421,15 @@
     display: block;
   }
 
+  .teacher-classes {
+    display: flex; flex-wrap: wrap; justify-content: center; gap: 6px;
+    margin-top: 14px;
+  }
+  .teacher-classes span {
+    font-size: 0.74rem; font-weight: 700; color: var(--text-2);
+    padding: 4px 10px; border-radius: 999px;
+    background: rgba(91, 71, 188, 0.08); border: 1px solid var(--border);
+  }
   .teacher-card.featured .teacher-avatar {
     background: var(--g-gold);
     box-shadow: 0 20px 40px -15px rgba(246,196,99,0.6);
@@ -8159,7 +8168,9 @@
       stroke-width: 2;
       transition: stroke-width 0.2s;
     }
-    /* 六個項目，字要小一點、不換行 */
+    /* 七個項目：間距收一點，字要小一點、不換行 */
+    .mobile-bottom-nav { padding-left: 6px; padding-right: 6px; gap: 0; }
+    .mob-nav-item { padding: 8px 2px; }
     .mob-nav-item span {
       font-size: 0.62rem;
       font-weight: 600;
@@ -8168,10 +8179,10 @@
     }
     /* 很窄的手機（iPhone SE 等）再收一點 */
     @media (max-width: 380px) {
-      .mobile-bottom-nav { padding: 7px 6px; gap: 2px; }
-      .mob-nav-item { padding: 7px 2px; }
-      .mob-nav-item svg { width: 20px; height: 20px; }
-      .mob-nav-item span { font-size: 0.58rem; }
+      .mobile-bottom-nav { padding: 7px 4px; gap: 0; }
+      .mob-nav-item { padding: 7px 1px; }
+      .mob-nav-item svg { width: 19px; height: 19px; }
+      .mob-nav-item span { font-size: 0.56rem; }
     }
     .mob-nav-item:active {
       transform: scale(0.92);
@@ -10094,6 +10105,15 @@ document.addEventListener('DOMContentLoaded', function () {
           <div class="teacher-sub">數學 · 高中</div>
           <p class="teacher-desc">高中數學系統化教學，函數、微積分、機率統計章節分段拆解，讓孩子面對段考、學測都游刃有餘。</p>
         </div>
+        <div class="teacher-card fade-up">
+          <div class="teacher-avatar"><img src="teacher-yuanxin.jpg" alt="元欣主導師" loading="lazy" decoding="async"></div>
+          <h4>元欣 主導師</h4>
+          <div class="teacher-sub">自然科主導師 · 國八 · 國九</div>
+          <p class="teacher-desc">10 多年帶班經驗，熟悉同學在理化學習上可能遇到的各種問題。照顧學習的同時也兼顧心理，不論是同儕人際或青春期與家長的矛盾，都盡力協助與陪伴，是同學和家長之間最好的溝通橋樑。</p>
+          <div class="teacher-classes" aria-label="帶領班級">
+            <span>國八理化</span><span>國九理化</span><span>國九自然總複習</span>
+          </div>
+        </div>
       </div>
       <div class="teachers-dots" id="teachersDots" aria-hidden="true">
         <button class="dot active" data-idx="0" aria-label="第 1 位老師"></button>
@@ -10103,6 +10123,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <button class="dot" data-idx="4" aria-label="第 5 位老師"></button>
         <button class="dot" data-idx="5" aria-label="第 6 位老師"></button>
         <button class="dot" data-idx="6" aria-label="第 7 位老師"></button>
+        <button class="dot" data-idx="7" aria-label="第 8 位老師"></button>
       </div>
       <div class="teachers-hint" aria-hidden="true">← 滑動查看更多老師 →</div>
     </div>
@@ -13074,6 +13095,10 @@ document.addEventListener('DOMContentLoaded', function () {
   <a href="#courses" class="mob-nav-item" data-page="courses">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M4 19.5A2.5 2.5 0 0 1 6.5 17H20"/><path d="M6.5 2H20v20H6.5A2.5 2.5 0 0 1 4 19.5v-15A2.5 2.5 0 0 1 6.5 2z"/></svg>
     <span>聯絡簿</span>
+  </a>
+  <a href="#calendar" class="mob-nav-item" data-page="calendar">
+    <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4.5" width="18" height="16.5" rx="3"/><path d="M3 9.5h18"/><path d="M8 2.5v4"/><path d="M16 2.5v4"/></svg>
+    <span>行事曆</span>
   </a>
   <a href="#dm" class="mob-nav-item" data-page="dm">
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="3"/><path d="M3 9h18"/><path d="M9 21V9"/></svg>
