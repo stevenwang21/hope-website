@@ -4269,12 +4269,25 @@
     margin: 0 auto;
     padding: 20px 0;
   }
-  .process-image-wrap img {
+  .process-image-wrap .process-image-full {
     width: 100%;
     height: auto;
     display: block;
     border-radius: 18px;
     box-shadow: 0 24px 60px -22px rgba(13, 7, 38, 0.18);
+  }
+  .process-image-steps { display: none; }
+  @media (max-width: 680px) {
+    .process-image-wrap .process-image-full { display: none; }
+    .process-image-steps {
+      display: grid; grid-template-columns: 1fr 1fr; gap: 10px;
+      list-style: none; margin: 0; padding: 0;
+    }
+    .process-image-steps li {
+      border-radius: 14px; overflow: hidden;
+      box-shadow: 0 14px 34px -18px rgba(13, 7, 38, 0.35);
+    }
+    .process-image-steps img { display: block; width: 100%; height: auto; }
   }
 
     .process-grid {
@@ -9063,7 +9076,14 @@ document.addEventListener('DOMContentLoaded', function () {
     </div>
 
     <div class="process-image-wrap fade-up">
-      <img src="試聽報名上課輔導.webp" alt="試聽 · 報名 · 上課 · 輔導" loading="lazy" decoding="async" />
+      <!-- 電腦：一張橫幅；手機：拆成四格 2×2，字才看得清楚 -->
+      <img class="process-image-full" src="試聽報名上課輔導.webp" alt="四步驟：01 免費試聽、02 完成報名、03 上課、04 輔導" width="2172" height="724" loading="lazy" decoding="async" />
+      <ol class="process-image-steps" aria-hidden="true">
+        <li><img src="流程-1.webp" alt="" width="520" height="625" loading="lazy" decoding="async" /></li>
+        <li><img src="流程-2.webp" alt="" width="520" height="625" loading="lazy" decoding="async" /></li>
+        <li><img src="流程-3.webp" alt="" width="527" height="625" loading="lazy" decoding="async" /></li>
+        <li><img src="流程-4.webp" alt="" width="516" height="625" loading="lazy" decoding="async" /></li>
+      </ol>
     </div>
   </div>
 </section>
