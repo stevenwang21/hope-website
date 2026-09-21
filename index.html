@@ -562,6 +562,40 @@
     margin: 0 auto;
     width: 100%;
   }
+
+  /* ========== Hero 主標題（2026-09-21 補回）==========
+     原本首屏只有 NEWS 膠囊和兩顆按鈕，沒有任何一句話介紹自己，
+     整份 index.html 也沒有 <h1>。這裡把標題補回來。
+     .hero-title / .hero-subtitle 原本只有媒體查詢裡的微調
+     （7717 / 7719 / 8168 行），沒有基礎規則，所以基礎規則寫在這裡。 */
+  .hero-title {
+    font-family: 'Noto Sans TC', 'Inter', sans-serif;
+    font-size: clamp(2.1rem, 4.6vw, 3.6rem);
+    font-weight: 800;
+    line-height: 1.18;
+    letter-spacing: -0.03em;
+    color: #fff;
+    margin: 0 0 16px;
+    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55);
+    animation: fadeInUp 0.9s var(--ease) 0.42s both;
+  }
+  .hero-title-accent {
+    background: linear-gradient(100deg, #ffd770 0%, #ff8bbf 100%);
+    -webkit-background-clip: text;
+    background-clip: text;
+    -webkit-text-fill-color: transparent;
+  }
+  .hero-subtitle {
+    font-size: clamp(0.95rem, 1.5vw, 1.12rem);
+    line-height: 1.75;
+    font-weight: 500;
+    color: rgba(255, 255, 255, 0.88);
+    margin: 0 auto;
+    max-width: 640px;
+    text-shadow: 0 1px 14px rgba(0, 0, 0, 0.5);
+    animation: fadeInUp 0.9s var(--ease) 0.54s both;
+  }
+
   /* 預約按鈕：跟 NEWS 一起在 hero-inner 內，不額外定位 */
   .hero > .container .hero-buttons {
     margin-top: 24px !important;
@@ -4264,10 +4298,10 @@
 
 
   /* ===== 首頁下方 · 聯絡資訊橫幅 ===== */
-  section.home-contact { padding: 10px 0 90px; }
-  .hc-banner { max-width: 1200px; margin: 0 auto; }
+  section.home-contact { padding: 30px 0 80px; }
+  .hc-banner { max-width: 860px; margin: 0 auto; }
   .hc-full, .hc-part {
-    position: relative; border-radius: 22px; overflow: hidden;
+    position: relative; border-radius: 18px; overflow: hidden;
     box-shadow: 0 30px 70px -30px rgba(10, 20, 80, 0.55);
     background: #061233;
   }
@@ -8694,6 +8728,14 @@ document.addEventListener('DOMContentLoaded', function () {
         <svg class="news-pill-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </button>
 
+      <!-- 首屏主標題（2026-09-21 補上）。全站原本沒有任何 <h1>。 -->
+      <h1 class="hero-title">
+        深耕台北小巨蛋 <span class="hero-title-accent">30 年</span>的國高中文理補習班
+      </h1>
+      <p class="hero-subtitle">
+        有教無類 · 教學相長 —— 從國七到高三，陪孩子把基礎打穩。
+      </p>
+
       <div class="hero-buttons">
         <a href="#contact" class="btn btn-primary">
           <span>立即預約試聽</span>
@@ -10186,8 +10228,8 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="teacher-card fade-up is-clickable" id="teacherHou" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="houVideosModal">
           <div class="teacher-avatar"><img src="侯昇4.webp" alt="侯昇老師" loading="lazy" decoding="async"></div>
           <h4>侯昇 老師</h4>
-          <div class="teacher-sub">數學 · 國一 · 國三</div>
-          <p class="teacher-desc">擅長把複雜概念拆成清晰脈絡，帶領國一與國三學生穩扎穩打，會考數學高分常勝軍。</p>
+          <div class="teacher-sub">數學 · 國七 · 國九</div>
+          <p class="teacher-desc">擅長把複雜概念拆成清晰脈絡，帶領國七與國九學生穩扎穩打，會考數學高分常勝軍。</p>
           <span class="teacher-cta">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
             試聽影片 · 侯昇老師
@@ -10196,8 +10238,8 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="teacher-card fade-up is-clickable" id="teacherLian" role="button" tabindex="0" aria-haspopup="dialog" aria-controls="lianVideosModal">
           <div class="teacher-avatar"><img src="teacher-lian.webp" alt="連晨老師" loading="lazy" decoding="async"></div>
           <h4>連晨 老師</h4>
-          <div class="teacher-sub">數學 · 國二</div>
-          <p class="teacher-desc">專注國二數學銜接關鍵期，從函數、幾何到應用題，建立孩子扎實的解題邏輯。</p>
+          <div class="teacher-sub">數學 · 國八</div>
+          <p class="teacher-desc">專注國八數學銜接關鍵期，從函數、幾何到應用題，建立孩子扎實的解題邏輯。</p>
           <span class="teacher-cta">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
             試聽影片 · 升八數學說明會
@@ -10207,7 +10249,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <div class="teacher-avatar"><img src="teacher-fang.webp" alt="方昊老師" loading="lazy" decoding="async"></div>
           <h4>方昊 老師</h4>
           <div class="teacher-sub">英文 · 國中 · 高中</div>
-          <p class="teacher-desc">國一到高三一條龍授課，文法、單字、閱讀、寫作完整規劃，銜接段考、會考到學測全面兼顧。</p>
+          <p class="teacher-desc">國七到高三一條龍授課，文法、單字、閱讀、寫作完整規劃，銜接段考、會考到學測全面兼顧。</p>
           <span class="teacher-cta">
             <svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor" aria-hidden="true"><path d="M8 5v14l11-7z"/></svg>
             試聽影片 · 國七／國八／國九
@@ -10400,7 +10442,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="video-card-body">
           <span class="video-card-kicker">MATH · 侯昇老師</span>
           <span class="video-card-title">侯昇老師 數學說明會</span>
-          <span class="video-card-desc">國一、國三數學章節脈絡分析，會考數學高分解題策略。</span>
+          <span class="video-card-desc">國七、國九數學章節脈絡分析，會考數學高分解題策略。</span>
         </div>
       </a>
     </div>
@@ -11079,6 +11121,27 @@ document.addEventListener('DOMContentLoaded', function () {
         <div class="school-name">政大附中</div>
         <div class="school-en">NCCU Affiliated Senior</div>
       </div>
+      <!-- 2026-09-21 補上：這四所原本只出現在首頁跑馬燈與小飛的回答裡，榜單反而沒有 -->
+      <div class="school-card fade-up">
+        <div class="school-rank">TOP 07</div>
+        <div class="school-name">中崙高中</div>
+        <div class="school-en">Zhonglun Senior High</div>
+      </div>
+      <div class="school-card fade-up">
+        <div class="school-rank">TOP 08</div>
+        <div class="school-name">西松高中</div>
+        <div class="school-en">Xisong Senior High</div>
+      </div>
+      <div class="school-card fade-up">
+        <div class="school-rank">TOP 09</div>
+        <div class="school-name">麗山高中</div>
+        <div class="school-en">Lishan Senior High</div>
+      </div>
+      <div class="school-card fade-up">
+        <div class="school-rank">TOP 10</div>
+        <div class="school-name">大直高中</div>
+        <div class="school-en">Dazhi Senior High</div>
+      </div>
       <div class="school-card star fade-up">
         <div class="school-rank">★ 滿級分</div>
         <div class="school-name">會考 5A++</div>
@@ -11501,7 +11564,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <div class="faq-icon">+</div>
         </div>
         <div class="faq-a">
-          <p>採學期制收費，一次收費半年。詳細費用請諮詢櫃台，會依孩子年級與選修課程提供報價。</p>
+          <p>採學期制收費，一次收費半年，<strong>目前沒有按月分期</strong>。詳細費用請諮詢櫃台，會依孩子年級與選修課程提供報價。</p>
         </div>
       </div>
       <div class="faq-item">
@@ -11510,7 +11573,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <div class="faq-icon">+</div>
         </div>
         <div class="faq-a">
-          <p>透過 LINE 官方帳號、線上連絡簿、定期家長會與導師一對一通話，家長可從多個管道掌握孩子的學習狀況。</p>
+          <p>透過 LINE 官方帳號、線上聯絡簿、定期家長會與導師一對一通話，家長可從多個管道掌握孩子的學習狀況。</p>
         </div>
       </div>
     </div>
@@ -12044,8 +12107,8 @@ document.addEventListener('DOMContentLoaded', function () {
       // k = 打字發問時用來比對的關鍵字
       var QA = [
         { q: '幾點上課？',
-          a: '各年級時段不一樣。國中晚上 6:30 開始，高中 6:30–9:30。完整課表在「課程DM」裡，每一科的時間都標好了。',
-          go: '看課表', to: '#dm',
+          a: '各年級、各科時段都不一樣。平日晚上大多是 6:15 或 6:30 開始，到 9:15～9:45 之間結束；也有幾門排在週六下午 2:00–5:00。孩子那一班的確切時間，用 LINE 或電話問櫃台最快。',
+          go: '問上課時間', to: '#contact',
           k: ['幾點','時間','上課','課表','時段','星期','禮拜','週','幾時','什麼時候上課','開課','下課'] },
         { q: '可以免費試聽嗎？',
           a: '可以，試聽完全免費。我們希望孩子先實際感受老師的教學方式與上課氛圍，再和家長一起決定是否報名。歡迎提前聯繫我們，安排適合的試聽課程。',
@@ -12070,12 +12133,12 @@ document.addEventListener('DOMContentLoaded', function () {
           k: ['學費','費用','多少錢','價格','收費','繳費','教材費','退費','契約','優惠','折扣','獎學金','便宜','貴'] },
         { hide: true,
           q: '有哪些老師？',
-          a: '理化是汪飛白老師與旺哲老師，數學有侯昇、連晨、呂碩老師，英文是方昊老師 (Steven)。每位老師的專長和帶班風格在「師資」裡都寫得很清楚。',
+          a: '理化與高中物理是汪飛白老師，高中化學是旺哲老師；數學有侯昇（國七、國九）、連晨（國八）、呂碩（高一）、楊傑（高中）四位老師；英文從國七到高三都是方昊老師 (Steven)。另外還有元欣主導師，負責國八、國九的自然科帶班。每位老師的專長和帶班風格在「師資」裡都寫得很清楚。',
           go: '看師資', to: '#teachers',
-          k: ['老師','師資','誰教','教師','汪飛白','旺哲','侯昇','連晨','呂碩','方昊','steven','理化','數學','英文','物理','化學'] },
+          k: ['老師','師資','誰教','教師','汪飛白','旺哲','侯昇','連晨','呂碩','楊傑','元欣','方昊','steven','理化','數學','英文','物理','化學','導師','主導師'] },
         { hide: true,
           q: '有哪些年級與科目的課程？',
-          a: '我們提供國一到高三的課程。國中開設生物、數學、英文、理化及自然科總複習；高中開設物理、化學、數學及英文。歡迎告訴我們孩子的年級與學習需求，一起了解適合的課程。',
+          a: '我們提供國七到高三的課程。國中開設生物、數學、英文、理化及自然科總複習；高中開設物理、化學、數學及英文。歡迎告訴我們孩子的年級與學習需求，一起了解適合的課程。',
           go: '看課程DM', to: '#dm',
           k: ['年級','科目','哪些課','什麼課','開什麼','國一','國二','國三','七年級','八年級','九年級','高一','高二','高三','生物','地科','自然','總複習','課程'] },
         { hide: true,
@@ -12903,23 +12966,27 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!lightbox || !lbImg || !lbClose) return;
 
     var TEACHERS = [
+      /* 2026-09-21 修正星期標籤：原本寫「六午」的其實是晚上 6 點多的課，
+         寫「六」的才是週六下午 2:00–5:00，兩個剛好相反。
+         現在統一成「六午」＝週六下午、「六晚」＝週六晚上。
+         （isToday() 只取第一個字來比對星期，所以改後面那個字不影響判斷。） */
       { name: '汪飛白 老師', sub: 'PHYSICS · 理化', classes: [
         { grade: '國八', course: 'G8P 國八物理', day: '五',   time: '6:30–9:45', room: '馬槽' },
-        { grade: '國九', course: 'G9P 國九物理', day: '六午', time: '6:15–9:30', room: '馬槽' },
+        { grade: '國九', course: 'G9P 國九物理', day: '六晚', time: '6:15–9:30', room: '馬槽' },
         { grade: '高一', course: '高一物理',     day: '四',   time: '6:15–9:45', room: '馬槽' },
         { grade: '高二', course: '高二物理',     day: '三',   time: '6:15–9:45', room: '象圈' },
-        { grade: '高三', course: '高三物理',     day: '六午', time: '線上同步直播', room: '線上', online: true }
+        { grade: '高三', course: '高三物理',     day: '六晚', time: '線上同步直播', room: '線上', online: true }
       ]},
       { name: '方昊 老師 (Steven)', sub: 'ENGLISH · 英文', classes: [
         { grade: '國七', course: 'G7E 國七英文', day: '二',   time: '6:15–9:15', room: '羊欄' },
         { grade: '國八', course: 'G8E 國八英文', day: '一',   time: '6:30–9:30', room: '羊欄' },
-        { grade: '國九', course: 'G9 國九',       day: '五',   time: '6:30–9:30', room: '馬槽' },
-        { grade: '高一', course: '高一英文',     day: '六',   time: '2:00–5:00', room: '羊欄' },
-        { grade: '高二', course: '高二英文',     day: '六午', time: '6:30–9:30', room: '羊欄' }
+        { grade: '國九', course: 'G9E 國九英文', day: '五',   time: '6:30–9:30', room: '馬槽' },
+        { grade: '高一', course: '高一英文',     day: '六午', time: '2:00–5:00', room: '羊欄' },
+        { grade: '高二', course: '高二英文',     day: '六晚', time: '6:30–9:30', room: '羊欄' }
       ]},
       { name: '侯昇 老師', sub: 'MATH · 數學', classes: [
         { grade: '國七', course: 'G7M 國七數學', day: '五', time: '6:30–9:30', room: '象圈' },
-        { grade: '國九', course: 'G9M 國九數學', day: '六', time: '2:00–5:00', room: '牛棚' }
+        { grade: '國九', course: 'G9M 國九數學', day: '六午', time: '2:00–5:00', room: '牛棚' }
       ]},
       { name: '連晨 老師', sub: 'MATH · 數學', classes: [
         { grade: '國八', course: 'G8M 國八數學', day: '四', time: '6:30–9:30', room: '象圈' }
