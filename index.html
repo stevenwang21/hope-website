@@ -563,38 +563,6 @@
     width: 100%;
   }
 
-  /* ========== Hero 主標題（2026-09-21 補回）==========
-     原本首屏只有 NEWS 膠囊和兩顆按鈕，沒有任何一句話介紹自己，
-     整份 index.html 也沒有 <h1>。這裡把標題補回來。
-     .hero-title / .hero-subtitle 原本只有媒體查詢裡的微調
-     （7717 / 7719 / 8168 行），沒有基礎規則，所以基礎規則寫在這裡。 */
-  .hero-title {
-    font-family: 'Noto Sans TC', 'Inter', sans-serif;
-    font-size: clamp(2.1rem, 4.6vw, 3.6rem);
-    font-weight: 800;
-    line-height: 1.18;
-    letter-spacing: -0.03em;
-    color: #fff;
-    margin: 0 0 16px;
-    text-shadow: 0 2px 24px rgba(0, 0, 0, 0.55);
-    animation: fadeInUp 0.9s var(--ease) 0.42s both;
-  }
-  .hero-title-accent {
-    background: linear-gradient(100deg, #ffd770 0%, #ff8bbf 100%);
-    -webkit-background-clip: text;
-    background-clip: text;
-    -webkit-text-fill-color: transparent;
-  }
-  .hero-subtitle {
-    font-size: clamp(0.95rem, 1.5vw, 1.12rem);
-    line-height: 1.75;
-    font-weight: 500;
-    color: rgba(255, 255, 255, 0.88);
-    margin: 0 auto;
-    max-width: 640px;
-    text-shadow: 0 1px 14px rgba(0, 0, 0, 0.5);
-    animation: fadeInUp 0.9s var(--ease) 0.54s both;
-  }
 
   /* 預約按鈕：跟 NEWS 一起在 hero-inner 內，不額外定位 */
   .hero > .container .hero-buttons {
@@ -8728,13 +8696,6 @@ document.addEventListener('DOMContentLoaded', function () {
         <svg class="news-pill-arrow" width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
       </button>
 
-      <!-- 首屏主標題（2026-09-21 補上）。全站原本沒有任何 <h1>。 -->
-      <h1 class="hero-title">
-        深耕台北小巨蛋 <span class="hero-title-accent">30 年</span>的國高中文理補習班
-      </h1>
-      <p class="hero-subtitle">
-        有教無類 · 教學相長 —— 從國七到高三，陪孩子把基礎打穩。
-      </p>
 
       <div class="hero-buttons">
         <a href="#contact" class="btn btn-primary">
