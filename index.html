@@ -4263,6 +4263,31 @@
   .process { padding: 160px 0; }
 
 
+  /* ===== 首頁下方 · 聯絡資訊橫幅 ===== */
+  section.home-contact { padding: 10px 0 90px; }
+  .hc-banner { max-width: 1200px; margin: 0 auto; }
+  .hc-full, .hc-part {
+    position: relative; border-radius: 22px; overflow: hidden;
+    box-shadow: 0 30px 70px -30px rgba(10, 20, 80, 0.55);
+    background: #061233;
+  }
+  .hc-banner img { display: block; width: 100%; height: auto; }
+  .hc-hot { position: absolute; display: block; border-radius: 18px; transition: box-shadow .25s var(--ease), background .25s var(--ease); }
+  .hc-hot.is-row { border-radius: 10px; }
+  .hc-hot:hover, .hc-hot:focus-visible {
+    background: rgba(120, 170, 255, 0.10);
+    box-shadow: 0 0 0 2px rgba(140, 190, 255, 0.55), 0 0 30px rgba(90, 150, 255, 0.35);
+    outline: none;
+  }
+  .hc-mobile { display: none; }
+  @media (max-width: 680px) {
+    section.home-contact { padding: 0 0 70px; }
+    .hc-full { display: none; }
+    .hc-mobile { display: grid; gap: 12px; }
+    .hc-part { border-radius: 16px; }
+    .hc-hot { border-radius: 12px; }
+  }
+
   /* 試聽報名上課輔導 圖片版面 */
   .process-image-wrap {
     max-width: 1100px;
@@ -8813,6 +8838,35 @@ document.addEventListener('DOMContentLoaded', function () {
       <span class="marquee-item">成功高中</span>
       <span class="marquee-item">松山高中</span>
       <span class="marquee-item">政大附中</span>
+    </div>
+  </div>
+</section>
+
+<!-- 首頁下方：聯絡資訊（整張是圖片，上面疊透明的可點區域） -->
+<section class="home-contact" data-page="home" aria-label="聯絡我們">
+  <div class="container">
+    <div class="hc-banner fade-up">
+      <div class="hc-full">
+        <img src="聯絡資訊.webp" alt="希望補習班｜南京東路四段25號3樓｜電話 8770-5578｜台北小巨蛋站一號出口｜Facebook、Instagram、官方 LINE" width="2172" height="724" loading="lazy" decoding="async" />
+        <a class="hc-hot is-row" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F" target="_blank" rel="noopener" aria-label="在 Google 地圖打開：南京東路四段25號3樓" style="left:10.75%;top:45.73%;width:24.50%;height:8.55%"></a>
+        <a class="hc-hot is-row" href="tel:+886287705578" aria-label="撥打電話 8770-5578" style="left:10.75%;top:56.67%;width:24.50%;height:8.10%"></a>
+        <a class="hc-hot is-row" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F" target="_blank" rel="noopener" aria-label="交通：台北小巨蛋站一號出口（打開地圖）" style="left:10.75%;top:66.42%;width:24.50%;height:8.55%"></a>
+        <a class="hc-hot is-card" href="https://www.facebook.com/xi.wang.7127/" target="_blank" rel="noopener" aria-label="希望補習班 Facebook" style="left:42.30%;top:22.04%;width:16.20%;height:53.22%"></a>
+        <a class="hc-hot is-card" href="https://page.line.me/745ajzxs" target="_blank" rel="noopener" aria-label="加入希望補習班官方 LINE" style="left:77.25%;top:22.04%;width:16.20%;height:53.22%"></a>
+      </div>
+      <div class="hc-mobile" aria-hidden="false">
+        <div class="hc-part">
+          <img src="聯絡資訊-左.webp" alt="希望補習班 南京東路四段25號3樓 電話 8770-5578 台北小巨蛋站一號出口" width="597" height="434" loading="lazy" decoding="async" />
+        <a class="hc-hot is-row" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F" target="_blank" rel="noopener" aria-label="在 Google 地圖打開：南京東路四段25號3樓" style="left:4.55%;top:46.25%;width:89.09%;height:14.25%"></a>
+        <a class="hc-hot is-row" href="tel:+886287705578" aria-label="撥打電話 8770-5578" style="left:4.55%;top:64.50%;width:89.09%;height:13.50%"></a>
+        <a class="hc-hot is-row" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F" target="_blank" rel="noopener" aria-label="交通：台北小巨蛋站一號出口（打開地圖）" style="left:4.55%;top:80.75%;width:89.09%;height:14.25%"></a>
+        </div>
+        <div class="hc-part">
+          <img src="聯絡資訊-右.webp" alt="Facebook、Instagram、加入官方 LINE" width="1146" height="413" loading="lazy" decoding="async" />
+        <a class="hc-hot is-card" href="https://www.facebook.com/xi.wang.7127/" target="_blank" rel="noopener" aria-label="希望補習班 Facebook" style="left:1.52%;top:3.16%;width:30.71%;height:93.42%"></a>
+        <a class="hc-hot is-card" href="https://page.line.me/745ajzxs" target="_blank" rel="noopener" aria-label="加入希望補習班官方 LINE" style="left:67.77%;top:3.16%;width:30.71%;height:93.42%"></a>
+        </div>
+      </div>
     </div>
   </div>
 </section>
