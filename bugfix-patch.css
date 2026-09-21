@@ -1,5 +1,5 @@
 /* ============================================================
-   bugfix-patch.css  ·  2026-09-18 更新（原 09-12 / 09-14 / 09-15 / 09-16）
+   bugfix-patch.css  ·  2026-09-20 更新（原 09-12 / 09-14 / 09-15 / 09-16 / 09-18）
    希望文理補習班網站 bug 修正（測試用，未套進 index.html）
 
    用法：在 index.html 的 </head> 前加一行
@@ -7,7 +7,17 @@
    或直接開 bugfix-test.html 預覽。
 
    ------------------------------------------------------------
-   本次（09-18）的異動：
+   本次（09-20）的異動：
+   · index.html 已被您更新到 13,208 行（9/19 那幾個 commit：
+     行事曆改成年級切換大圖＋點圖放大、新增元欣主導師、
+     手機下方列加行事曆、四步驟流程圖手機版拆四格）。
+   · #2 / #4 / #5 / #6 / #7 / #8 / #9 / #10 全部重新對過行號，
+     確認「仍然存在」，原樣保留（#2 → 7471 行、#5 → 8240 行、
+     #6 → 7982 行、#8 → 4940／5092 行附近、#10 → 8218 行）。
+   · 新增 #11：行事曆放大檢視在手機上「關不掉」。← 本次最重要
+   · 新增 #12：手機版行事曆年級列，「國中部／高中部」分組標籤整個消失。
+
+   09-18 的紀錄（保留備查）：
    · index.html 已被您更新到 12,989 行（9/17 那三個 commit）。
      #2 / #4 / #5 / #6 / #7 六段全部重新對過行號，確認「仍然存在」，原樣保留。
    · 新增 #8：新做的「理化 DATABASE 封面橫幅」在 561–640px 之間會跑版。
@@ -197,5 +207,102 @@ body.is-paged[data-current="contact"] footer {
     background: linear-gradient(135deg, #3d4ecc, #6e4ee6) !important;
     color: #fff !important;
     box-shadow: 0 4px 12px -3px rgba(61, 78, 204, 0.6);
+  }
+}
+
+/* ------------------------------------------------------------
+   #11【中・新】行事曆點開放大之後，手機上關不掉
+
+      您 9/19 新做的「點圖放大」（index.html 12715–12760 行）
+      彈出的 .cal-viewer 長這樣（5618–5648 行）：
+
+        .cal-viewer {
+          position: fixed; inset: 0;
+          backdrop-filter: blur(6px);      ← 5621 行
+          overflow-y: auto;                ← 5622 行（它自己是捲動容器）
+        }
+        .cal-viewer-close {
+          position: fixed; top: 14px; right: 14px;   ← 5642 行
+        }
+
+      問題出在 backdrop-filter。依 CSS Filter Effects 規範，
+      只要 filter / backdrop-filter 不是 none，這個元素就會變成
+      「所有 fixed 子孫的定位基準」——也就是說，右上角那顆「×」
+      不再是釘在螢幕上的 fixed，而是變成跟著 .cal-viewer 的
+      捲動內容一起捲的東西。
+
+      行事曆是直式長圖（國七那張 1131×1600），在手機上打開後
+      本來就要往下捲才看得到下半個月。一捲下去：
+
+        · 「×」已經捲到畫面上方看不見了；
+        · 點圖片本身不會關（12734 行刻意排除 vImg，
+          因為要留給「長按存圖」）；
+        · 手機沒有 Esc 鍵；
+        · .cal-viewer-inner 的左右 padding 只有 12px（5630 行），
+          而圖片是 width:100%，所以兩側只剩各 12px 的空白可以點。
+
+      結果就是家長在手機上把行事曆放大、往下捲看段考日期之後，
+      幾乎沒有辦法關掉，只能重新整理或上一頁。
+
+      → 這裡把 .cal-viewer 的 backdrop-filter 拿掉
+        （底色本來就是 rgba(12,10,24,0.92) 幾乎不透明，
+          少了那層模糊在視覺上看不太出來，
+          而且省掉整頁毛玻璃，手機捲動還更順），
+        「×」就會恢復成真正釘在螢幕右上角的 fixed。
+        順便把它做大一點、避開瀏海／動態島，
+        並加大左右可點的空白。
+
+      （正式版的根治做法：把 5621 行那兩行 backdrop-filter 刪掉；
+        或把「×」搬到 .cal-viewer 外面、直接掛在 <body> 上。）
+   ------------------------------------------------------------ */
+.cal-viewer {
+  backdrop-filter: none !important;
+  -webkit-backdrop-filter: none !important;
+  background: rgba(12, 10, 24, 0.95) !important;
+}
+.cal-viewer-close {
+  position: fixed !important;
+  top: calc(14px + env(safe-area-inset-top, 0px)) !important;
+  right: calc(14px + env(safe-area-inset-right, 0px)) !important;
+  width: 48px !important;
+  height: 48px !important;
+  z-index: 10060 !important;
+}
+@media (max-width: 680px) {
+  /* 左右多留一點空白，讓「點旁邊關閉」真的點得到 */
+  .cal-viewer-inner { padding: 72px 22px 64px !important; }
+  /* 提示文字也可以點（它本來就會觸發關閉），做大一點好按 */
+  .cal-viewer-hint { padding: 14px 0 24px; font-size: 0.86rem !important; }
+}
+
+/* ------------------------------------------------------------
+   #12【小・新】手機版行事曆：「國中部／高中部」分組標籤整個不見
+
+      index.html 5653 行：
+        @media (max-width: 680px) { .cal-tabs-group { display: none; } }
+
+      桌機看到的是：
+        國中部  [國七][國八][國九]  |  高中部  [高一][高二]
+      手機看到的是：
+        [國七][國八][國九] | [高一][高二]
+
+      五顆鈕擠成一排，中間只剩一條 3px 的分隔線（.cal-tabs-sep），
+      家長在手機上看不出來哪些是國中部、哪些是高中部。
+      而手機正是最多人用的裝置。
+
+      → 不整個藏掉，改成一個很小、淡一階的文字標籤留在群組前面。
+        （正式版的根治做法：5653 行改成縮小字級而不是 display:none。）
+   ------------------------------------------------------------ */
+@media (max-width: 680px) {
+  .cal-tabs-group {
+    display: inline-flex !important;
+    align-items: center;
+    font-size: 0.66rem;
+    font-weight: 700;
+    letter-spacing: 0.04em;
+    opacity: 0.6;
+    padding: 0 2px;
+    white-space: nowrap;
+    flex: 0 0 auto;
   }
 }

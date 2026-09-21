@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex, nofollow" />
-<title>Bug 修正測試頁 · 2026-09-19 · 希望文理補習班</title>
+<title>Bug 修正測試頁 · 2026-09-21 · 希望文理補習班</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -62,7 +62,7 @@
 <body>
 
 <div class="bar">
-  <strong>Bug 修正測試頁 · 2026-09-19</strong>
+  <strong>Bug 修正測試頁 · 2026-09-21</strong>
   <span class="sep"></span>
   <button id="toggle" class="on">修正：已套用</button>
   <span class="sep"></span>
@@ -108,6 +108,50 @@
   　　獎學金圖片放大、四位老師的影片彈窗都可以複製。
   　　其中<strong>「家長選擇我們的理由」與獎學金放大</strong>最明顯 ——
   　　關閉修正時，快速再開會得到一張<strong>空白卡片</strong>（內容被清掉了）。<br>
+  ⑬ <strong>【本次新增・09-20・最重要】</strong>行事曆放大後在手機上關不掉（#11）：<br>
+  　　用<strong>手機 390px</strong>測。切到「行事曆」分頁 → 點國七那張大圖放大。<br>
+  　　<strong>關閉修正時：</strong>往下捲看段考日期，右上角的「×」會跟著捲走，
+  　　點圖片本身不會關（那是留給長按存圖的），左右只剩各 12px 空白，
+  　　手機又沒有 Esc —— 等於關不掉，只能重新整理。<br>
+  　　<strong>套用修正後：</strong>「×」永遠釘在右上角，左右也留了 22px 好點。<br>
+  ⑭ <strong>【本次新增・09-20】</strong>行事曆放大「關閉→立刻再開」會全黑（#H）：<br>
+  　　放大國七 → 按「×」→ <strong>半秒內</strong>馬上點國八那張。<br>
+  　　關閉修正時會得到一片全黑（圖片來源被舊 timer 拔掉了）；
+  　　套用修正後第二張會正常顯示。<br>
+  ⑮ <strong>【09-20 新增】</strong>手機版行事曆年級列，
+  　　「國中部／高中部」兩個分組標籤會不會出現（#12）。<br>
+  ⑯ <strong>【本次新增・09-21】</strong>師資輪播的圓點會攔截鍵盤焦點（#M）：<br>
+  　　用<strong>手機 390px</strong>測，切到「師資」分頁。<br>
+  　　<strong>關閉修正時：</strong>一直按 <kbd>Tab</kbd> 走過師資區，
+  　　會連續<strong>八次</strong>停在看不出來被選中的地方（那八顆圓點），
+  　　畫面上完全沒有任何提示，像是焦點憑空消失。<br>
+  　　<strong>套用修正後：</strong>Tab 會直接從最後一張老師卡片跳到下一個區塊，
+  　　圓點用滑鼠／手指點還是照樣能切老師（視覺零變化）。<br>
+  　　※ 這一項只看得到「焦點行為」的差別，建議開 F12 的 Elements 面板，
+  　　　 一邊按 Tab 一邊看反白的是哪個元素。<br>
+  ⑰ <strong>【本次新增・09-21】</strong>行事曆按「放大」要等圖（#N）：<br>
+  　　開 F12 →「Network」分頁 → 勾「Disable cache」→ 切到行事曆。<br>
+  　　<strong>關閉修正時：</strong>頁面載完後只看得到
+  　　<code>115國七行事曆.webp</code>；點下去放大的那一刻，
+  　　才開始下載<code>115國七行事曆.jpg</code>（一份全新的、沒壓過的原圖）
+  　　—— 手機 4G 上就是「點了先黑一下才出圖」。<br>
+  　　<strong>套用修正後：</strong>頁面閒下來時就會多一筆
+  　　<code>115國七行事曆.jpg</code>（fetchPriority 是 low，不會搶首屏），
+  　　點放大是秒開，長按存下來的仍然是 JPG。<br>
+  　　切年級時也會預抓新的那一張，而且只抓看得到的那一張。<br>
+  ※ 2026-09-21 複查：index.html 仍是 <strong>13,209 行</strong>，與 9/20 完全相同
+  　 （最後一個 commit 還是 9/19 的「四步驟流程圖」）。
+  　 ①～⑮ 逐項重新對過行號，<strong>全部仍然存在</strong>，
+  　 沒有任何一項被正式版修掉；⑯⑰ 是這次新發現的。<br>
+  ※ 2026-09-20 複查：index.html 已更新到 <strong>13,208 行</strong>
+  　 （9/19 的「行事曆改年級切換大圖／點圖放大」「元欣主導師」
+  　 「手機下方列加行事曆」「四步驟流程圖」四組 commit）。
+  　 ①～⑫ 逐項重新對過行號，<strong>全部仍然存在</strong>，
+  　 沒有任何一項被正式版修掉；⑬～⑮ 是這次新發現的。<br>
+  ※ 另有三項看不到畫面差異、只影響驗證／搜尋／無障礙的修正已一併加入
+  　 （#I WebP 退回 JPG 沒作用、#J 四步驟圖手機版沒有 alt、
+  　 #K favicon type 寫錯、#L 年級列 tablist 混了非 tab 子元素），
+  　 這些要開開發者工具才看得出來。<br>
   ※ 2026-09-19 複查：index.html 與 9/18 完全相同（12,989 行），
   　 ①～⑪ 全部仍然有效，沒有任何一項被正式版修掉。<br>
   ※ 2026-09-18 複查：首頁故事區影片彈窗（原 #B）已由正式版自行修好，本次修正檔已移除該段。<br>

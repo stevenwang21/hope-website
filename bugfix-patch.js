@@ -1,5 +1,7 @@
 /* ============================================================
-   bugfix-patch.js  ·  2026-09-19 更新（原 09-12 / 09-14 / 09-15 / 09-16 / 09-17 / 09-18）
+   bugfix-patch.js  ·  2026-09-21 更新
+                      （原 09-12 / 09-14 / 09-15 / 09-16 / 09-17 /
+                        09-18 / 09-19 / 09-20）
    希望文理補習班網站 bug 修正（測試用，未套進 index.html）
 
    用法：在 index.html 的 </body> 前加一行
@@ -7,7 +9,37 @@
    或直接開 bugfix-test.html 預覽效果。
 
    ------------------------------------------------------------
-   本次（09-19）的異動：
+   本次（09-21）的異動：
+   · index.html 仍是 13,209 行，與 9/20 完全相同（最後一個 commit 是
+     9/19 的「更新四步驟流程圖（手機版拆成四格）」）。
+     #4 / #5 / #6 / #A / #C / #D / #E / #F / #G / #H / #I / #J / #K / #L
+     全部複查後確認「仍然存在」，原樣保留，行號重新對過。
+   · #F 的過期活動今天（9/21）已經過期 80 天。
+   · 新增 #M：師資輪播的圓點，是「藏起來卻還能被 Tab 選到」的按鈕。
+   · 新增 #N：行事曆按下「放大」之後要重新下載一份沒快取過的 JPG。
+   · 本次另外修了兩個**不在 index.html 裡**的檔案（見報告）：
+       .gitignore            bugfix-patch.*  → bugfix-patch*
+       _移除已公開的檢查檔.ps1  同一個 pattern
+     原本的寫法擋不到 bugfix-patch-tracking.js / bugfix-patch-courses.js。
+
+   09-20 的紀錄（保留備查）：
+   · index.html 從 12,989 行變成 13,208 行（9/19 的 commit：
+     「行事曆改成年級切換大圖」「行事曆：點圖放大、長按存圖」
+     「新增元欣主導師、手機下方列加行事曆」
+     「更新四步驟流程圖（手機版拆成四格）」）。
+   · #4 / #5 / #6 / #A / #C / #D / #E / #F / #G 全部複查後確認
+     「仍然存在」，原樣保留；行號已重新對過（#A 的
+     initMobileBottomNav 現在在 12615 行，而 <nav> 在 13176 行，
+     成因完全一樣）。
+   · #F 的過期活動今天（9/20）已經過期 79 天，仍掛在首頁。
+   · 新增 #H：行事曆放大檢視「關閉→立刻再開」會變全黑（比 #G 更嚴重）。
+   · 新增 #I：<picture> 的 WebP 退回 JPG 那段，寫了等於沒寫。
+   · 新增 #J：四步驟流程圖在手機上，對螢幕閱讀器是完全空白的。
+   · 新增 #K：favicon 宣告成 image/png，實際檔案是 JPEG。
+   · 新增 #L：行事曆年級列的 tablist 裡混了非 tab 的子元素。
+   · 「×」關不掉那一項（#11）是純 CSS，在 bugfix-patch.css。
+
+   09-19 的紀錄（保留備查）：
    · index.html 仍是 12,989 行，與 9/18 完全相同（最後一個 commit 是 9/17）。
      #4 / #5 / #6 / #A / #C / #D / #E / #F 全部複查後確認「仍然存在」，原樣保留。
    · 新增 #G：所有彈窗共用的「關閉→立刻再打開就消失」競態。
@@ -470,7 +502,7 @@
 
        全站的彈窗關閉都是同一個寫法：先把 is-open 拿掉讓它淡出，
        再用 setTimeout 等動畫跑完才真的 hidden = true。
-       例（index.html 8625–8629 行，最新消息）：
+       例（index.html 8714–8718 行，最新消息）：
 
          function close(){
            modal.classList.remove('is-open');
@@ -484,16 +516,16 @@
        接著那個還在排隊的舊 timer 才燒到，又把 hidden 設成 true。
        畫面上就是：點了、閃一下、不見了，要再點第三次才會出來。
 
-       同一個寫法在六個地方出現，行號與附帶災情：
+       同一個寫法在六個地方出現（行號 09-21 重新對過）：
 
-         8627  最新消息 newsModal              只有 hidden
-         9712  線上課程購物車（已停用的區塊）   只有 hidden
-        10637  四位老師的影片彈窗              hidden ＋ unmountLive()
+         8716  最新消息 newsModal              只有 hidden
+         9808  線上課程購物車（已停用的區塊）   只有 hidden
+        10743  四位老師的影片彈窗              hidden ＋ unmountLive()
                  （wangVideosModal / fangVideosModal /
                    lianVideosModal / houVideosModal）
-        12396  會考英雄榜 championLightbox     只有 hidden
-        12851  家長選擇我們的理由 bentoModal   hidden ＋ body.innerHTML = ''
-        12913  獎學金放大 scholarshipZoom      hidden ＋ img.src = ''
+        12513  會考英雄榜 championLightbox     只有 hidden
+        13066  家長選擇我們的理由 bentoModal   hidden ＋ body.innerHTML = ''
+        13128  獎學金放大 scholarshipZoom      hidden ＋ zoomImg.src = ''
 
        最後兩個比較嚴重：舊 timer 不只會把彈窗藏起來，還會把剛剛才
        填好的內容清空 —— 所以就算硬把它顯示回來，也是一張白卡片。
@@ -584,6 +616,396 @@
 
       // 線上課程的購物車彈窗（目前入口已停用，一併保護以免日後開回來）
       document.querySelectorAll('.shop-modal').forEach(guard);
+    })();
+
+    /* --------------------------------------------------------
+       #H 行事曆放大檢視「關閉→立刻再開」會變成全黑  ← 新（09-20）
+
+       跟 #G 同一個病，但這次多清了一樣東西，所以更嚴重。
+       index.html 12749–12754 行：
+
+         function closeViewer() {
+           viewer.classList.remove('is-open');
+           document.documentElement.classList.remove('cal-viewer-lock');
+           setTimeout(function () {
+             viewer.hidden = true;
+             vImg.removeAttribute('src');     ← 連圖片一起拔掉
+           }, 250);
+           if (lastFocus) lastFocus.focus({ preventScroll: true });
+         }
+
+       這個 timer 一樣沒有人 clearTimeout。家長常見的操作是：
+       放大國七行事曆 → 看完按「×」→ 馬上點國八那張放大。
+       兩個動作之間如果不到 0.25 秒（手機上點兩下很容易），
+       舊 timer 才燒到，就會：
+         · viewer.hidden = true        → 整個蓋板不見
+         · vImg.removeAttribute('src') → 圖片來源被拔掉
+
+       第二點是 #G 沒有的：就算硬把它顯示回來，也是一片全黑
+       （.cal-viewer 底色是 rgba(12,10,24,0.92)）中間一個破圖框。
+       要再點第三次才會正常。
+
+       另外 .cal-viewer 是 12719 行用 JS 臨時 createElement 出來的，
+       第一次點圖片才會生出來，而且沒有 id，
+       所以 #G 那份用 id 抓的守門員名單抓不到它，必須另外處理。
+
+       → 這裡監看 <body> 的子節點，等 .cal-viewer 一出現就：
+         · 記住每次成功載入的圖片網址；
+         · 偵測到「還掛著 is-open 卻被設成 hidden」或
+           「還開著卻沒有 src」就補回去。
+
+       （正式版的根治做法：跟 #G 一樣，把 timer 存起來，
+         openViewer() 的第一行加 clearTimeout(closeTimer);）
+       -------------------------------------------------------- */
+    (function fixCalViewerReopenRace() {
+      if (!window.MutationObserver) return;
+
+      var lastSrc = '';
+
+      function guardViewer(el) {
+        if (!el || el.__calGuarded) return;
+        el.__calGuarded = true;
+
+        var img = el.querySelector('img');
+
+        // 記住有內容的那一次（被清空時不要覆寫掉備份）
+        if (img) {
+          new MutationObserver(function () {
+            var s = img.getAttribute('src') || '';
+            if (s) lastSrc = s;
+          }).observe(img, { attributes: true, attributeFilter: ['src'] });
+        }
+
+        function rescue() {
+          if (!el.classList.contains('is-open')) return;
+          if (el.hidden) el.hidden = false;
+          if (img && !img.getAttribute('src') && lastSrc) {
+            img.setAttribute('src', lastSrc);
+          }
+          // 還開著，捲動鎖不該被前一次的 closeViewer() 解掉
+          document.documentElement.classList.add('cal-viewer-lock');
+        }
+
+        new MutationObserver(rescue)
+          .observe(el, { attributes: true, attributeFilter: ['hidden', 'class'] });
+        if (img) {
+          new MutationObserver(rescue)
+            .observe(img, { attributes: true, attributeFilter: ['src'] });
+        }
+      }
+
+      // 已經在的話先接手；還沒生出來就等它出現
+      guardViewer(document.querySelector('.cal-viewer'));
+      new MutationObserver(function (list) {
+        list.forEach(function (m) {
+          Array.prototype.forEach.call(m.addedNodes, function (n) {
+            if (n.nodeType === 1 && n.classList && n.classList.contains('cal-viewer')) {
+              guardViewer(n);
+            }
+          });
+        });
+      }).observe(document.body, { childList: true });
+    })();
+
+    /* --------------------------------------------------------
+       #I 行事曆的「WebP 萬一沒上傳成功就退回 JPG」寫了等於沒寫  ← 新
+
+       index.html 12762–12768 行：
+
+         document.querySelectorAll('.calendar-board picture img').forEach(function (img) {
+           img.addEventListener('error', function () {
+             var src = img.parentNode.querySelector('source');
+             if (src) { src.parentNode.removeChild(src); img.src = img.getAttribute('src'); }
+           }, { once: true });
+         });
+
+       最後那一句 `img.src = img.getAttribute('src')` 是把
+       **同一個字串再指派一次**（本來就是 "115國七行事曆.jpg"）。
+       屬性值沒有變，瀏覽器不保證會重跑 <picture> 的來源挑選，
+       實務上多半什麼事都不會發生 —— <source> 是移掉了，
+       但圖片仍然停在失敗的狀態，家長看到的還是破圖框。
+
+       目前五個 .webp 都在資料夾裡，所以「現在看起來正常」，
+       這是一個**下次漏傳 WebP 才會爆**的地雷。
+
+       → 這裡改成先清空再指派，強迫瀏覽器重新挑一次來源。
+         （正式版的根治做法：12766 行改成
+            var jpg = img.getAttribute('src');
+            src.parentNode.removeChild(src);
+            img.removeAttribute('src');
+            img.src = jpg;
+          並且不要用 { once: true }，改成自己擋重入，
+          否則 JPG 也失敗時就沒有第二次機會了。）
+       -------------------------------------------------------- */
+    (function fixPictureWebpFallback() {
+      document.querySelectorAll('picture > img').forEach(function (img) {
+        if (img.__webpFallbackFixed) return;
+        img.__webpFallbackFixed = true;
+
+        img.addEventListener('error', function () {
+          if (img.__fellBack) return;       // JPG 也壞掉就不再繞圈
+          var source = img.parentNode && img.parentNode.querySelector('source');
+          var jpg = img.getAttribute('src');
+          if (!source || !jpg) return;
+          img.__fellBack = true;
+          source.parentNode.removeChild(source);
+          img.removeAttribute('src');       // ← 關鍵：先清空
+          img.setAttribute('src', jpg);     //   再指派，來源挑選才會重跑
+        });
+      });
+    })();
+
+    /* --------------------------------------------------------
+       #J 四步驟流程圖：手機版對螢幕閱讀器是完全空白的  ← 新
+
+       index.html 9078–9086 行（9/19 新做的）：
+
+         <img class="process-image-full" src="四步驟流程.webp"
+              alt="四步驟：01 免費試聽、02 完成報名、03 上課、04 輔導" ... />
+         <ol class="process-image-steps" aria-hidden="true">
+           <li><img src="流程-1.webp" alt="" ... /></li>
+           ...
+
+       而 CSS 4279–4291 行：
+         .process-image-steps { display: none; }
+         @media (max-width: 680px) {
+           .process-image-full { display: none; }    ← 手機把有 alt 的藏起來
+           .process-image-steps { display: grid; }   ← 顯示 aria-hidden 的那組
+         }
+
+       也就是說，手機上：
+         · 唯一寫了 alt 的那張被 display:none（讀不到）；
+         · 顯示出來的四張，容器是 aria-hidden="true"、
+           圖片又全是 alt=""。
+
+       結果整個「四步驟，為孩子打好基礎」區塊，在手機上對
+       螢幕閱讀器、以及圖片載入失敗時的替代文字，都是一片空白。
+       Google 的圖片索引也抓不到這四張的內容。
+
+       → 這裡在手機寬度下，把四張圖補上各自的 alt，
+         並把容器的 aria-hidden 拿掉。
+         （正式版的根治做法：9081 行拿掉 aria-hidden="true"，
+           9082–9085 四行各自補上 alt。）
+       -------------------------------------------------------- */
+    (function fixProcessStepsAlt() {
+      var ol = document.querySelector('.process-image-steps');
+      if (!ol) return;
+
+      var ALTS = [
+        '步驟 01 · 免費試聽',
+        '步驟 02 · 完成報名',
+        '步驟 03 · 上課',
+        '步驟 04 · 課後輔導'
+      ];
+
+      ol.removeAttribute('aria-hidden');
+      ol.setAttribute('aria-label', '四步驟教學流程');
+      ol.querySelectorAll('img').forEach(function (img, i) {
+        if (!img.getAttribute('alt')) img.setAttribute('alt', ALTS[i] || '');
+      });
+    })();
+
+    /* --------------------------------------------------------
+       #K favicon 宣告的格式跟實際檔案不符  ← 新
+
+       index.html 32 行：
+         <link rel="icon" type="image/png" href="navbar-logo.jpg" />
+
+       type 寫 image/png，但 href 指到的是 JPEG。
+       瀏覽器多半會忽略 type 自己判斷，所以「現在看起來正常」，
+       但這是 HTML 驗證會報的錯，嚴格一點的爬蟲／分享預覽
+       （LINE、Facebook 的 favicon 抓取）可能直接跳過。
+
+       → 這裡把 type 改成 image/jpeg。
+         （正式版的根治做法：32 行改成 type="image/jpeg"，
+           或乾脆做一張真正的 favicon.png / .ico。）
+       -------------------------------------------------------- */
+    (function fixFaviconType() {
+      document.querySelectorAll('link[rel~="icon"]').forEach(function (l) {
+        var href = (l.getAttribute('href') || '').toLowerCase();
+        var type = l.getAttribute('type') || '';
+        if (/\.jpe?g($|\?)/.test(href) && type !== 'image/jpeg') {
+          l.setAttribute('type', 'image/jpeg');
+        }
+      });
+    })();
+
+    /* --------------------------------------------------------
+       #L 行事曆年級列的 tablist 裡混了非 tab 的子元素  ← 新
+
+       index.html 10773–10782 行：
+
+         <div class="cal-tabs" role="tablist" aria-label="選擇年級">
+           <span class="cal-tabs-group">國中部</span>        ← 不是 tab
+           <button role="tab" ...>國七</button>
+           <button role="tab" ...>國八</button>
+           <button role="tab" ...>國九</button>
+           <span class="cal-tabs-sep" aria-hidden="true"></span>
+           <span class="cal-tabs-group">高中部</span>        ← 不是 tab
+           <button role="tab" ...>高一</button>
+           <button role="tab" ...>高二</button>
+         </div>
+
+       依 ARIA 規範，role="tablist" 底下只能放 role="tab"。
+       多出來的兩個 <span> 會讓輔助技術把整組的計數弄錯
+       （「第 1 個，共 7 個」之類），而且它們讀出來的
+       「國中部」「高中部」跟後面的按鈕沒有任何關聯。
+       手機上這兩個 span 又被 display:none 藏起來（見 CSS #12），
+       等於視覺和語意兩邊都斷了。
+
+       → 這裡把兩個分組標籤設成 aria-hidden="true"（視覺留著、
+         不進無障礙樹；<span> 本身沒有 role，光加 role="presentation"
+         擋不住裡面的文字被讀出來），
+         改把分組資訊直接併進每顆按鈕的 aria-label：
+         「國中部 國七」「高中部 高一」。
+         視覺完全不變。
+         （正式版的根治做法：把 role="tablist" 往內收，
+           或改用兩個 tablist（國中部一組、高中部一組）。）
+       -------------------------------------------------------- */
+    (function fixCalTablistAria() {
+      var list = document.querySelector('.cal-tabs[role="tablist"]');
+      if (!list) return;
+
+      var group = '';
+      Array.prototype.forEach.call(list.children, function (el) {
+        if (el.classList.contains('cal-tabs-group')) {
+          group = (el.textContent || '').trim();
+          el.setAttribute('aria-hidden', 'true');
+          return;
+        }
+        if (el.getAttribute('role') === 'tab' && group) {
+          if (!el.getAttribute('aria-label')) {
+            el.setAttribute('aria-label', group + ' ' + (el.textContent || '').trim());
+          }
+        }
+      });
+    })();
+
+    /* --------------------------------------------------------
+       #M 師資輪播的圓點：藏起來了，卻還能被 Tab 選到  ← 新（09-21）
+
+       index.html 10172–10180 行：
+
+         <div class="teachers-dots" id="teachersDots" aria-hidden="true">
+           <button class="dot active" data-idx="0" aria-label="第 1 位老師"></button>
+           ... 共八顆 ...
+         </div>
+
+       容器掛了 aria-hidden="true"（＝「這一塊不要讀給輔助技術聽」），
+       但裡面八顆是貨真價實的 <button>，沒有 tabindex="-1"，
+       所以鍵盤仍然 Tab 得到。這是 ARIA 明文禁止的組合
+       （aria-hidden 的子樹裡不能有可聚焦元素）。
+
+       實際會發生的事：用鍵盤瀏覽的人在師資區按 Tab，
+       會連續八次停在「什麼都不會念出來、螢幕上也看不出被選中」
+       的地方（.dot 沒有 :focus-visible 樣式），
+       像是游標憑空消失八下。每顆還寫了 aria-label="第 N 位老師"，
+       但被 aria-hidden 蓋掉，等於白寫。
+
+       這兩年的自動檢測工具（axe / Lighthouse 無障礙分數）
+       會把 aria-hidden-focus 列為 serious 等級。
+
+       → 這裡給八顆圓點補上 tabindex="-1"。
+         滑鼠與觸控完全不受影響（照樣點得動、照樣切老師），
+         只是不再攔截鍵盤焦點。視覺零變化。
+
+       （正式版的根治做法：10173–10180 每顆 <button> 補 tabindex="-1"；
+         或者反過來——拿掉容器的 aria-hidden，把圓點當成真正的
+         分頁控制項，並補上 :focus-visible 的外框。
+         後者比較完整，但要多寫 CSS，看您想做到哪個程度。）
+       -------------------------------------------------------- */
+    (function fixHiddenFocusableDots() {
+      // 全站掃一次。今天實際掃得到的只有 #teachersDots 這一處
+      // （其他 aria-hidden 的容器裡都只有 <svg> 圖示，不可聚焦），
+      // 寫成通用的是為了以後再加輪播時不用改這裡。
+      document.querySelectorAll('[aria-hidden="true"]').forEach(function (box) {
+        box.querySelectorAll(
+          'button, a[href], input, select, textarea, [tabindex]:not([tabindex="-1"])'
+        ).forEach(function (el) {
+          el.setAttribute('tabindex', '-1');
+        });
+      });
+    })();
+
+    /* --------------------------------------------------------
+       #N 行事曆按「放大」之後，要重新下載一份沒快取過的 JPG  ← 新（09-21）
+
+       這不是壞掉，是一個「兩段設計沒對上」的效能問題。
+
+       (1) 頁面上顯示的行事曆是 WebP（index.html 10794 行）：
+             <picture>
+               <source srcset="115國七行事曆.webp" type="image/webp" />
+               <img src="115國七行事曆.jpg" ... />
+             </picture>
+           支援 WebP 的瀏覽器（現在幾乎全部）抓的是 .webp。
+
+       (2) 背景預載（11664–11670 行的 srcOf()）很聰明地也只抓 .webp：
+             if (canWebp && 父層是 <picture>) return source 的 srcset;
+           所以快取裡有 .webp，沒有 .jpg。
+
+       (3) 但放大檢視（12741 行）刻意改抓 JPG：
+             vImg.src = frame.getAttribute('data-full') || ...
+             // data-full="115國七行事曆.jpg"
+           程式碼裡的註解寫得很清楚，這是故意的：
+           「顯示 JPG，家長長按存下來的就是 JPG，傳 LINE 最不會出問題」。
+
+       這個取捨本身是對的（LINE 對 WebP 的支援確實不穩），
+       問題在於 **(2) 和 (3) 抓的是不同檔案**：
+       家長點下去的那一刻，瀏覽器才開始下載一份從來沒抓過的 JPG，
+       而 JPG 又是沒壓過的原圖。在補習班門口用 4G 的手機上，
+       就是「點了放大 → 先看到一片黑 → 等圖」。
+
+       → 這裡在瀏覽器閒下來的時候，把**目前顯示中**那一張的
+         data-full（JPG）悄悄預抓進快取，並且：
+           · 只抓現在看得到的那一張，不是五張全抓；
+           · 切年級時再抓新的那一張；
+           · 開了「節省流量」或 2G/3G 就完全不做。
+         點下去就會是秒開，而且長按存到的仍然是 JPG。
+
+       （正式版的根治做法，二選一：
+          (a) 照這裡的做法，在 calendarSwitch() 的 show() 最後
+              加一行把 data-full 預抓起來；
+          (b) 或者放大檢視改成顯示 WebP（跟頁面一致、不用多下載），
+              另外在提示文字旁邊放一顆
+              <a href="…jpg" download> 下載 JPG </a>。
+          (b) 省流量，(a) 順手。我偏好 (a)，因為「長按存圖」
+          是家長真的會做的動作，不該多一個步驟。）
+       -------------------------------------------------------- */
+    (function prefetchCalendarFullJpg() {
+      var boards = document.querySelectorAll('.calendar-board[data-cal]');
+      if (!boards.length) return;
+
+      var conn = navigator.connection || navigator.mozConnection ||
+                 navigator.webkitConnection || {};
+      if (conn.saveData) return;                                  // 節省流量 → 不做
+      if (/(^|-)[23]g$/.test(conn.effectiveType || '')) return;   // 2G/3G → 不做
+
+      var done = {};
+      // 注意：requestIdleCallback 一定要用 window 當 this 呼叫，
+      // 直接拿參考出來呼叫在 Chrome 會丟 "Illegal invocation"。
+      var idle = window.requestIdleCallback
+        ? function (fn) { return window.requestIdleCallback(fn, { timeout: 4000 }); }
+        : function (fn) { return setTimeout(fn, 1200); };
+
+      function warmCurrent() {
+        var on = document.querySelector('.calendar-board.is-on .calendar-board-frame');
+        if (!on) return;
+        var url = on.getAttribute('data-full');
+        if (!url || done[url]) return;
+        done[url] = 1;
+        idle(function () {
+          var im = new Image();
+          if ('fetchPriority' in im) im.fetchPriority = 'low';
+          im.decoding = 'async';
+          im.src = url;
+        });
+      }
+
+      warmCurrent();
+      // 切年級 → 換成預抓新的那一張（正式版切完才加 is-on，所以等它一下）
+      document.querySelectorAll('.cal-tab').forEach(function (t) {
+        t.addEventListener('click', function () { setTimeout(warmCurrent, 0); });
+      });
     })();
 
   });

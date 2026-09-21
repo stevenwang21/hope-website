@@ -24,6 +24,10 @@ Claude outputs/
 # 注意：加在這裡只擋「以後」的檔案，已經被 git 追蹤的要另外用
 #       git rm --cached 取消追蹤（見 _移除已公開的檢查檔.ps1）。
 BUG檢查報告*.md
-bugfix-patch.*
+# 2026-09-21 修正：原本寫 bugfix-patch.* ，那個點是字面上的點，
+# 所以只擋得住 bugfix-patch.js / .css，擋不住
+# bugfix-patch-tracking.js 與 bugfix-patch-courses.js（中間多了 -xxx）。
+# 這兩支正是寫著「家長後台沒有驗證」「登入密碼被印進 console」的檔案。
+bugfix-patch*
 bugfix-test*.html
 bugfix-sitemap.xml
