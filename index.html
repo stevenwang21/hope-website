@@ -6647,6 +6647,12 @@
   }
 
   .info-card .value a:hover { color: var(--brand); }
+  /* 電話、LINE 這類文字連結原本只有 16px 高，手機上很難按；上下補一點內距把可按範圍撐到 28px */
+  .info-card .value a {
+    display: inline-block;
+    padding: 6px 2px;
+    margin: -6px 0;
+  }
 
   /* LINE QR Card */
   .qr-card {
@@ -7845,7 +7851,7 @@
     .teachers-dots .dot {
       width: 8px; height: 8px;
       border-radius: 999px;
-      background: rgba(255,255,255,0.2);
+      background: rgba(91, 71, 188, 0.25);   /* 這區是淺色底，白點會看不見 */
       border: none;
       padding: 0;
       cursor: pointer;
@@ -8193,6 +8199,41 @@
   }
 
   /* ===== 手機版底部導覽列 LINE 風格 ===== */
+  /* ===== 手機：輪播圓點別被下方導覽列蓋住，而且要按得到 =====
+     下方導覽列高約 75px（bottom:14px + 內距），圓點原本落在它底下完全點不到；
+     這裡把圓點往上推，並用透明內距把可按範圍放大到 28px（看起來還是小圓點）。 */
+  @media (max-width: 720px) {
+    /* 首屏內容整體往上抬，讓出「按鈕」與「圓點」各自的空間，
+       兩者不會互相重疊，圓點也不會被下方導覽列蓋住。 */
+    /* 首屏下緣被「兩顆按鈕 + 下方導覽列」占滿，圓點放哪都會打架，
+       所以手機版把圓點移到右上角空白處：看得到、按得到、不擋任何按鈕。 */
+    .hero-dots {
+      top: 104px; right: 14px; bottom: auto; left: auto;
+      transform: none; flex-direction: column; gap: 2px;
+      pointer-events: none;
+    }
+    .hero-dot { pointer-events: auto; }
+    .hero-dot {
+      width: 28px; height: 28px; padding: 9px;   /* 透明內距＝放大可按範圍，看起來仍是小圓點 */
+      background-clip: content-box; border: 0;
+      box-shadow: none;
+      background-color: rgba(255,255,255,0.45);
+      border-radius: 50%;
+    }
+    .hero-dot.is-active {
+      background-clip: content-box;
+      background-color: #fff;
+      box-shadow: none;
+    }
+    .teachers-dots { margin-top: 0; margin-bottom: 96px; gap: 2px; }
+    .teachers-dots .dot {
+      width: 28px; height: 28px; padding: 10px;   /* 透明內距＝好按 */
+      background-clip: content-box;
+      border-radius: 999px;
+    }
+    .teachers-dots .dot.active { width: 40px; background-clip: content-box; }
+  }
+
   .mobile-bottom-nav {
     display: none;
   }
@@ -8878,16 +8919,16 @@ document.addEventListener('DOMContentLoaded', function () {
         <a class="hc-hot is-row" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F" target="_blank" rel="noopener" aria-label="在 Google 地圖打開：南京東路四段25號3樓" style="left:9.90%;top:45.58%;width:25.55%;height:9.39%"></a>
         <a class="hc-hot is-row" href="tel:+886287705578" aria-label="撥打電話 8770-5578" style="left:9.90%;top:55.94%;width:25.55%;height:9.25%"></a>
         <a class="hc-hot is-row" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F" target="_blank" rel="noopener" aria-label="交通：台北小巨蛋站一號出口（打開地圖）" style="left:9.90%;top:66.30%;width:25.55%;height:9.39%"></a>
-        <a class="hc-hot is-card" href="https://www.facebook.com/xi.wang.7127/" target="_blank" rel="noopener" aria-label="希望補習班 Facebook" style="left:42.59%;top:20.72%;width:15.88%;height:54.56%"></a>
-        <a class="hc-hot is-card" href="https://page.line.me/745ajzxs" target="_blank" rel="noopener" aria-label="加入希望補習班官方 LINE" style="left:76.66%;top:20.72%;width:15.42%;height:54.56%"></a>
+        <a class="hc-hot is-card" href="https://www.facebook.com/xi.wang.7127/" target="_blank" rel="noopener" aria-label="希望補習班 Facebook" style="left:42.22%;top:21.55%;width:16.39%;height:53.73%"></a>
+        <a class="hc-hot is-card" href="https://page.line.me/745ajzxs" target="_blank" rel="noopener" aria-label="加入希望補習班官方 LINE" style="left:77.21%;top:21.69%;width:16.25%;height:53.59%"></a>
       </div>
       <div class="hc-mobile">
         <img src="聯絡資訊-手機.webp" alt="希望補習班 · 汪飛白理化｜南京東路四段25號3樓｜電話 8770-5578｜台北小巨蛋站一號出口｜Facebook、Instagram、加入官方 LINE" width="740" height="758" loading="lazy" decoding="async" />
         <a class="hc-hot is-row" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F" target="_blank" rel="noopener" aria-label="在 Google 地圖打開：南京東路四段25號3樓" style="left:15.82%;top:33.37%;width:70.25%;height:8.40%"></a>
         <a class="hc-hot is-row" href="tel:+886287705578" aria-label="撥打電話 8770-5578" style="left:15.82%;top:42.63%;width:70.25%;height:8.28%"></a>
         <a class="hc-hot is-row" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F" target="_blank" rel="noopener" aria-label="交通：台北小巨蛋站一號出口（打開地圖）" style="left:15.82%;top:51.90%;width:70.25%;height:8.40%"></a>
-        <a class="hc-hot is-card" href="https://www.facebook.com/xi.wang.7127/" target="_blank" rel="noopener" aria-label="希望補習班 Facebook" style="left:3.85%;top:63.12%;width:29.49%;height:32.96%"></a>
-        <a class="hc-hot is-card" href="https://page.line.me/745ajzxs" target="_blank" rel="noopener" aria-label="加入希望補習班官方 LINE" style="left:67.09%;top:63.12%;width:28.63%;height:32.96%"></a>
+        <a class="hc-hot is-card" href="https://www.facebook.com/xi.wang.7127/" target="_blank" rel="noopener" aria-label="希望補習班 Facebook" style="left:3.16%;top:63.62%;width:30.43%;height:32.46%"></a>
+        <a class="hc-hot is-card" href="https://page.line.me/745ajzxs" target="_blank" rel="noopener" aria-label="加入希望補習班官方 LINE" style="left:68.12%;top:63.71%;width:30.17%;height:32.37%"></a>
       </div>
     </div>
   </div>
@@ -11797,6 +11838,57 @@ document.addEventListener('DOMContentLoaded', function () {
     }
     if (document.readyState === 'complete') load();
     else window.addEventListener('load', load);
+  })();
+
+  /* 師資輪播的圓點：原本只是靜態裝飾，點了沒反應、滑動也不會更新。
+     這裡接上 —— 點圓點會滑到那位老師，手指滑動時圓點也跟著亮。 */
+  (function initTeacherDots() {
+    var grid = document.getElementById('teachersGrid');
+    var wrap = document.getElementById('teachersDots');
+    if (!grid || !wrap) return;
+    var cards = grid.querySelectorAll('.teacher-card');
+    var dots = wrap.querySelectorAll('.dot');
+    if (!cards.length || !dots.length) return;
+
+    // 圓點數量跟老師數量對齊（之後加減老師都不用再改這裡）
+    while (dots.length > cards.length) { wrap.removeChild(dots[dots.length - 1]); dots = wrap.querySelectorAll('.dot'); }
+    for (var i = dots.length; i < cards.length; i++) {
+      var b = document.createElement('button');
+      b.type = 'button'; b.className = 'dot';
+      b.setAttribute('data-idx', i);
+      b.setAttribute('aria-label', '第 ' + (i + 1) + ' 位老師');
+      wrap.appendChild(b);
+    }
+    dots = wrap.querySelectorAll('.dot');
+    wrap.removeAttribute('aria-hidden');
+
+    function current() {
+      var mid = grid.scrollLeft + grid.clientWidth / 2, best = 0, bd = Infinity;
+      cards.forEach(function (c, i) {
+        var cm = c.offsetLeft + c.offsetWidth / 2;
+        var d = Math.abs(cm - mid);
+        if (d < bd) { bd = d; best = i; }
+      });
+      return best;
+    }
+    function paint() {
+      var n = current();
+      dots.forEach(function (d, i) {
+        d.classList.toggle('active', i === n);
+        d.setAttribute('aria-current', i === n ? 'true' : 'false');
+      });
+    }
+    dots.forEach(function (d, i) {
+      d.addEventListener('click', function () {
+        var c = cards[i];
+        grid.scrollTo({ left: c.offsetLeft - (grid.clientWidth - c.offsetWidth) / 2, behavior: 'smooth' });
+      });
+    });
+    var t = null;
+    grid.addEventListener('scroll', function () {
+      clearTimeout(t); t = setTimeout(paint, 80);
+    }, { passive: true });
+    paint();
   })();
 
   /* ===== 圖片背景預載 =====
