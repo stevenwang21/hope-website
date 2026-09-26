@@ -1,7 +1,7 @@
 /* ============================================================
-   bugfix-patch.js  ·  2026-09-21 更新
+   bugfix-patch.js  ·  2026-09-24 更新
                       （原 09-12 / 09-14 / 09-15 / 09-16 / 09-17 /
-                        09-18 / 09-19 / 09-20）
+                        09-18 / 09-19 / 09-20 / 09-21 / 09-23）
    希望文理補習班網站 bug 修正（測試用，未套進 index.html）
 
    用法：在 index.html 的 </body> 前加一行
@@ -9,7 +9,39 @@
    或直接開 bugfix-test.html 預覽效果。
 
    ------------------------------------------------------------
-   本次（09-21）的異動：
+   本次（09-24）的異動：
+   · index.html 仍是 13,362 行，與 9/23 完全相同
+     （最後一個 commit 是 9/22 的「SEO：結構化資料網址統一、
+       sitemap 更新日期」）。
+     #4 / #5 / #6 / #A / #C / #D / #E / #F / #G / #H / #I / #J / #K /
+     #L / #M / #N / #O / #P / #Q 全部複查後確認「仍然存在」，原樣保留。
+   · #F 的過期活動今天（9/24）已經過期 83 天。
+   · 新增 #R：整個首頁**沒有任何 <h1>**。← 本次最重要
+     9/22 的「移除首頁大標題」把唯一的 h1 一起拿掉了，
+     而同一天還有兩個 SEO commit，所以這顯然不是故意的。
+   · 新增 #S：師資輪播那八顆圓點**完全沒有接任何 JavaScript**——
+     滑到第幾位老師它都停在第一顆，點下去也沒有反應。
+
+   09-23 的紀錄（保留備查）：
+   · index.html 從 13,209 行變成 13,362 行。9/22 有六個 commit：
+       呂碩、旺哲老師加試聽影片
+       首頁下方加聯絡資訊橫幅（FB、LINE、地圖、電話）
+       錄取學校加中崙、西松、麗山、大直
+       首頁聯絡資訊區縮小
+       移除首頁大標題
+       SEO：結構化資料網址統一、sitemap 更新日期
+   · #4 / #5 / #6 / #A / #C / #D / #E / #F / #G / #H / #I / #J / #K /
+     #L / #M / #N 全部複查後確認「仍然存在」，原樣保留，行號重新對過。
+   · #F 的過期活動今天（9/23）已經過期 82 天。
+   · #G 的守門員名單補上 9/22 新增的兩個彈窗
+     （luVideosModal 呂碩、wangzheVideosModal 旺哲）——
+     它們用的是同一份 pairs 迴圈，同一個沒有 clearTimeout 的 close()。
+   · 新增 #O：手機版 hero 的輪播圓點，整排被底部導覽列蓋住。← 本次最重要
+   · 新增 #P：新做的聯絡資訊橫幅，Instagram 那張卡片沒有連結。
+   · 新增 #Q：全站有兩個不同的 Facebook 網址。
+     （#P / #Q 都需要您提供正確網址，見下方 IG_URL / FB_URL）
+
+   09-21 的紀錄（保留備查）：
    · index.html 仍是 13,209 行，與 9/20 完全相同（最後一個 commit 是
      9/19 的「更新四步驟流程圖（手機版拆成四格）」）。
      #4 / #5 / #6 / #A / #C / #D / #E / #F / #G / #H / #I / #J / #K / #L
@@ -75,6 +107,28 @@
        };
      ============================================================ */
   var NEWS_OVERRIDE = null;
+
+  /* ============================================================
+     【#P】首頁下方「聯絡資訊」橫幅的 Instagram 卡片沒有連結。
+     圖上畫了 Facebook / Instagram / 加入官方 LINE 三張卡，
+     但 index.html 只放了 Facebook 與 LINE 兩塊可點區域，
+     中間那張 Instagram 點下去完全沒反應。
+     把補習班的 IG 網址填進來，這個 patch 就會把中間那塊補上去
+     （桌機版與手機版兩張圖都會補）。
+     例：var IG_URL = 'https://www.instagram.com/ourhope.tw/';
+     ============================================================ */
+  var IG_URL = '';
+
+  /* ============================================================
+     【#Q】全站有兩個不同的 Facebook 網址：
+       頁尾（index.html 11741 行）  https://www.facebook.com/ourhopeourhome/
+       聯絡橫幅（8865 / 8877 行）   https://www.facebook.com/xi.wang.7127/
+     而頁尾目前被 CSS 藏起來（見 #2），所以家長實際點得到的
+     只有橫幅那一個。這兩個哪一個才是官方粉專，只有您知道。
+     把正確的那一個填進來，patch 會把全站的 facebook 連結統一成它；
+     留空 = 不動，只在 console 印出提醒。
+     ============================================================ */
+  var FB_URL = '';
 
   function ready(fn) {
     if (document.readyState !== 'loading') fn();
@@ -611,8 +665,13 @@
 
       [
         'newsModal', 'championLightbox', 'bentoModal', 'scholarshipZoom',
-        'wangVideosModal', 'fangVideosModal', 'lianVideosModal', 'houVideosModal'
+        'wangVideosModal', 'fangVideosModal', 'lianVideosModal', 'houVideosModal',
+        // 09-22 新增的兩位老師，共用同一個 pairs 迴圈、同一個沒有
+        // clearTimeout 的 close()，所以一樣會中這個競態（09-23 補上）
+        'luVideosModal', 'wangzheVideosModal'
       ].forEach(function (id) { guard(document.getElementById(id)); });
+      // 保險：以後再加老師也自動納入
+      document.querySelectorAll('.video-modal[id]').forEach(guard);
 
       // 線上課程的購物車彈窗（目前入口已停用，一併保護以免日後開回來）
       document.querySelectorAll('.shop-modal').forEach(guard);
@@ -1006,6 +1065,398 @@
       document.querySelectorAll('.cal-tab').forEach(function (t) {
         t.addEventListener('click', function () { setTimeout(warmCurrent, 0); });
       });
+    })();
+
+    /* --------------------------------------------------------
+       #O 手機版：hero 的輪播圓點整排被底部導覽列蓋住  ← 新（09-23）
+
+       index.html 418–426 行：
+         .hero-dots {
+           position: absolute;
+           bottom: 18px;            ← 距離 hero 底部 18px
+           left: 50%; transform: translateX(-50%);
+           z-index: 5;
+         }
+
+       而手機底部導覽列（8184–8199 行）：
+         .mobile-bottom-nav {
+           position: fixed;
+           bottom: 14px; left: 12px; right: 12px;
+           padding: 8px 10px;       ← 連圖示＋文字，整條高約 56px
+           z-index: 9999;
+           background: rgba(28,28,32,0.95);   ← 幾乎不透明
+         }
+
+       也就是說，在 ≤720px 的螢幕上，導覽列從畫面底部 14px 一路
+       蓋到大約 70px，而圓點在 18px —— 整排四顆圓點完全落在
+       導覽列底下，而且導覽列的 z-index 是 9999、圓點只有 5。
+
+       結果：
+         · 家長在手機上看不到「現在是第幾張、總共幾張」；
+         · 想點某一顆直接跳圖也點不到（點下去只會按到導覽列）；
+         · hero 是 min-height:100vh，所以這排圓點不是「捲一下就看得到」，
+           它是被永久蓋住的。
+
+       桌機沒有底部導覽列（.mobile-bottom-nav 在 >720px 是 display:none），
+       所以這個問題只發生在手機——也就是最多人用的裝置。
+
+       這一段不用 JS 就能修，整個修正寫在 bugfix-patch.css 的 #13
+       （把圓點在手機上往上移到導覽列上方）。
+       這裡只做一件 JS 才做得到的事：圓點目前沒有任何 aria 標記，
+       補上 tablist 語意，讓它至少對螢幕閱讀器有意義。
+
+       （正式版的根治做法：在 8183 行那個 @media (max-width:720px) 裡
+         加一條 .hero-dots { bottom: 84px; }）
+       -------------------------------------------------------- */
+    (function fixHeroDotsSemantics() {
+      var box = document.getElementById('heroDots');
+      if (!box) return;
+      var dots = box.querySelectorAll('.hero-dot');
+      if (!dots.length) return;
+
+      box.setAttribute('role', 'tablist');
+      box.setAttribute('aria-label', '首頁背景輪播');
+      dots.forEach(function (d) {
+        d.setAttribute('role', 'tab');
+        d.setAttribute('aria-selected', d.classList.contains('is-active') ? 'true' : 'false');
+      });
+      if (window.MutationObserver) {
+        dots.forEach(function (d) {
+          new MutationObserver(function () {
+            d.setAttribute('aria-selected',
+              d.classList.contains('is-active') ? 'true' : 'false');
+          }).observe(d, { attributes: true, attributeFilter: ['class'] });
+        });
+      }
+    })();
+
+    /* --------------------------------------------------------
+       #P 聯絡資訊橫幅：Instagram 那張卡片點不動  ← 新（09-23）
+
+       9/22 新做的「首頁下方聯絡資訊」是一張整圖，上面疊透明的
+       <a class="hc-hot"> 當可點區域（index.html 8856–8883 行）。
+
+       圖上畫了三張卡：Facebook、Instagram、加入官方 LINE，
+       alt 也老實寫了「Facebook、Instagram、加入官方 LINE」。
+       但實際只放了兩塊可點區域：
+
+         桌機版（8865/8866 行）
+           Facebook  left:42.30%  width:16.20%   → 42.30%～58.50%
+           LINE      left:77.25%  width:16.20%   → 77.25%～93.45%
+           中間 58.50%～77.25% 這塊（＝ Instagram）沒有任何連結
+
+         手機版（8877/8878 行）
+           Facebook  left:1.52%   width:30.71%
+           LINE      left:67.77%  width:30.71%
+           中間 34%～66% 這塊（＝ Instagram）一樣沒有連結
+
+       量過原圖（聯絡資訊.webp 2172×724、聯絡資訊-右.webp 1146×413）
+       確認三張卡的位置與上面的百分比對得起來，中間那張確實是
+       Instagram，而且確實是空的。
+
+       家長看到三張一模一樣的卡，點中間那張什麼事都不會發生 ——
+       比「沒有這張卡」更糟，因為看起來像網站壞了。
+
+       → 把 IG 網址填進本檔最上面的 IG_URL，這裡就會把兩張圖
+         中間那塊補上去（位置用左右兩塊算出來，保證對齊）。
+         留空的話只在 console 提醒，不會亂猜網址。
+
+       （正式版的根治做法：在 8865 與 8877 行中間各插一行
+         <a class="hc-hot is-card" href="您的IG網址" target="_blank"
+            rel="noopener" aria-label="希望補習班 Instagram"
+            style="left:59.78%;top:22.04%;width:16.20%;height:53.22%"></a>
+         手機版那張用 style="left:34.64%;top:3.16%;width:30.71%;height:93.42%"）
+       -------------------------------------------------------- */
+    (function fixContactBannerInstagram() {
+      var banner = document.querySelector('.hc-banner');
+      if (!banner) return;
+
+      // 每一塊圖（桌機一張、手機兩張）各自處理
+      var blocks = banner.querySelectorAll('.hc-full, .hc-part');
+      var patched = 0, found = 0;
+
+      blocks.forEach(function (block) {
+        var cards = block.querySelectorAll('a.hc-hot.is-card');
+        if (cards.length !== 2) return;          // 不是「FB + LINE」這種版型就跳過
+
+        // 已經補過就不要補第二次
+        if (block.querySelector('a.hc-hot[data-bugfix-ig]')) return;
+
+        function num(el, prop) { return parseFloat(el.style[prop]) || 0; };
+
+        var a = cards[0], b = cards[1];
+        var left = num(a, 'left'), w = num(a, 'width');
+        var right = num(b, 'left');
+        // 三張卡等寬等距 → 中間那張的左緣 = 兩張卡左緣的中點
+        var midLeft = (left + right) / 2;
+        if (!(w > 0) || !(right > left)) return;
+
+        found++;
+        if (!IG_URL) return;
+
+        var ig = document.createElement('a');
+        ig.className = a.className;
+        ig.setAttribute('data-bugfix-ig', '1');
+        ig.href = IG_URL;
+        ig.target = '_blank';
+        ig.rel = 'noopener';
+        ig.setAttribute('aria-label', '希望補習班 Instagram');
+        ig.style.left = midLeft.toFixed(2) + '%';
+        ig.style.top = a.style.top;
+        ig.style.width = w.toFixed(2) + '%';
+        ig.style.height = a.style.height;
+        a.parentNode.insertBefore(ig, b);
+        patched++;
+      });
+
+      if (found && !patched && window.console) {
+        console.warn('[bugfix #P] 聯絡資訊橫幅的 Instagram 卡片沒有連結（共 ' +
+          found + ' 處）。請把 IG 網址填進 bugfix-patch.js 最上面的 IG_URL。');
+      }
+    })();
+
+    /* --------------------------------------------------------
+       #Q 全站有兩個不同的 Facebook 網址  ← 新（09-23）
+
+       index.html 11741 行（頁尾）：
+         <a href="https://www.facebook.com/ourhopeourhome/">FB</a>
+       index.html 8865 / 8877 行（9/22 新做的聯絡資訊橫幅）：
+         <a href="https://www.facebook.com/xi.wang.7127/" ...>
+
+       同一個網站、同一個「Facebook」按鈕，指到兩個不同的地方。
+       而且因為頁尾目前被 `body.is-paged footer { display:none }`
+       整個藏起來（見 bugfix-patch.css 的 #2），家長實際上
+       只點得到橫幅那一個 —— 也就是 xi.wang.7127。
+
+       ourhopeourhome 看起來像粉絲專頁的網址，
+       xi.wang.7127 看起來像個人帳號的網址，
+       但這只是從字面猜的，哪一個才是要給家長看的，只有您知道。
+
+       → 把正確的填進本檔最上面的 FB_URL，這裡會把全站統一過去；
+         留空就只在 console 印出目前找到哪幾個，不動任何連結。
+
+       （正式版的根治做法：三處（8865 / 8877 / 11741）改成同一個網址。）
+       -------------------------------------------------------- */
+    (function fixFacebookUrlMismatch() {
+      var links = document.querySelectorAll('a[href*="facebook.com"]');
+      if (!links.length) return;
+
+      var seen = {};
+      links.forEach(function (a) { seen[a.getAttribute('href')] = 1; });
+      var urls = Object.keys(seen);
+
+      if (FB_URL) {
+        links.forEach(function (a) { a.setAttribute('href', FB_URL); });
+        return;
+      }
+      if (urls.length > 1 && window.console) {
+        console.warn('[bugfix #Q] 全站有 ' + urls.length +
+          ' 個不同的 Facebook 網址：\n  ' + urls.join('\n  ') +
+          '\n請把正確的那一個填進 bugfix-patch.js 最上面的 FB_URL。');
+      }
+    })();
+
+    /* --------------------------------------------------------
+       #R 整個首頁沒有任何 <h1>  ← 新（09-24）· 本次最重要
+
+       9/22 的 commit「移除首頁大標題」把 hero 裡的
+       <h1 class="hero-title"> 整段刪掉了。現在 hero 裡只剩下：
+
+         <button class="news-pill">…NEWS 最新消息…</button>
+         <div class="hero-buttons"> 立即預約試聽 / 查看聯絡簿 </div>
+
+       我把 index.html 全部 13,362 行掃過，「<h1」出現 0 次。
+       也就是說整個網站（首頁就是全站唯一的內容頁）**一個 h1 都沒有**，
+       最上層的標題直接從 <h2>關於我們</h2> 開始。
+
+       為什麼這件事要緊：
+
+       · Google 拿 h1 當「這一頁在講什麼」最主要的依據之一。
+         現在能表達主題的只剩 <title> 和一堆 h2。
+         偏偏同一天（9/22）還有另外兩個 commit 在做 SEO
+         （結構化資料統一網址、sitemap 更新日期），
+         顯然是想把搜尋排名做起來，卻同時把 h1 弄掉了 ——
+         這兩件事是互相抵銷的，所以我判斷它是誤刪，不是設計決定。
+       · 補習班很吃「小巨蛋 補習班」「松山 理化」這種在地搜尋，
+         h1 是這類關鍵字最該出現的位置。
+       · 螢幕閱讀器的使用者習慣按「跳到 h1」來確認自己在哪一頁，
+         現在會直接跳到「關於我們」。
+       · 標題層級從 h2 開始（跳過 h1）也是 HTML 驗證與
+         Lighthouse 無障礙檢查會報的項目。
+
+       → 這裡補一個「看不見但讀得到」的 h1 放在 hero 最前面
+         （視覺上完全沒有變化，不會把您刻意留白的封面弄亂）。
+         文案取自 <title> 與 og:description 已經在用的字，
+         沒有自己編新的東西：
+           希望文理補習班 · 汪飛白理化 — 台北松山小巨蛋 30 年國高中文理補習班
+
+       （正式版的根治做法，二選一：
+          (a) 想維持現在乾淨的封面 → 照這裡的做法，
+              在 8689 行 <div class="hero-inner"> 後面加一行
+              視覺隱藏的 <h1>，CSS 用 bugfix-patch.css 的 .sr-only；
+          (b) 想把大標題放回來 → 把 9/22 刪掉的 <h1 class="hero-title">
+              加回去就好，`.hero-title` 的 CSS（7719 / 8170 行）
+              到現在都還留著，是現成可用的死碼。
+          我建議 (a)：您 9/22 連著兩個 commit 在縮小首頁的視覺重量
+          （移除大標題、聯絡資訊區縮小），看得出是刻意要留白，
+          (a) 可以同時保留留白跟 SEO。）
+       -------------------------------------------------------- */
+    (function fixMissingH1() {
+      if (document.querySelector('h1')) return;   // 正式版補好了就不要重複加
+
+      var H1_TEXT = '希望文理補習班 · 汪飛白理化 — 台北松山小巨蛋 30 年國高中文理補習班';
+
+      var host = document.querySelector('.hero .hero-inner') ||
+                 document.querySelector('.hero .container') ||
+                 document.querySelector('.hero');
+      if (!host) return;
+
+      var h1 = document.createElement('h1');
+      h1.className = 'sr-only bugfix-h1';
+      h1.textContent = H1_TEXT;
+      host.insertBefore(h1, host.firstChild);
+    })();
+
+    /* --------------------------------------------------------
+       #S 師資輪播的八顆圓點，完全沒有接任何 JavaScript  ← 新（09-24）
+
+       手機版（≤520px）的師資區是一個真的輪播
+       （index.html 7778–7806 行）：
+
+         .teachers-grid {
+           display: flex !important;
+           overflow-x: auto;
+           scroll-snap-type: x mandatory;
+         }
+         .teacher-card {
+           flex: 0 0 calc(100% - 32px);
+           scroll-snap-align: center;
+         }
+
+       一頁一位老師，左右滑動，共八位。下面還放了八顆圓點
+       （10245–10253 行），第一顆寫著 class="dot active"：
+
+         <div class="teachers-dots" id="teachersDots" aria-hidden="true">
+           <button class="dot active" data-idx="0" aria-label="第 1 位老師"></button>
+           … 共八顆 …
+         </div>
+
+       問題是：**沒有任何 JavaScript 用到它們。**
+       我把 13,362 行全部搜過，`teachersDots` 只出現在 10245 行
+       這一個地方（就是上面那段 HTML 自己），
+       JS 裡一次都沒有被抓出來過；`data-idx` 在 JS 裡只有 12726 行，
+       那是 hero 背景輪播自己產生的圓點，跟師資無關。
+
+       所以實際上會發生的事（只在手機，也就是最多人用的裝置）：
+         · 家長滑到第五位老師，圓點還是**停在第一顆**——
+           永遠告訴你「你在第 1 位」，是錯的資訊；
+         · 那八顆是貨真價實的 <button>，看起來像可以點
+           （CSS 7835 行還特別寫了 cursor: pointer），
+           點下去卻完全沒反應；
+         · 因為沒有任何回饋，家長很可能根本不知道右邊還有五位老師
+           ——「← 滑動查看更多老師 →」那行提示字（10255 行）
+           在 ≤520px 才顯示，而且很小。
+
+       對照組：hero 的背景輪播圓點是 12715–12729 行用 JS 自動產生、
+       自動同步、可以點的。師資這組是手寫八顆靜態 HTML，
+       八成是當初先把樣子做出來、之後忘了補程式。
+       （順帶一提，寫死八顆也表示以後再加第九位老師，
+         圓點數量會跟卡片對不上。）
+
+       → 這裡把它補完整：
+         · 依「實際有幾張卡」重建圓點（多的刪掉、少的補上），
+           順手解決寫死八顆的問題；
+         · 捲動時用 scrollLeft 算出目前是第幾張，同步 active
+           （rAF 節流，不會拖慢捲動）；
+         · 點圓點會平滑捲到那位老師；
+         · 圓點本身仍然維持 tabindex="-1"（見 #M，容器是
+           aria-hidden），改用 aria-live 之外的方式不動語意，
+           視覺行為與桌機完全不受影響（>520px 整組是 display:none）。
+
+       （正式版的根治做法：在 index.html 加一段像下面這樣的
+         initTeachersDots()，放在 </body> 前或包進 DOMContentLoaded：
+
+           var grid = document.getElementById('teachersGrid');
+           var box  = document.getElementById('teachersDots');
+           var cards = grid.querySelectorAll('.teacher-card');
+           // 依 cards.length 產生圓點、捲動時同步 active、點擊時 scrollTo
+       ）
+       -------------------------------------------------------- */
+    (function fixTeachersDots() {
+      var grid = document.getElementById('teachersGrid');
+      var box  = document.getElementById('teachersDots');
+      if (!grid || !box) return;
+
+      var cards = grid.querySelectorAll('.teacher-card');
+      if (!cards.length) return;
+
+      /* ---- 1. 讓圓點數量等於卡片數量（原本寫死八顆） ---- */
+      var dots = box.querySelectorAll('.dot');
+      while (dots.length > cards.length) {
+        box.removeChild(box.lastElementChild);
+        dots = box.querySelectorAll('.dot');
+      }
+      while (dots.length < cards.length) {
+        var add = document.createElement('button');
+        add.type = 'button';
+        add.className = 'dot';
+        box.appendChild(add);
+        dots = box.querySelectorAll('.dot');
+      }
+      dots.forEach(function (d, i) {
+        d.setAttribute('data-idx', i);
+        d.setAttribute('aria-label', '第 ' + (i + 1) + ' 位老師');
+        // 容器是 aria-hidden="true"，不要攔鍵盤焦點（見 #M）
+        d.setAttribute('tabindex', '-1');
+      });
+
+      /* ---- 2. 捲到第幾張，就亮第幾顆 ---- */
+      function activeIndex() {
+        // 用「捲動位置 ÷ 每張卡佔的寬度」算，比 getBoundingClientRect
+        // 逐張比對便宜，而且 scroll-snap 保證每張等寬。
+        var step = grid.scrollWidth / cards.length;
+        if (!(step > 0)) return 0;
+        var i = Math.round(grid.scrollLeft / step);
+        return Math.max(0, Math.min(cards.length - 1, i));
+      }
+
+      function sync() {
+        var i = activeIndex();
+        dots.forEach(function (d, k) { d.classList.toggle('active', k === i); });
+      }
+
+      var ticking = false;
+      grid.addEventListener('scroll', function () {
+        if (ticking) return;
+        ticking = true;
+        requestAnimationFrame(function () { ticking = false; sync(); });
+      }, { passive: true });
+
+      /* ---- 3. 點圓點 → 捲到那位老師 ---- */
+      box.addEventListener('click', function (e) {
+        var dot = e.target.closest ? e.target.closest('.dot') : null;
+        if (!dot) return;
+        var i = +dot.getAttribute('data-idx') || 0;
+        var card = cards[i];
+        if (!card) return;
+        // 置中對齊，跟 scroll-snap-align: center 一致。
+        // scrollIntoView 的 inline:'center' 直接由瀏覽器算，
+        // 不用擔心 offsetParent 到底是 grid 還是外面那層 wrap；
+        // block:'nearest' 保證不會順便把整頁上下捲動。
+        if (card.scrollIntoView) {
+          try {
+            card.scrollIntoView({ behavior: 'smooth', inline: 'center', block: 'nearest' });
+            return;
+          } catch (err) { /* 舊瀏覽器不吃物件參數，往下走 */ }
+        }
+        var left = Math.max(0, card.offsetLeft - (grid.clientWidth - card.offsetWidth) / 2);
+        if (grid.scrollTo) grid.scrollTo({ left: left, behavior: 'smooth' });
+        else grid.scrollLeft = left;
+      });
+
+      sync();
+      // 轉向 / 改變視窗寬度後每張卡的寬度會變，重算一次
+      window.addEventListener('resize', function () { setTimeout(sync, 200); });
     })();
 
   });

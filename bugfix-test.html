@@ -4,7 +4,7 @@
 <meta charset="UTF-8" />
 <meta name="viewport" content="width=device-width, initial-scale=1.0" />
 <meta name="robots" content="noindex, nofollow" />
-<title>Bug 修正測試頁 · 2026-09-21 · 希望文理補習班</title>
+<title>Bug 修正測試頁 · 2026-09-26 · 希望文理補習班</title>
 <style>
   * { box-sizing: border-box; }
   body {
@@ -62,7 +62,7 @@
 <body>
 
 <div class="bar">
-  <strong>Bug 修正測試頁 · 2026-09-21</strong>
+  <strong>Bug 修正測試頁 · 2026-09-26</strong>
   <span class="sep"></span>
   <button id="toggle" class="on">修正：已套用</button>
   <span class="sep"></span>
@@ -139,6 +139,86 @@
   　　<code>115國七行事曆.jpg</code>（fetchPriority 是 low，不會搶首屏），
   　　點放大是秒開，長按存下來的仍然是 JPG。<br>
   　　切年級時也會預抓新的那一張，而且只抓看得到的那一張。<br>
+  ⑱ <strong>【本次新增・09-23・最重要】</strong>手機版 hero 的輪播圓點
+  　　被底部導覽列蓋住（#13）：<br>
+  　　用<strong>手機 390px</strong>測，停在首頁。<br>
+  　　<strong>關閉修正時：</strong>hero 最下面那排小圓點
+  　　（顯示「現在是第幾張背景圖」的那四顆）完全看不到 ——
+  　　它在距離底部 18px 的位置，而底部導覽列從 14px 蓋到約 70px，
+  　　z-index 又是 9999 比圓點的 5 大，所以整排被壓在黑條底下，
+  　　既看不到也點不到。<br>
+  　　<strong>套用修正後：</strong>圓點會移到導覽列上方，
+  　　看得到也點得動（可點範圍也放大到 30px 好按）。桌機零變化。<br>
+  ⑲ <strong>【本次新增・09-23】</strong>首頁下方「聯絡資訊」橫幅的
+  　　Instagram 卡片點不動（#P）：<br>
+  　　捲到首頁最下面那張深藍色橫幅，上面有 Facebook / Instagram /
+  　　加入官方 LINE 三張卡。點 Facebook 會開粉專、點 LINE 會開官方帳號，
+  　　<strong>點中間的 Instagram 什麼事都不會發生</strong>
+  　　—— 那塊根本沒有放連結。<br>
+  　　※ 這一項需要您先把 IG 網址填進 <code>bugfix-patch.js</code> 最上面的
+  　　<code>IG_URL</code>，填了之後開關才看得出差別；沒填的話
+  　　只會在 F12 的 Console 印一行提醒。<br>
+  ⑳ <strong>【本次新增・09-23】</strong>全站有兩個不同的 Facebook 網址（#Q）：<br>
+  　　頁尾寫的是 <code>facebook.com/ourhopeourhome/</code>，
+  　　新做的聯絡橫幅寫的是 <code>facebook.com/xi.wang.7127/</code>。<br>
+  　　同樣需要您決定哪一個才對，填進 <code>FB_URL</code>；
+  　　沒填只會在 Console 印出目前找到的清單。<br>
+  ㉑ <strong>【本次新增・09-24・最重要】</strong>整個首頁沒有任何
+  　　<code>&lt;h1&gt;</code>（#R）：<br>
+  　　這一項看不到畫面差異（補回去的 h1 是刻意做成「讀得到但看不見」的），
+  　　要用開發者工具驗：<br>
+  　　<strong>關閉修正時：</strong>在 iframe 裡按 F12 → Console 貼上
+  　　<code>document.querySelectorAll('h1').length</code> → 得到 <strong>0</strong>。
+  　　整份 13,362 行的 index.html 裡「&lt;h1」出現 0 次，
+  　　最上層標題直接從 <code>&lt;h2&gt;關於我們&lt;/h2&gt;</code> 開始。<br>
+  　　<strong>套用修正後：</strong>同一行指令會得到 <strong>1</strong>，
+  　　內容是「希望文理補習班 · 汪飛白理化 — 台北松山小巨蛋 30 年國高中文理補習班」
+  　　（文案取自現有的 &lt;title&gt; 與 og:description，沒有自己編）。
+  　　<strong>視覺上完全沒有變化</strong>，封面維持 9/22 之後留白的樣子。<br>
+  　　※ 成因是 9/22 的 commit「移除首頁大標題」把唯一的 h1 一起拿掉了，
+  　　　 而同一天還有兩個 SEO commit —— 兩件事互相抵銷，所以我判斷是誤刪。<br>
+  ㉒ <strong>【本次新增・09-24】</strong>師資輪播那八顆圓點完全沒接程式（#S）：<br>
+  　　用<strong>手機 390px</strong>測，切到「師資」分頁。<br>
+  　　<strong>關閉修正時：</strong>左右滑動老師卡片，下面那排圓點
+  　　<strong>永遠停在第一顆</strong>（滑到第五位老師，它還是說你在第 1 位）；
+  　　那八顆是真的 <code>&lt;button&gt;</code>、CSS 還特別寫了
+  　　<code>cursor:pointer</code>，但點下去<strong>完全沒有反應</strong>。<br>
+  　　<strong>套用修正後：</strong>滑動時圓點會跟著亮，點圓點會平滑捲到那位老師，
+  　　可點範圍也從 8px 放大到 30px 好按。<br>
+  　　※ 順手解決了「圓點寫死八顆」的問題 —— 修正後會依實際卡片數量重建，
+  　　　 以後加第九位老師不用再改 HTML。桌機零變化（&gt;520px 整組是 display:none）。<br>
+  ※ 2026-09-26 複查：index.html 仍是 <strong>13,362 行</strong>，內容與 9/22 最後一次 commit 逐位元組相同
+  　 （courses.html 1867 行、tracking.html 467 行也都沒變）。Windows 沙盒仍被 9/8 更新擋住，
+  　 這次用<strong>自動化腳本</strong>重跑一輪：13 段內嵌 <code>&lt;script&gt;</code>（11 段 JS＋2 段 JSON-LD）
+  　 逐段跑 <code>node --check</code> ／ <code>JSON.parse</code>，<strong>零語法錯誤</strong>；
+  　 101 個 <code>id</code> 全部唯一；10 個 <code>href="#..."</code> 錨點全部有對應 id；
+  　 47 個 <code>target="_blank"</code> 全部有 <code>rel="noopener"</code>；無 <code>http://</code> 混合內容；
+  　 程式比對全部圖片參照與資料夾實際檔名，<strong>無破圖</strong>。另外這次額外用網路擷取
+  　 直接讀了 <strong>線上正式版</strong>（new.ourhope.com.tw）的 HTML 當對照，
+  　 標題與內容跟本機 index.html 一致，同樣<strong>沒有 &lt;h1&gt;</strong>（#1 仍待處理）。
+  　 courses.html 1210/1218/1220 行的明文密碼 console.log 也再次確認還在。
+  　 ①～㉒ 全部仍然存在，沒有任何一項被正式版修掉，這次沒有新發現——
+  　 已連續第三天（09-24／09-25／09-26）沒有變動。<br>
+  ※ 2026-09-25 複查：index.html 仍是 <strong>13,362 行</strong>，內容與 9/24 逐位元組相同
+  　 （Windows 沙盒仍被擋，這次改用<strong>自動化工具</strong>而不是肉眼讀碼：
+  　 對 13 段內嵌 <code>&lt;script&gt;</code> 逐段跑 <code>node --check</code> 語法檢查、
+  　 用程式比對全部圖片／PDF 參照與資料夾實際檔名、CSS／HTML 標籤配對計數、
+  　 id 唯一性與 <code>href="#..."</code> 錨點比對——<strong>全部通過，零錯誤</strong>，
+  　 courses.html 1210/1218/1220 行的明文密碼 console.log 也再次確認還在）。
+  　 ①～㉒ 全部仍然存在，沒有任何一項被正式版修掉，這次沒有新發現。<br>
+  ※ 2026-09-24 複查：index.html 仍是 <strong>13,362 行</strong>，與 9/23 完全相同
+  　 （最後一個 commit 還是 9/22 的「SEO：結構化資料網址統一、sitemap 更新日期」）。
+  　 ①～⑳ 逐項重新對過，<strong>全部仍然存在</strong>，
+  　 沒有任何一項被正式版修掉；㉑㉒ 是這次新發現的。<br>
+  ※ 2026-09-23 複查：index.html 從 13,209 行變成 <strong>13,362 行</strong>
+  　 （9/22 的六個 commit：呂碩／旺哲試聽影片、首頁下方聯絡資訊橫幅、
+  　 錄取學校加中崙／西松／麗山／大直、聯絡資訊區縮小、移除首頁大標題、
+  　 SEO 網址統一）。①～⑰ 逐項重新對過行號，<strong>全部仍然存在</strong>，
+  　 沒有任何一項被正式版修掉；⑱⑲⑳ 是這次新發現的。<br>
+  　 另外 ⑫（彈窗關閉→立刻再開）的守門員名單已補上 9/22 新增的
+  　 <strong>呂碩、旺哲</strong>兩個試聽影片彈窗 —— 它們用的是同一份
+  　 <code>pairs</code> 迴圈、同一個沒有 clearTimeout 的 <code>close()</code>，
+  　 所以一樣會中這個競態。<br>
   ※ 2026-09-21 複查：index.html 仍是 <strong>13,209 行</strong>，與 9/20 完全相同
   　 （最後一個 commit 還是 9/19 的「四步驟流程圖」）。
   　 ①～⑮ 逐項重新對過行號，<strong>全部仍然存在</strong>，

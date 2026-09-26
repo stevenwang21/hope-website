@@ -1,5 +1,7 @@
 /* ============================================================
-   bugfix-patch.css  ·  2026-09-20 更新（原 09-12 / 09-14 / 09-15 / 09-16 / 09-18）
+   bugfix-patch.css  ·  2026-09-24 更新
+                       （原 09-12 / 09-14 / 09-15 / 09-16 / 09-18 /
+                         09-20 / 09-23）
    希望文理補習班網站 bug 修正（測試用，未套進 index.html）
 
    用法：在 index.html 的 </head> 前加一行
@@ -7,7 +9,29 @@
    或直接開 bugfix-test.html 預覽。
 
    ------------------------------------------------------------
-   本次（09-20）的異動：
+   本次（09-24）的異動：
+   · index.html 仍是 13,362 行，與 9/23 完全相同。
+     #2 / #4 / #5 / #6 / #7 / #8 / #9 / #10 / #11 / #12 / #13
+     全部複查後確認「仍然存在」，原樣保留。
+   · 新增 #14：`.sr-only`——配合 bugfix-patch.js 的 #R，
+     讓補回去的 <h1> 讀得到但看不見。
+   · 新增 #15：師資輪播圓點的可點範圍（配合 js 的 #S）。
+
+   09-23 的紀錄（保留備查）：
+   · index.html 已被您更新到 13,362 行（9/22 那六個 commit：
+     呂碩／旺哲試聽影片、首頁下方聯絡資訊橫幅、錄取學校加四所、
+     聯絡資訊區縮小、移除首頁大標題、SEO 統一網址）。
+   · #2 / #4 / #5 / #6 / #7 / #8 / #9 / #10 / #11 / #12 全部重新對過行號，
+     確認「仍然存在」，原樣保留
+     （#2 → 7498 行、#5 → 8267 行與 403–409 行、#11 → 5645–5675 行、
+       #12 → 5680 行）。
+   · 新增 #13：手機版 hero 的輪播圓點整排被底部導覽列蓋住。← 本次最重要
+   · 附帶說明：#2 的理由要修正一半 —— 9/22 之後 Facebook 連結
+     在首頁下方的「聯絡資訊」橫幅裡也有了，不再是「全站只有頁尾才有」。
+     但頁尾的營業時間、地址、版權宣告仍然是全站看不到，
+     而且橫幅的 FB 網址跟頁尾的不一樣（見 bugfix-patch.js 的 #Q）。
+
+   09-20 的紀錄（保留備查）：
    · index.html 已被您更新到 13,208 行（9/19 那幾個 commit：
      行事曆改成年級切換大圖＋點圖放大、新增元欣主導師、
      手機下方列加行事曆、四步驟流程圖手機版拆四格）。
@@ -304,5 +328,125 @@ body.is-paged[data-current="contact"] footer {
     padding: 0 2px;
     white-space: nowrap;
     flex: 0 0 auto;
+  }
+}
+
+/* ------------------------------------------------------------
+   #13【中・新・09-23】手機版 hero 的輪播圓點，整排被底部導覽列蓋住
+
+      index.html 418–426 行（沒有任何手機版的覆寫）：
+        .hero-dots {
+          position: absolute;
+          bottom: 18px;                     ← 距離 hero 底部 18px
+          left: 50%; transform: translateX(-50%);
+          z-index: 5;
+        }
+
+      而手機底部導覽列（8184–8199 行）：
+        .mobile-bottom-nav {
+          position: fixed;
+          bottom: 14px; left: 12px; right: 12px;
+          padding: 8px 10px;                ← 圖示 22px ＋ 文字 ＋ 上下 padding
+          z-index: 9999;                    ← 圓點只有 5
+          background: rgba(28,28,32,0.95);  ← 幾乎不透明
+        }
+
+      導覽列整條高度約 56px，也就是從畫面底部 14px 蓋到約 70px。
+      圓點在 18px —— 整排剛好落在導覽列正下方，而且被一塊
+      z-index 9999 的不透明黑條完全遮住。
+
+      實際發生的事（只在 ≤720px，也就是最多人用的手機）：
+        · 看不到「現在是第幾張、總共有幾張」；
+        · 想點某一顆直接跳到那張圖，點下去只會按到導覽列；
+        · hero 是 min-height:100vh，這排圓點不是「往下捲就看得到」，
+          它是被永久蓋住的。
+
+      9/22 把首頁大標題移除之後，hero 只剩背景輪播、NEWS 膠囊和
+      兩顆按鈕，這排圓點是唯一讓家長知道「還有其他照片可以看」的
+      提示，被蓋住影響不小。
+
+      → 在手機把圓點往上移到導覽列上方（84px），
+        底部導覽列的 top 大約在 70px，留 14px 的空隙；
+        同時把 z-index 拉到導覽列之下、hero 內容之上，
+        並把可點範圍做大一點（圓點原本只有 10px，手指很難點）。
+        桌機完全不受影響（>720px 沒有底部導覽列，這段不會生效）。
+
+      （正式版的根治做法：在 8183 行那個 @media (max-width: 720px) 裡
+        加一條 .hero-dots { bottom: 84px; }）
+   ------------------------------------------------------------ */
+@media (max-width: 720px) {
+  .hero-dots {
+    bottom: calc(84px + env(safe-area-inset-bottom, 0px)) !important;
+    z-index: 6 !important;
+    gap: 18px !important;
+  }
+  /* 圓點本身維持 10px 的視覺大小，但用 ::before 把可點範圍撐到 28px。
+     間距 18px ＋ 圓點 10px ＝ 每顆佔 28px，剛好不會互相重疊。 */
+  .hero-dot { position: relative; }
+  .hero-dot::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 28px; height: 28px;
+    transform: translate(-50%, -50%);
+  }
+}
+
+/* ------------------------------------------------------------
+   #14【高・新・09-24】`.sr-only`——配合 bugfix-patch.js 的 #R
+
+      9/22 的「移除首頁大標題」把整個網站唯一的 <h1> 一起刪掉了
+      （現在 index.html 13,362 行裡「<h1」出現 0 次），
+      最上層的標題直接從 <h2>關於我們</h2> 開始。
+      js 的 #R 會在 hero 最前面補一個 <h1 class="sr-only">，
+      這裡提供它需要的「讀得到但看不見」樣式。
+
+      用的是無障礙界通用的那組寫法（不是 display:none ——
+      display:none 連螢幕閱讀器也讀不到，等於沒補）：
+      裁成 1×1 的方框、移出可視範圍、關掉換行。
+
+      視覺上完全沒有任何變化，封面維持 9/22 之後留白的樣子。
+
+      （正式版的根治做法：把這一段 .sr-only 抄進 index.html 的
+        <style> 裡，再在 8689 行 <div class="hero-inner"> 後面
+        加一行 <h1 class="sr-only">…</h1>。）
+   ------------------------------------------------------------ */
+.sr-only {
+  position: absolute !important;
+  width: 1px !important;
+  height: 1px !important;
+  padding: 0 !important;
+  margin: -1px !important;
+  overflow: hidden !important;
+  clip: rect(0, 0, 0, 0) !important;
+  clip-path: inset(50%) !important;
+  white-space: nowrap !important;
+  border: 0 !important;
+}
+
+/* ------------------------------------------------------------
+   #15【小・新・09-24】師資輪播圓點的可點範圍（配合 js 的 #S）
+
+      圓點原本是 8×8px（index.html 7830 行），
+      在 js 的 #S 把「點圓點跳到那位老師」接上去之後，
+      8px 的目標對手指來說太小了
+      （Apple 與 Google 的建議值都是 44px）。
+
+      → 用 ::before 把可點範圍撐到 30px，視覺大小完全不變。
+        間距是 10px（7825 行）＋ 圓點 8px ＝ 每顆佔 18px，
+        撐到 30px 會稍微重疊，所以順手把 gap 加大到 20px，
+        每顆佔 28px，不會互相蓋到。
+        另外 .dot.active 會變成 26px 寬的膠囊（7838 行），
+        那顆本來就夠大，不受影響。
+   ------------------------------------------------------------ */
+@media (max-width: 520px) {
+  .teachers-dots { gap: 20px !important; }
+  .teachers-dots .dot { position: relative; }
+  .teachers-dots .dot::before {
+    content: '';
+    position: absolute;
+    top: 50%; left: 50%;
+    width: 30px; height: 30px;
+    transform: translate(-50%, -50%);
   }
 }

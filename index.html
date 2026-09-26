@@ -11819,13 +11819,29 @@ document.addEventListener('DOMContentLoaded', function () {
       return im.getAttribute('src');
     }
 
+    // 有些圖只有電腦版看得到、有些只有手機版看得到（例如聯絡資訊橫幅、四步驟流程）。
+    // 分頁本身是 display:none，所以只往上檢查到 section 為止，不要把整頁都當成隱藏。
+    function hiddenHere(im) {
+      var el = im;
+      while (el && el !== document.body) {
+        if (el.tagName === 'SECTION' && el.hasAttribute('data-page')) return false;
+        var st = window.getComputedStyle(el);
+        if (st.display === 'none') return true;
+        el = el.parentElement;
+      }
+      return false;
+    }
+
     // 目前這一頁的圖最優先，其他分頁的排後面
     var here = document.querySelector('section[data-page="' +
       (document.body.getAttribute('data-current') || 'home') + '"]');
     if (here) {
-      here.querySelectorAll('img[src]').forEach(function (im) { add(srcOf(im), soon); });
+      here.querySelectorAll('img[src]').forEach(function (im) {
+        if (!hiddenHere(im)) add(srcOf(im), soon);
+      });
     }
     document.querySelectorAll('img[src]').forEach(function (im) {
+      if (hiddenHere(im)) return;
       var u = srcOf(im);
       add(u, /^scholarship\//.test(u) ? later : soon);
     });
@@ -11854,16 +11870,29 @@ document.addEventListener('DOMContentLoaded', function () {
       if (window.requestIdleCallback) requestIdleCallback(fn, { timeout: 1200 });
       else setTimeout(fn, 60);
     }
+    // 這一頁自己的圖（hereCount 張）永遠抓；其他分頁的圖在手機上設 1.2MB 上限，
+    // 超過就停手 —— 家長切到那一頁時，hashchange 會立刻補抓，不會一直吃行動網路流量。
+    var hereCount = here ? here.querySelectorAll('img[src]').length : 0;
+    var BUDGET = lean ? 1.2e6 : Infinity;
+    var spent = 0;
+    function transferOf(url) {
+      try {
+        var e = performance.getEntriesByName(new URL(url, location.href).href);
+        return (e && e.length) ? (e[e.length - 1].transferSize || 0) : 0;
+      } catch (e) { return 0; }
+    }
     var soonCount = soon.length;
     function pump() {
       if (idx >= queue.length) return;
       var i = idx++;
-      var isHere = i < soonCount;                    // 目前這一頁的圖
+      var isHere = i < hereCount;                    // 目前這一頁的圖
+      if (!isHere && spent > BUDGET) return;         // 別頁的圖抓夠了就先停
       if (!isHere && busy) { idx = i; setTimeout(pump, 300); return; }  // 別頁的圖才讓路
       var img = new Image();
       img.decoding = 'async';
       if (!isHere && 'fetchPriority' in img) img.fetchPriority = 'low';
       img.onload = img.onerror = function () {
+        if (!isHere) spent += transferOf(img.src);
         if (isHere) pump();                          // 本頁的圖一張接一張，不等閒置
         else nextTick(pump);
       };
@@ -11878,6 +11907,7 @@ document.addEventListener('DOMContentLoaded', function () {
           (document.body.getAttribute('data-current') || 'home') + '"]');
         if (!sec) return;
         sec.querySelectorAll('img[src]').forEach(function (im) {
+          if (hiddenHere(im)) return;
           var u = srcOf(im);
           if (!u || seen[u] === 2) return;
           seen[u] = 2;
@@ -11927,8 +11957,26 @@ document.addEventListener('DOMContentLoaded', function () {
       s.onerror = function () {};          // 載不到就安靜放棄，不影響網站
       document.head.appendChild(s);
     }
-    if (document.readyState === 'complete') setTimeout(warm, 600);
-    else window.addEventListener('load', function () { setTimeout(warm, 600); });
+    // 手機：3D 函式庫（約 150KB）等家長真的開始看（捲動或點畫面）才載，
+    // 一進站的那幾秒把頻寬和 CPU 全留給圖片和文字；六秒沒動作也會自己載。
+    var onPhone = window.matchMedia && window.matchMedia('(max-width: 720px)').matches;
+    if (document.readyState === 'complete') setTimeout(schedule, 600);
+    else window.addEventListener('load', function () { setTimeout(schedule, 600); });
+    function schedule() {
+      if (!onPhone) return warm();
+      var fired = false;
+      function go() {
+        if (fired) return;
+        fired = true;
+        window.removeEventListener('scroll', go);
+        window.removeEventListener('touchstart', go);
+        clearTimeout(t);
+        warm();
+      }
+      var t = setTimeout(go, 6000);
+      window.addEventListener('scroll', go, { passive: true, once: true });
+      window.addEventListener('touchstart', go, { passive: true, once: true });
+    }
     function warm() {
       if (window.requestIdleCallback) requestIdleCallback(start, { timeout: 3000 });
       else setTimeout(start, 400);
@@ -12832,7 +12880,7 @@ document.addEventListener('DOMContentLoaded', function () {
         var on = b.getAttribute('data-cal') === k;
         if (on) found = true;
         b.classList.toggle('is-on', on);
-        if (on) { var im = b.querySelector('img'); if (im) im.loading = 'eager'; }  // 顯示中的那張不要延遲載入
+        if (on) { var im = b.querySelector('img'); if (im) { im.loading = 'eager'; if ('fetchPriority' in im) im.fetchPriority = 'high'; } }  // 顯示中的那張優先載
       });
       if (!found) return false;
       tabs.forEach(function (t) {
