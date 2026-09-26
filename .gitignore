@@ -31,3 +31,9 @@ BUG檢查報告*.md
 bugfix-patch*
 bugfix-test*.html
 bugfix-sitemap.xml
+BUG檢查報告_*.md
+bugfix-*
+index_bugfix_test.html
+bug-report.md
+怪怪的地方_*.md
+修改紀錄_*.md
