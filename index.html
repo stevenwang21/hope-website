@@ -4599,6 +4599,7 @@
   }
   .video-modal-close {
     position: absolute;
+    z-index: 5;                 /* 永遠在最上層，確保按得到 */
     top: 16px;
     right: 16px;
     width: 40px;
@@ -4621,6 +4622,13 @@
     transform: rotate(90deg);
   }
   .video-modal-header {
+    /* 注意：這是 <header> 標籤，會吃到全站的 header{position:fixed;z-index:1000}，
+       變成浮在卡片上面、蓋住右上角的 × 讓人按不到。這裡把它改回普通區塊。 */
+    position: static;
+    transform: none;
+    width: auto;
+    max-width: none;
+    z-index: auto;
     text-align: center;
     margin-bottom: 32px;
   }
@@ -5247,6 +5255,9 @@
     line-height: 1.6;
     color: var(--text-2);
   }
+  /* 彈窗是深色底，說明文字要用淺色才看得清楚（原本用的是深色系文字） */
+  .video-modal .video-card-desc { color: rgba(255,255,255,0.62); }
+  .video-modal .video-card-title { color: #fff; }
 
   @media (max-width: 900px) {
     .video-modal { padding: 16px; }
