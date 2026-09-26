@@ -4274,10 +4274,15 @@
 
   /* ===== 首頁下方 · 聯絡資訊橫幅 ===== */
   section.home-contact { padding: 30px 0 80px; }
-  .hc-banner { max-width: 860px; margin: 0 auto; }
-  .hc-full, .hc-part {
-    position: relative; border-radius: 18px; overflow: hidden;
+  /* 名片與招牌共用同一個外框：外框負責圓角與陰影，裡面兩張圖貼齊沒有縫 */
+  .hc-banner {
+    max-width: 700px; margin: 0 auto;
+    border-radius: 18px; overflow: hidden;
     box-shadow: 0 30px 70px -30px rgba(10, 20, 80, 0.55);
+    background: #061233;
+  }
+  .hc-full, .hc-part {
+    position: relative;
     background: #061233;
   }
   .hc-banner img { display: block; width: 100%; height: auto; }
@@ -4289,16 +4294,23 @@
     outline: none;
   }
   .hc-mobile { display: none; }
+  /* 名片下方的長條招牌 */
+  .hc-sign {
+    display: block; position: relative;
+    padding: 14px 20px 20px;            /* 左右留白，招牌不貼齊外框邊緣 */
+    transition: filter .25s var(--ease);
+  }
+  .hc-sign img { display: block; width: 100%; height: auto; border-radius: 8px; }
+  .hc-sign:hover { filter: brightness(1.08); }
   @media (max-width: 680px) {
     section.home-contact { padding: 0 0 70px; }
     .hc-full { display: none; }
     .hc-mobile {
       display: block; position: relative;
-      border-radius: 18px; overflow: hidden;
-      box-shadow: 0 30px 70px -30px rgba(10, 20, 80, 0.55);
       background: #061233;
     }
     .hc-mobile img { display: block; width: 100%; height: auto; }
+    .hc-sign { padding: 10px 12px 14px; }
     .hc-hot { border-radius: 12px; }
   }
 
@@ -8938,6 +8950,9 @@ document.addEventListener('DOMContentLoaded', function () {
         <a class="hc-hot is-card" href="https://www.facebook.com/xi.wang.7127/" target="_blank" rel="noopener" aria-label="希望補習班 Facebook" style="left:3.16%;top:63.62%;width:30.43%;height:32.46%"></a>
         <a class="hc-hot is-card" href="https://page.line.me/745ajzxs" target="_blank" rel="noopener" aria-label="加入希望補習班官方 LINE" style="left:68.12%;top:63.71%;width:30.17%;height:32.37%"></a>
       </div>
+      <a class="hc-sign" href="tel:+886287705578" aria-label="撥打電話 8770-5578">
+        <img src="希望教育招牌.webp" alt="希望教育 · 人文素養 歷史觀 品味｜台北市南京東路4段25號3F｜汪飛白 數理語文資優｜TEL 8770-5578、8770-5278" width="1720" height="172" loading="lazy" decoding="async" />
+      </a>
     </div>
   </div>
 </section>
