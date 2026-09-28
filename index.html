@@ -4297,7 +4297,7 @@
   /* 名片下方的長條招牌 */
   .hc-sign {
     display: block; position: relative;
-    padding: 14px 20px 20px;            /* 左右留白，招牌不貼齊外框邊緣 */
+    padding: 0 20px 20px;               /* 上緣不留白，招牌貼齊名片；左右仍留白 */
     transition: filter .25s var(--ease);
   }
   .hc-sign img { display: block; width: 100%; height: auto; border-radius: 8px; }
@@ -4310,7 +4310,7 @@
       background: #061233;
     }
     .hc-mobile img { display: block; width: 100%; height: auto; }
-    .hc-sign { padding: 10px 12px 14px; }
+    .hc-sign { padding: 0 12px 14px; }
     .hc-hot { border-radius: 12px; }
   }
 
@@ -8935,13 +8935,13 @@ document.addEventListener('DOMContentLoaded', function () {
   <div class="container">
     <div class="hc-banner fade-up">
       <div class="hc-full">
-        <img src="聯絡資訊-0926b.webp" alt="希望補習班 · 汪飛白理化｜南京東路四段25號3樓｜電話 8770-5578｜台北小巨蛋站一號出口｜Facebook、Instagram、官方 LINE" width="2172" height="724" loading="lazy" decoding="async" />
-        <a class="hc-hot is-row" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F" target="_blank" rel="noopener" aria-label="在 Google 地圖打開：南京東路四段25號3樓" style="left:9.90%;top:45.58%;width:25.55%;height:9.39%"></a>
-        <a class="hc-hot is-row" href="tel:+886287705578" aria-label="撥打電話 8770-5578" style="left:9.90%;top:55.94%;width:25.55%;height:9.25%"></a>
-        <a class="hc-hot is-row" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F" target="_blank" rel="noopener" aria-label="交通：台北小巨蛋站一號出口（打開地圖）" style="left:9.90%;top:66.30%;width:25.55%;height:9.39%"></a>
-        <a class="hc-hot is-card" href="https://www.facebook.com/xi.wang.7127/" target="_blank" rel="noopener" aria-label="希望補習班 Facebook" style="left:42.22%;top:21.55%;width:16.39%;height:53.73%"></a>
-        <a class="hc-hot is-card" href="https://www.instagram.com/our_hope_school520/" target="_blank" rel="noopener" aria-label="希望補習班 Instagram" style="left:59.76%;top:21.69%;width:16.34%;height:53.59%"></a>
-        <a class="hc-hot is-card" href="https://page.line.me/745ajzxs" target="_blank" rel="noopener" aria-label="加入希望補習班官方 LINE" style="left:77.21%;top:21.69%;width:16.25%;height:53.59%"></a>
+        <img src="聯絡資訊-0928.webp" alt="希望補習班 · 汪飛白理化｜南京東路四段25號3樓｜電話 8770-5578｜台北小巨蛋站一號出口｜Facebook、Instagram、官方 LINE" width="2172" height="651" loading="lazy" decoding="async" />
+        <a class="hc-hot is-row" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F" target="_blank" rel="noopener" aria-label="在 Google 地圖打開：南京東路四段25號3樓" style="left:9.90%;top:50.69%;width:25.55%;height:10.44%"></a>
+        <a class="hc-hot is-row" href="tel:+886287705578" aria-label="撥打電話 8770-5578" style="left:9.90%;top:62.21%;width:25.55%;height:10.29%"></a>
+        <a class="hc-hot is-row" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F" target="_blank" rel="noopener" aria-label="交通：台北小巨蛋站一號出口（打開地圖）" style="left:9.90%;top:73.73%;width:25.55%;height:10.44%"></a>
+        <a class="hc-hot is-card" href="https://www.facebook.com/xi.wang.7127/" target="_blank" rel="noopener" aria-label="希望補習班 Facebook" style="left:42.22%;top:23.97%;width:16.39%;height:59.76%"></a>
+        <a class="hc-hot is-card" href="https://www.instagram.com/our_hope_school520/" target="_blank" rel="noopener" aria-label="希望補習班 Instagram" style="left:59.76%;top:24.12%;width:16.34%;height:59.60%"></a>
+        <a class="hc-hot is-card" href="https://page.line.me/745ajzxs" target="_blank" rel="noopener" aria-label="加入希望補習班官方 LINE" style="left:77.21%;top:24.12%;width:16.25%;height:59.60%"></a>
       </div>
       <div class="hc-mobile">
         <img src="聯絡資訊-手機-0926b.webp" alt="希望補習班 · 汪飛白理化｜南京東路四段25號3樓｜電話 8770-5578｜台北小巨蛋站一號出口｜Facebook、Instagram、加入官方 LINE" width="740" height="758" loading="lazy" decoding="async" />
