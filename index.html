@@ -64,6 +64,10 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <!-- 首屏主圖：最高優先度先抓，讓第一眼的畫面立刻出現 -->
 <link rel="preload" as="image" href="封面底圖.webp" fetchpriority="high" />
+<!-- 名片在每一頁最下方，先低優先權預抓，捲到時才不用等 -->
+<link rel="preload" as="image" href="%E8%81%AF%E7%B5%A1%E8%B3%87%E8%A8%8A-v3.webp" media="(min-width: 681px)" fetchpriority="low" />
+<link rel="preload" as="image" href="%E8%81%AF%E7%B5%A1%E8%B3%87%E8%A8%8A-%E6%89%8B%E6%A9%9F-v3.webp" media="(max-width: 680px)" fetchpriority="low" />
+<link rel="preload" as="image" href="%E5%B8%8C%E6%9C%9B%E6%95%99%E8%82%B2%E6%8B%9B%E7%89%8C-v3.webp" fetchpriority="low" />
 <!-- 字體改成非阻塞載入：不擋住第一次繪製 -->
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;600;700;800;900&family=Noto+Serif+TC:wght@500;700&display=swap" media="print" onload="this.media='all'" />
 <noscript><link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800;900&family=Noto+Sans+TC:wght@400;500;600;700;800;900&family=Noto+Serif+TC:wght@500;700&display=swap" /></noscript>
@@ -11777,9 +11781,9 @@ document.addEventListener('DOMContentLoaded', function () {
 <!-- 全站共用：聯絡名片 ＋ 招牌（沒有 data-page，所以每一頁都會顯示） -->
 <section class="home-contact site-contact" aria-label="聯絡我們">
   <div class="container">
-    <div class="hc-banner fade-up">
+    <div class="hc-banner">
       <div class="hc-full">
-        <img src="聯絡資訊-0928b.webp" alt="希望補習班 · 汪飛白理化｜南京東路四段25號3樓｜電話 8770-5578｜台北小巨蛋站一號出口｜Facebook、Instagram、官方 LINE" width="2172" height="651" loading="lazy" decoding="async" />
+        <img src="聯絡資訊-v3.webp" alt="希望補習班 · 汪飛白理化｜南京東路四段25號3樓｜電話 8770-5578｜台北小巨蛋站一號出口｜Facebook、Instagram、官方 LINE" width="1400" height="420" loading="lazy" decoding="async" />
         <a class="hc-hot is-row" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F" target="_blank" rel="noopener" aria-label="在 Google 地圖打開：南京東路四段25號3樓" style="left:10.69%;top:50.35%;width:30.15%;height:12.33%"></a>
         <a class="hc-hot is-row" href="tel:+886287705578" aria-label="撥打電話 8770-5578" style="left:10.69%;top:63.94%;width:30.15%;height:12.14%"></a>
         <a class="hc-hot is-row" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F" target="_blank" rel="noopener" aria-label="交通：台北小巨蛋站一號出口（打開地圖）" style="left:10.69%;top:77.53%;width:30.15%;height:12.33%"></a>
@@ -11788,7 +11792,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <a class="hc-hot is-card" href="https://page.line.me/745ajzxs" target="_blank" rel="noopener" aria-label="加入希望補習班官方 LINE" style="left:81.35%;top:24.12%;width:16.25%;height:59.60%"></a>
       </div>
       <div class="hc-mobile">
-        <img src="聯絡資訊-手機-0928b.webp" alt="希望補習班 · 汪飛白理化｜南京東路四段25號3樓｜電話 8770-5578｜台北小巨蛋站一號出口｜Facebook、Instagram、加入官方 LINE" width="740" height="753" loading="lazy" decoding="async" />
+        <img src="聯絡資訊-手機-v3.webp" alt="希望補習班 · 汪飛白理化｜南京東路四段25號3樓｜電話 8770-5578｜台北小巨蛋站一號出口｜Facebook、Instagram、加入官方 LINE" width="740" height="753" loading="lazy" decoding="async" />
         <a class="hc-hot is-row" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F" target="_blank" rel="noopener" aria-label="在 Google 地圖打開：南京東路四段25號3樓" style="left:15.53%;top:33.05%;width:71.57%;height:8.62%"></a>
         <a class="hc-hot is-row" href="tel:+886287705578" aria-label="撥打電話 8770-5578" style="left:15.53%;top:42.56%;width:71.57%;height:8.49%"></a>
         <a class="hc-hot is-row" href="https://www.google.com/maps/search/?api=1&amp;query=%E5%8F%B0%E5%8C%97%E5%B8%82%E6%9D%BE%E5%B1%B1%E5%8D%80%E5%8D%97%E4%BA%AC%E6%9D%B1%E8%B7%AF%E5%9B%9B%E6%AE%B525%E8%99%9F" target="_blank" rel="noopener" aria-label="交通：台北小巨蛋站一號出口（打開地圖）" style="left:15.53%;top:52.06%;width:71.57%;height:8.62%"></a>
@@ -11797,7 +11801,7 @@ document.addEventListener('DOMContentLoaded', function () {
         <a class="hc-hot is-card" href="https://page.line.me/745ajzxs" target="_blank" rel="noopener" aria-label="加入希望補習班官方 LINE" style="left:68.12%;top:63.46%;width:30.17%;height:32.59%"></a>
       </div>
       <a class="hc-sign" href="tel:+886287705578" aria-label="撥打電話 8770-5578">
-        <img src="希望教育招牌.webp" alt="希望教育 · 人文素養 歷史觀 品味｜台北市南京東路4段25號3F｜汪飛白 數理語文資優｜TEL 8770-5578、8770-5278" width="1720" height="172" loading="lazy" decoding="async" />
+        <img src="希望教育招牌-v3.webp" alt="希望教育 · 人文素養 歷史觀 品味｜台北市南京東路4段25號3F｜汪飛白 數理語文資優｜TEL 8770-5578、8770-5278" width="1400" height="140" loading="lazy" decoding="async" />
       </a>
     </div>
   </div>
