@@ -39,3 +39,5 @@ bug-report.md
 修改紀錄_*.md
 *.test.html
 index.test.html
+index.test-*.html
+*.test-*.html
