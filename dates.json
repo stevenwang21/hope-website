@@ -1,6 +1,6 @@
 {
-  "updatedAt": "2026-10-02T19:40:17.848Z",
-  "updatedAtTaipei": "2026/10/3 03:40:17",
+  "updatedAt": "2026-10-03T06:06:36.339Z",
+  "updatedAtTaipei": "2026/10/3 14:06:36",
   "dates": {
     "10-chemistry": {
       "date": "2026-10-02",
@@ -86,6 +86,13 @@
       "url": "https://wfbph.blogspot.com/2026/10/820261002.html",
       "blog": "https://wfbph.blogspot.com"
     },
+    "8-physics-wj": {
+      "date": "2026-09-26",
+      "label": "9/26 更新",
+      "title": "旺哲理化八年級聯絡簿 - 2026/9/26",
+      "url": "https://wjhp-8.blogspot.com/2026/09/2026926.html",
+      "blog": "https://wjhp-8.blogspot.com"
+    },
     "9-english": {
       "date": "2026-10-02",
       "label": "10/2 更新",
@@ -106,6 +113,20 @@
       "title": "理化9年級－週六進度 聯絡簿(汪老師)－2026年09月26日(六)",
       "url": "https://wfph-9.blogspot.com/2026/09/9-20260926.html",
       "blog": "https://wfph-9.blogspot.com"
+    },
+    "9-physics-wj": {
+      "date": "2026-09-29",
+      "label": "9/29 更新",
+      "title": "旺哲理化九年級聯絡簿 - 2026/9/29",
+      "url": "https://wjhp-9.blogspot.com/2026/09/2026929.html",
+      "blog": "https://wjhp-9.blogspot.com"
+    },
+    "9-science": {
+      "date": "2026-10-01",
+      "label": "10/1 更新",
+      "title": "理化9年級－自然複習課－2026年10月01日(四)",
+      "url": "https://wfphg1.blogspot.com/2026/10/920261001.html",
+      "blog": "https://wfphg1.blogspot.com"
     }
   }
 }
