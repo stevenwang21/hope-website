@@ -5058,6 +5058,123 @@
   .db-vid-title { font-size: 0.86rem; font-weight: 700; line-height: 1.45; color: #fff; }
   .db-pop-empty { color: rgba(255,255,255,0.65); font-size: 0.9rem; grid-column: 1 / -1; }
 
+  /* ===== 汪老師彈窗 · 精緻化（保留深色，降噪、統一層次） ===== */
+  /* 圖示：有內容＝淡金底＋金色線條；沒內容＝灰。不再用實心金塊搶視線 */
+  .db-item:not(.is-soon) .db-item-icon {
+    background: rgba(255,215,112,0.10) !important; color: var(--gold);
+    box-shadow: inset 0 0 0 1px rgba(255,215,112,0.20);
+  }
+  @media (min-width: 880px) {
+    #wangVideosModal .video-modal-card {
+      background: radial-gradient(120% 70% at 50% -10%, rgba(255,215,112,0.055), transparent 60%), #0c0c10;
+      border-color: rgba(255,255,255,0.08);
+      box-shadow: 0 40px 100px rgba(0,0,0,0.6);
+    }
+    /* 標題：加大、變清楚，前面一顆小金點 */
+    #wangVideosModal .wang-who {
+      display: flex; align-items: center; gap: 10px;
+      font-family: 'Noto Sans TC', 'Inter', sans-serif; font-size: 0.86rem; font-weight: 700;
+      letter-spacing: 0.14em; text-transform: none; color: rgba(255,255,255,0.72);
+      padding: 6px 56px 22px 2px;
+    }
+    #wangVideosModal .wang-who::before {
+      content: ''; width: 6px; height: 6px; border-radius: 50%;
+      background: var(--gold); box-shadow: 0 0 10px rgba(255,215,112,0.7);
+    }
+    /* 影片主格：縮圖壓一點飽和＋底部漸層，字不再跟縮圖打架 */
+    #wangVideosModal .video-card.is-trial { background: #101015; border-color: rgba(255,255,255,0.08); border-radius: 18px; }
+    #wangVideosModal .video-card.is-trial .video-card-frame img { filter: saturate(0.88) brightness(0.94); transition: filter .35s ease, transform .5s ease; }
+    #wangVideosModal .video-card.is-trial:hover .video-card-frame img { filter: none; }
+    #wangVideosModal .video-card.is-trial .video-card-frame::before {
+      content: ''; position: absolute; inset: auto 0 0 0; height: 38%; z-index: 1; pointer-events: none;
+      background: linear-gradient(180deg, transparent, rgba(16,16,21,0.75));
+    }
+    #wangVideosModal .video-card.is-trial .video-card-body { padding: 18px 20px 20px; gap: 6px; }
+    #wangVideosModal .video-card.is-trial .video-card-title { font-size: 1.42rem; }
+    #wangVideosModal .video-card-kicker { color: var(--gold); opacity: .9; }
+    /* 方格：更安靜的質感，編號縮成角落小字，箭頭 hover 才出現 */
+    #wangVideosModal .db-item {
+      background: linear-gradient(160deg, #15151c, #101015);
+      border-color: rgba(255,255,255,0.07); border-radius: 18px;
+      padding: 16px 18px;
+    }
+    #wangVideosModal .db-item:hover {
+      background: linear-gradient(160deg, #1a1a23, #131319);
+      border-color: rgba(255,215,112,0.38); box-shadow: 0 10px 30px rgba(0,0,0,0.35);
+    }
+    #wangVideosModal .db-item-no {
+      right: 16px; top: 16px; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.18em;
+      color: rgba(255,255,255,0.26);
+    }
+    #wangVideosModal .db-item:hover .db-item-no { color: rgba(255,215,112,0.75); }
+    #wangVideosModal .db-item-icon { left: 18px; top: 16px; width: 30px; height: 30px; border-radius: 9px; }
+    #wangVideosModal .db-item-icon svg { width: 15px; height: 15px; }
+    #wangVideosModal .db-item-name { font-size: 1rem; font-weight: 700; }
+    #wangVideosModal .db-item-meta { color: rgba(255,255,255,0.38); letter-spacing: 0.1em; }
+    #wangVideosModal .db-item-arrow {
+      display: block; position: absolute; right: 16px; bottom: 14px; margin: 0;
+      font-size: 1.1rem; color: var(--gold); opacity: 0; transform: translateX(-6px);
+      transition: opacity .25s ease, transform .25s ease;
+    }
+    #wangVideosModal .db-item:not(.is-soon):hover .db-item-arrow { opacity: 1; transform: none; }
+    #wangVideosModal .db-item.is-soon { background: #0f0f14; border-color: rgba(255,255,255,0.05); }
+    #wangVideosModal .db-item.is-soon .db-item-no { color: rgba(255,255,255,0.14); }
+  }
+
+  /* ===== 影片 / 資料庫 分成兩個畫面 ===== */
+  #wangVideosModal[data-view="video"] .wang-db { display: none; }
+  #wangVideosModal[data-view="db"] .wang-col { display: none; }
+  .wang-switch { margin-top: 18px; }
+  .wang-switch:empty { display: none; }
+  .wang-go {
+    display: flex; align-items: center; gap: 14px; width: 100%;
+    padding: 15px 18px; text-align: left; cursor: pointer; font-family: inherit; color: #fff;
+    background: linear-gradient(160deg, #15151c, #101015);
+    border: 1px solid rgba(255,255,255,0.09); border-radius: 18px;
+    transition: border-color .3s ease, background .3s ease, transform .3s ease;
+  }
+  .wang-go:hover, .wang-go:focus-visible {
+    border-color: rgba(255,215,112,0.45); transform: translateY(-2px); outline: none;
+  }
+  .wang-go-ic {
+    flex: none; width: 34px; height: 34px; border-radius: 10px; display: grid; place-items: center;
+    background: rgba(255,215,112,0.10); color: var(--gold);
+    box-shadow: inset 0 0 0 1px rgba(255,215,112,0.20);
+  }
+  .wang-go-ic svg { width: 17px; height: 17px; }
+  .wang-go-tx { display: flex; flex-direction: column; gap: 2px; min-width: 0; flex: 1; }
+  .wang-go-tx b { font-size: 1rem; font-weight: 700; }
+  .wang-go-tx i { font-style: normal; font-size: 0.78rem; color: rgba(255,255,255,0.42);
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .wang-go-ar { color: var(--gold); font-size: 1.4rem; flex: none; transition: transform .3s ease; }
+  .wang-go:hover .wang-go-ar { transform: translateX(4px); }
+  .wang-back {
+    font-family: inherit; font-size: 0.84rem; font-weight: 700; cursor: pointer;
+    color: #fff; background: rgba(255,255,255,0.07);
+    border: 1px solid rgba(255,255,255,0.12); border-radius: 999px; padding: 8px 16px;
+    transition: background .2s ease;
+  }
+  .wang-back:hover { background: rgba(255,255,255,0.14); }
+  @keyframes wangViewIn { from { opacity: 0; transform: translateY(10px); } to { opacity: 1; transform: none; } }
+  #wangVideosModal[data-view="video"] .wang-col,
+  #wangVideosModal[data-view="db"] .wang-db { animation: wangViewIn .38s cubic-bezier(.2,.8,.2,1); }
+  /* 手機：資料庫畫面把返回鈕放最上面比較順手，維持放底部即可 */
+  @media (min-width: 880px) {
+    /* 影片畫面：單一大影片置中，不再跟卡片搶版面 */
+    #wangVideosModal[data-view="video"] .video-modal-grid.is-split { grid-template-columns: minmax(0, 1fr); }
+    #wangVideosModal[data-view="video"] .wang-col { grid-column: 1 / -1; width: 100%; max-width: 760px; margin: 0 auto; }
+    #wangVideosModal[data-view="video"] .wang-switch { max-width: 760px; margin-left: auto; margin-right: auto; }
+    #wangVideosModal .video-card.is-trial .video-card-title { font-size: 1.5rem; }
+    /* 資料庫畫面：三欄、全寬 */
+    #wangVideosModal[data-view="db"] .wang-db {
+      grid-column: span 6; grid-template-columns: repeat(6, minmax(0, 1fr));
+    }
+    #wangVideosModal[data-view="db"] .db-item { grid-column: span 2; min-height: 138px; }
+    #wangVideosModal[data-view="db"] .db-item:nth-child(4),
+    #wangVideosModal[data-view="db"] .db-item:nth-child(5) { grid-column: span 3; }
+  }
+
+
   /* ---- 課程影片：單元 → 小節 ---- */
   .db-pop-list.is-units { display: flex; flex-direction: column; gap: 26px; }
   .unit { display: flex; flex-direction: column; gap: 14px; }
@@ -10420,6 +10537,7 @@ document.addEventListener('DOMContentLoaded', function () {
       <!-- 右邊：理化 DATABASE（內容由下方 WANG_DB 產生） -->
       <div class="wang-db" id="wangDb"></div>
     </div>
+    <div class="wang-switch" id="wangSwitch"></div>
   </div>
 
   <!-- 點資料庫項目後彈出的影片清單 -->
@@ -10729,7 +10847,8 @@ document.addEventListener('DOMContentLoaded', function () {
         var g = btn.getAttribute('data-g');
         if (g === current) return;
         current = g;
-        renderTabs(); renderTrial(); renderItems();
+        view = 'video';
+        renderTabs(); renderTrial(); renderItems(); applyView();
       });
     }
 
@@ -10751,7 +10870,44 @@ document.addEventListener('DOMContentLoaded', function () {
           '</button>');
       });
     }
-    renderTabs(); renderTrial(); renderItems();
+    /* ---- 兩個畫面：試聽影片 / 理化資料庫（分開顯示） ---- */
+    var modalEl = document.getElementById('wangVideosModal');
+    var switchBox = document.getElementById('wangSwitch');
+    var view = 'video';
+    function hasTrial() { return !!(WANG_DB.trial || {})[current]; }
+    function applyView() {
+      if (!modalEl) return;
+      var v = hasTrial() ? view : 'db';      // 這個年級沒有試聽影片：直接看資料庫
+      modalEl.setAttribute('data-view', v);
+      if (!switchBox) return;
+      if (!hasTrial()) { switchBox.innerHTML = ''; return; }
+      if (v === 'video') {
+        var names = WANG_DB.items.map(function (it) { return it.name; }).slice(1, 4).join('、');
+        switchBox.innerHTML =
+          '<button type="button" class="wang-go" data-v="db">' +
+            '<span class="wang-go-ic">' + icon('book') + '</span>' +
+            '<span class="wang-go-tx"><b>理化資料庫</b><i>' + esc(names) + '…</i></span>' +
+            '<span class="wang-go-ar" aria-hidden="true">\u203A</span>' +
+          '</button>';
+      } else {
+        switchBox.innerHTML =
+          '<button type="button" class="wang-back" data-v="video">\u2190 \u56de\u8a66\u807d\u5f71\u7247</button>';
+      }
+    }
+    if (switchBox) {
+      switchBox.addEventListener('click', function (e) {
+        var btn = e.target.closest('[data-v]');
+        if (!btn) return;
+        view = btn.getAttribute('data-v');
+        applyView();
+      });
+    }
+    if (modalEl && window.MutationObserver) {
+      new MutationObserver(function () {
+        if (!modalEl.hidden) { view = 'video'; applyView(); }   // 每次打開都從試聽影片開始
+      }).observe(modalEl, { attributes: true, attributeFilter: ['hidden'] });
+    }
+    renderTabs(); renderTrial(); renderItems(); applyView();
 
     var popNo    = pop.querySelector('.db-pop-no');
     var popTitle = pop.querySelector('.db-pop-title');
@@ -10999,11 +11155,11 @@ document.addEventListener('DOMContentLoaded', function () {
             <span class="calendar-board-text">
               <span class="calendar-board-kicker">GRADE 7 · 國七</span>
               <span class="calendar-board-title">國七 英數行事曆</span>
-              <span class="calendar-board-meta">115 學年度 · 開學 ～ 第一次段考</span>
+              <span class="calendar-board-meta">115 學年度 · 第二段</span>
             </span>
           </figcaption>
-          <div class="calendar-board-frame" role="button" tabindex="0" data-full="115國七行事曆.jpg" aria-label="點擊放大 國七行事曆">
-            <picture><source srcset="115國七行事曆.webp" type="image/webp" /><img src="115國七行事曆.jpg" alt="115 國七 英數行事曆" width="1131" height="1600" loading="lazy" decoding="async" /></picture>
+          <div class="calendar-board-frame" role="button" tabindex="0" data-full="115國七2段行事曆.jpg" aria-label="點擊放大 國七行事曆">
+            <picture><source srcset="115國七2段行事曆.webp" type="image/webp" /><img src="115國七2段行事曆.jpg" alt="115 國七 英數行事曆 第二段" width="1131" height="1600" loading="lazy" decoding="async" /></picture>
             <span class="calendar-board-zoom" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>點擊放大</span>
           </div>
         </figure>
@@ -11012,11 +11168,11 @@ document.addEventListener('DOMContentLoaded', function () {
             <span class="calendar-board-text">
               <span class="calendar-board-kicker">GRADE 8 · 國八</span>
               <span class="calendar-board-title">國八 英數理行事曆</span>
-              <span class="calendar-board-meta">115 學年度 · 開學 ～ 第一次段考</span>
+              <span class="calendar-board-meta">115 學年度 · 第二段</span>
             </span>
           </figcaption>
-          <div class="calendar-board-frame" role="button" tabindex="0" data-full="115國八行事曆.jpg" aria-label="點擊放大 國八行事曆">
-            <picture><source srcset="115國八行事曆.webp" type="image/webp" /><img src="115國八行事曆.jpg" alt="115 國八 英數理行事曆" width="1131" height="1600" loading="lazy" decoding="async" /></picture>
+          <div class="calendar-board-frame" role="button" tabindex="0" data-full="115國八2段行事曆.jpg" aria-label="點擊放大 國八行事曆">
+            <picture><source srcset="115國八2段行事曆.webp" type="image/webp" /><img src="115國八2段行事曆.jpg" alt="115 國八 英數理行事曆 第二段" width="1131" height="1600" loading="lazy" decoding="async" /></picture>
             <span class="calendar-board-zoom" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>點擊放大</span>
           </div>
         </figure>
