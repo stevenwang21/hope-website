@@ -7590,6 +7590,23 @@
     from { transform: translate(0, 0) scale(1); }
     to   { transform: translate(60px, 40px) scale(1.12); }
   }
+  /* ===== 每次開啟隨機換背景：配色（漸層＋色團）＋ 教室照片的柔光 ===== */
+  .page-bg.is-rnd {
+    background: linear-gradient(var(--rnd-a, 135deg),
+      var(--rnd-c1), var(--rnd-c2) 28%, var(--rnd-c3) 55%, var(--rnd-c4) 80%, var(--rnd-c5));
+  }
+  /* 蓋過各頁自己的色團顏色，讓整站這次都是同一組配色 */
+  body[data-current] .page-bg.is-rnd .o1 { --orb: var(--rnd-o1); }
+  body[data-current] .page-bg.is-rnd .o2 { --orb: var(--rnd-o2); }
+  .page-bg .bg-photo {
+    position: absolute; inset: -60px;
+    background-size: cover; background-position: center;
+    filter: blur(24px) saturate(1.1);
+    opacity: 0; transition: opacity 1.6s ease;
+    -webkit-mask-image: radial-gradient(ellipse at 50% 40%, #000 25%, transparent 85%);
+    mask-image: radial-gradient(ellipse at 50% 40%, #000 25%, transparent 85%);
+  }
+  .page-bg .bg-photo.is-in { opacity: 0.26; }
   /* 主題塗鴉層 */
   .page-bg .bg-doodle {
     position: absolute;
@@ -8698,6 +8715,56 @@ document.addEventListener('DOMContentLoaded', function () {
 <div class="page-bg" aria-hidden="true">
   <div class="bg-orb o1"></div>
   <div class="bg-orb o2"></div>
+  <script>
+  /* 每次打開網站，隨機換一組背景配色，並在底下疊一張模糊的教室照片。
+     新增配色：在 P 裡加一行；新增照片：在 PH 裡加檔名。 */
+  (function(){
+    var bg = document.querySelector('.page-bg');
+    if (!bg) return;
+    // [五段漸層色, 色團1 RGB, 色團2 RGB]
+    var P = [
+      [['#ffd6f0','#d6e6ff','#c8f0e8','#fff5cc','#ffd9c4'],'255,179,230','179,209,255'], // 原本粉藍薄荷
+      [['#ffe3d1','#ffd1dc','#f3d6ff','#d6e4ff','#d1f5ec'],'255,190,160','200,170,255'], // 蜜桃日落
+      [['#d1f5ec','#d6eaff','#e3dcff','#ffe0f0','#fff3d1'],'160,230,215','190,200,255'], // 薄荷海風
+      [['#e8dcff','#d6e4ff','#d1f0ff','#d1f5e0','#fff5cc'],'200,180,255','170,225,255'], // 薰衣草
+      [['#fff5cc','#e6f5d0','#c8f0e8','#d6e8ff','#ecdcff'],'255,229,138','179,240,214'], // 檸檬清新
+      [['#ffd6e5','#ffe3d1','#fff5cc','#e6f5d0','#d6e8ff'],'255,179,198','255,224,168']  // 玫瑰棉花糖
+    ];
+    var PH = ['牛棚2.webp','羊欄1.webp','羊欄2.webp','豬圈2.webp','象圈2.webp','馬槽2.webp','櫃台1.webp'];
+    function pick(n, key) {            // 隨機挑一個，但不要跟上次一樣
+      var last = -1;
+      try { last = parseInt(localStorage.getItem(key), 10); } catch (e) {}
+      var i = Math.floor(Math.random() * n);
+      if (n > 1 && i === last) i = (i + 1 + Math.floor(Math.random() * (n - 1))) % n;
+      try { localStorage.setItem(key, String(i)); } catch (e) {}
+      return i;
+    }
+    var c = P[pick(P.length, 'bgPalette')], st = bg.style;
+    st.setProperty('--rnd-a', (115 + Math.floor(Math.random() * 50)) + 'deg');
+    c[0].forEach(function (col, k) { st.setProperty('--rnd-c' + (k + 1), col); });
+    st.setProperty('--rnd-o1', c[1]);
+    st.setProperty('--rnd-o2', c[2]);
+    bg.classList.add('is-rnd');
+
+    // 照片：頁面載完、閒置時才載，並且省流量模式不載
+    var conn = navigator.connection;
+    if (conn && conn.saveData) return;
+    var photo = PH[pick(PH.length, 'bgPhoto')];
+    function loadPhoto() {
+      var img = new Image();
+      img.onload = function () {
+        var d = document.createElement('div');
+        d.className = 'bg-photo';
+        d.style.backgroundImage = 'url("' + photo + '")';
+        bg.insertBefore(d, bg.firstChild);
+        requestAnimationFrame(function () { requestAnimationFrame(function () { d.classList.add('is-in'); }); });
+      };
+      img.src = photo;
+    }
+    if (document.readyState === 'complete') setTimeout(loadPhoto, 300);
+    else window.addEventListener('load', function () { setTimeout(loadPhoto, 300); });
+  })();
+  </script>
 
   <!-- 關於我們：引號、時間軸、1996 -->
   <div class="bg-doodle" data-for="about">
