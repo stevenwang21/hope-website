@@ -7900,6 +7900,9 @@
     .hero-subtitle { font-size: 1rem; margin-top: 20px; }
     .hero-buttons { gap: 10px; }
     .hero-buttons .btn { padding: 13px 22px; font-size: 0.92rem; width: 100%; justify-content: center; }
+    /* 三顆按鈕：預約試聽整排，兩顆次要按鈕並排，才不會擠到底部導覽列 */
+    .hero > .container .hero-buttons .btn-ghost { width: calc(50% - 5px); padding-left: 12px; padding-right: 12px; }
+    .hero > .container .hero-buttons { margin-bottom: 64px; }
     /* 首頁 50 年歷程軸 - 手機 */
     .hero-timeline { margin-top: 0 !important; }
     .hero-timeline-head { gap: 10px; margin-bottom: 4px; }
@@ -8968,6 +8971,7 @@ document.addEventListener('DOMContentLoaded', function () {
           <svg class="btn-arrow" width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><line x1="5" y1="12" x2="19" y2="12"/><polyline points="12 5 19 12 12 19"/></svg>
         </a>
         <a href="#courses" class="btn btn-ghost">查看聯絡簿</a>
+        <a href="#calendar" class="btn btn-ghost">最新行事曆</a>
       </div>
     </div>
   </div>
