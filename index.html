@@ -7607,6 +7607,95 @@
     mask-image: radial-gradient(ellipse at 50% 40%, #000 25%, transparent 85%);
   }
   .page-bg .bg-photo.is-in { opacity: 0.26; }
+
+  /* ================= 萬聖節（10/25–10/31 自動開啟）=================
+     所有樣式都掛在 html.halloween 底下，平常完全不生效。 */
+  html.halloween .page-bg.is-rnd {
+    background: linear-gradient(160deg, #ffd7a6 0%, #ffb98a 26%, #e6b3ee 58%, #b79be6 82%, #8f78c9 100%) !important;
+  }
+  html.halloween body[data-current] .page-bg.is-rnd .o1 { --orb: 255,140,40; }
+  html.halloween body[data-current] .page-bg.is-rnd .o2 { --orb: 150,90,220; }
+  html.halloween .page-bg .bg-photo { display: none; }
+  html.halloween .page-bg::after {
+    content: ''; position: absolute; inset: 0; pointer-events: none;
+    background: radial-gradient(ellipse at 50% 45%, transparent 42%, rgba(45,15,80,0.40) 100%);
+  }
+  #hwLayer { position: fixed; inset: 0; z-index: 8; pointer-events: none; overflow: hidden; }
+  .hw-web { position: absolute; width: 170px; height: 170px; opacity: .42; pointer-events: none; }
+  .hw-web.tl { top: 0; left: 0; }
+  .hw-web.tr { top: 0; right: 0; transform: scaleX(-1); }
+  .hw-crit { position: fixed; left: 0; top: 0; pointer-events: auto; cursor: pointer;
+    will-change: transform; -webkit-tap-highlight-color: transparent; touch-action: manipulation; }
+  .hw-crit svg { display: block; width: 100%; height: auto; filter: drop-shadow(0 6px 8px rgba(30,10,60,.35)); }
+  .hw-bat svg { animation: hwFlap .32s ease-in-out infinite alternate; transform-origin: 50% 55%; }
+  @keyframes hwFlap { from { transform: scaleY(1); } to { transform: scaleY(.55); } }
+  .hw-p { position: fixed; left: 0; top: 0; width: 8px; height: 8px; margin: -4px 0 0 -4px; border-radius: 50%;
+    pointer-events: none; z-index: 9; }
+  .hw-spark { position: fixed; left: 0; top: 0; width: 6px; height: 6px; margin: -3px 0 0 -3px; border-radius: 50%;
+    pointer-events: none; z-index: 7; }
+
+  /* 右下角南瓜：抽小驚喜 */
+  #hwPumpkin {
+    position: fixed; right: 22px; bottom: 24px; z-index: 900;
+    width: 66px; height: 62px; padding: 0; border: 0; background: none; cursor: pointer;
+    -webkit-tap-highlight-color: transparent; animation: hwWobble 3.2s ease-in-out infinite;
+    transform-origin: 50% 90%;
+  }
+  #hwPumpkin svg { width: 100%; height: 100%; display: block; filter: drop-shadow(0 8px 10px rgba(60,20,0,.4)); }
+  #hwPumpkin .hw-tip {
+    position: absolute; right: 54px; top: 2px; white-space: nowrap;
+    background: #1d1030; color: #ffd9a8; font-size: .78rem; font-weight: 700; padding: 7px 12px; border-radius: 999px;
+    border: 1px solid rgba(255,190,110,.35);
+    box-shadow: 0 10px 24px -8px rgba(30,10,60,.6); animation: hwTip 3.2s ease-in-out infinite;
+  }
+  #hwPumpkin:hover { animation-play-state: paused; transform: scale(1.1) rotate(-4deg); }
+  @keyframes hwWobble { 0%,100% { transform: rotate(0); } 8% { transform: rotate(-7deg); } 16% { transform: rotate(6deg); } 24% { transform: rotate(-4deg); } 32% { transform: rotate(0); } }
+  @keyframes hwTip { 0%,55%,100% { opacity: 0; transform: translateX(8px); } 62%,90% { opacity: 1; transform: none; } }
+  @media (max-width: 720px) {
+    #hwPumpkin { right: 12px; bottom: 96px; width: 54px; height: 51px; }
+    .hw-web { width: 100px; height: 100px; }
+  }
+
+  /* 抽小驚喜視窗 */
+  #hwModal { position: fixed; inset: 0; z-index: 10050; display: grid; place-items: center; padding: 18px; }
+  #hwModal[hidden] { display: none; }
+  #hwModal .hw-bd { position: absolute; inset: 0; background: rgba(18,6,34,.72); backdrop-filter: blur(4px); }
+  #hwModal .hw-card {
+    position: relative; width: min(420px, 100%); text-align: center; color: #fff;
+    padding: 30px 26px 24px; border-radius: 26px;
+    background: radial-gradient(120% 80% at 50% -10%, rgba(255,138,31,.28), transparent 60%), #1d1030;
+    border: 1px solid rgba(255,190,110,.28); box-shadow: 0 40px 90px -20px rgba(0,0,0,.7);
+    animation: hwIn .4s cubic-bezier(.2,.9,.3,1.2);
+  }
+  @keyframes hwIn { from { opacity: 0; transform: translateY(18px) scale(.94); } to { opacity: 1; transform: none; } }
+  #hwModal .hw-x { position: absolute; right: 14px; top: 14px; width: 34px; height: 34px; border-radius: 50%;
+    border: 1px solid rgba(255,255,255,.2); background: rgba(255,255,255,.08); color: #fff; font-size: 1.2rem; cursor: pointer; line-height: 1; }
+  #hwModal .hw-big { width: 110px; margin: 4px auto 6px; }
+  #hwModal .hw-big svg { width: 100%; height: auto; display: block; }
+  #hwModal .hw-big.shake { animation: hwShake .7s ease-in-out; }
+  @keyframes hwShake { 0%,100% { transform: rotate(0) scale(1); } 15% { transform: rotate(-12deg) scale(1.05); } 30% { transform: rotate(10deg) scale(1.08); }
+    45% { transform: rotate(-9deg) scale(1.1); } 60% { transform: rotate(7deg) scale(1.12); } 80% { transform: rotate(-3deg) scale(1.15); } }
+  #hwModal .hw-kick { font: 800 .68rem/1 'Inter', sans-serif; letter-spacing: .28em; color: #ffb347; margin: 8px 0 10px; }
+  #hwModal .hw-ttl { font-size: 1.5rem; font-weight: 900; letter-spacing: .02em; margin-bottom: 10px; }
+  #hwModal .hw-txt { font-size: .96rem; line-height: 1.8; color: rgba(255,255,255,.82); min-height: 3.6em; }
+  #hwModal .hw-lucky { margin-top: 12px; display: inline-block; font-size: .8rem; font-weight: 700; color: #1d1030;
+    background: linear-gradient(135deg, #ffd25a, #ff9b3d); padding: 6px 14px; border-radius: 999px; }
+  #hwModal .hw-res { opacity: 0; transform: translateY(8px); transition: opacity .5s ease, transform .5s ease; }
+  #hwModal .hw-res.on { opacity: 1; transform: none; }
+  #hwModal .hw-btns { display: flex; gap: 10px; justify-content: center; margin-top: 20px; flex-wrap: wrap; }
+  #hwModal .hw-b { font: inherit; font-weight: 800; font-size: .88rem; padding: 11px 20px; border-radius: 999px; cursor: pointer; border: 0; text-decoration: none; }
+  #hwModal .hw-b.pri { background: linear-gradient(135deg, #ffd25a, #ff8a1f); color: #2a1200; }
+  #hwModal .hw-b.sec { background: rgba(255,255,255,.1); color: #fff; border: 1px solid rgba(255,255,255,.2); }
+  #hwModal .hw-foot { margin-top: 14px; font-size: .7rem; color: rgba(255,255,255,.45); }
+  #hwToast { position: fixed; left: 50%; top: 96px; z-index: 10040; transform: translate(-50%, -14px); opacity: 0; pointer-events: none;
+    background: #1d1030; color: #ffd9a8; font-weight: 700; font-size: .88rem; padding: 11px 20px; border-radius: 999px;
+    box-shadow: 0 16px 36px -10px rgba(30,10,60,.6); border: 1px solid rgba(255,190,110,.3);
+    transition: opacity .35s ease, transform .35s ease; white-space: nowrap; max-width: 92vw; overflow: hidden; text-overflow: ellipsis; }
+  #hwToast.on { opacity: 1; transform: translate(-50%, 0); }
+  @media (prefers-reduced-motion: reduce) {
+    #hwPumpkin, #hwPumpkin .hw-tip, .hw-bat svg { animation: none; }
+    #hwPumpkin .hw-tip { opacity: 1; }
+  }
   /* 主題塗鴉層 */
   .page-bg .bg-doodle {
     position: absolute;
@@ -8522,7 +8611,7 @@
   /* ========== 小飛 · 3D 吉祥物 ========== */
   #hopeSprite {
     position: fixed; left: 0; top: 0;
-    z-index: 1;                    /* 背景圖之上、文字容器之下 → 從文字後面經過但看得見 */
+    z-index: 900;                  /* 往前移：浮在內容之上（低於導覽列 1000），仍不擋點擊 */
     width: 164px; height: 150px;   /* 寬度要容得下電子軌道，比身體寬 */
     pointer-events: none;          /* 完全不擋任何按鈕；點擊改由座標判斷 */
     will-change: transform;
@@ -8711,6 +8800,22 @@ document.addEventListener('DOMContentLoaded', function () {
 })();
 </script>
 
+<script>
+/* 萬聖節開關：台灣時間 2026/10/25～10/31 自動開啟，其餘時間不生效。
+   測試用：網址後面加 ?halloween=1 強制開、?halloween=0 強制關。
+   要改日期：改下面的 y / m / d 範圍。 */
+(function () {
+  var on = false;
+  try {
+    var t = new Date(Date.now() + 8 * 36e5);
+    on = t.getUTCFullYear() === 2026 && t.getUTCMonth() === 9 && t.getUTCDate() >= 25 && t.getUTCDate() <= 31;
+    var q = /[?&]halloween=([01])/.exec(location.search);
+    if (q) on = q[1] === '1';
+  } catch (e) {}
+  window.HW_ON = on;
+  if (on) document.documentElement.classList.add('halloween');
+})();
+</script>
 <div class="scroll-progress" id="scrollProgress"></div>
 <div class="cursor-glow" id="cursorGlow"></div>
 
@@ -11225,12 +11330,12 @@ document.addEventListener('DOMContentLoaded', function () {
           <figcaption class="calendar-board-caption">
             <span class="calendar-board-text">
               <span class="calendar-board-kicker">GRADE 7 · 國七</span>
-              <span class="calendar-board-title">國七 英數行事曆</span>
+              <span class="calendar-board-title">國七 英數理行事曆</span>
               <span class="calendar-board-meta">115 學年度 · 第二段</span>
             </span>
           </figcaption>
-          <div class="calendar-board-frame" role="button" tabindex="0" data-full="115國七2段行事曆.jpg" aria-label="點擊放大 國七行事曆">
-            <picture><source srcset="115國七2段行事曆.webp" type="image/webp" /><img src="115國七2段行事曆.jpg" alt="115 國七 英數行事曆 第二段" width="1131" height="1600" loading="lazy" decoding="async" /></picture>
+          <div class="calendar-board-frame" role="button" tabindex="0" data-full="115國七二段行事曆.jpg" aria-label="點擊放大 國七行事曆">
+            <picture><source srcset="115國七二段行事曆.webp" type="image/webp" /><img src="115國七二段行事曆.jpg" alt="115 國七 英數理行事曆 第二段" width="929" height="1139" loading="lazy" decoding="async" /></picture>
             <span class="calendar-board-zoom" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>點擊放大</span>
           </div>
         </figure>
@@ -11242,8 +11347,8 @@ document.addEventListener('DOMContentLoaded', function () {
               <span class="calendar-board-meta">115 學年度 · 第二段</span>
             </span>
           </figcaption>
-          <div class="calendar-board-frame" role="button" tabindex="0" data-full="115國八2段行事曆.jpg" aria-label="點擊放大 國八行事曆">
-            <picture><source srcset="115國八2段行事曆.webp" type="image/webp" /><img src="115國八2段行事曆.jpg" alt="115 國八 英數理行事曆 第二段" width="1131" height="1600" loading="lazy" decoding="async" /></picture>
+          <div class="calendar-board-frame" role="button" tabindex="0" data-full="115國八二段行事曆.jpg" aria-label="點擊放大 國八行事曆">
+            <picture><source srcset="115國八二段行事曆.webp" type="image/webp" /><img src="115國八二段行事曆.jpg" alt="115 國八 英數理行事曆 第二段" width="929" height="1506" loading="lazy" decoding="async" /></picture>
             <span class="calendar-board-zoom" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>點擊放大</span>
           </div>
         </figure>
@@ -11251,12 +11356,12 @@ document.addEventListener('DOMContentLoaded', function () {
           <figcaption class="calendar-board-caption">
             <span class="calendar-board-text">
               <span class="calendar-board-kicker">GRADE 9 · 國九</span>
-              <span class="calendar-board-title">國九 一段行事曆</span>
-              <span class="calendar-board-meta">115 學年度 · 第一次段考</span>
+              <span class="calendar-board-title">國九 英數理行事曆</span>
+              <span class="calendar-board-meta">115 學年度 · 第二段</span>
             </span>
           </figcaption>
-          <div class="calendar-board-frame" role="button" tabindex="0" data-full="115G9一段行事曆.jpg" aria-label="點擊放大 國九行事曆">
-            <picture><source srcset="115G9一段行事曆.webp" type="image/webp" /><img src="115G9一段行事曆.jpg" alt="115 國九 一段行事曆" width="957" height="953" loading="lazy" decoding="async" /></picture>
+          <div class="calendar-board-frame" role="button" tabindex="0" data-full="115國九二段行事曆.jpg" aria-label="點擊放大 國九行事曆">
+            <picture><source srcset="115國九二段行事曆.webp" type="image/webp" /><img src="115國九二段行事曆.jpg" alt="115 國九 英數理行事曆 第二段" width="963" height="1417" loading="lazy" decoding="async" /></picture>
             <span class="calendar-board-zoom" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>點擊放大</span>
           </div>
         </figure>
@@ -11265,11 +11370,11 @@ document.addEventListener('DOMContentLoaded', function () {
             <span class="calendar-board-text">
               <span class="calendar-board-kicker">SENIOR 1 · 高一</span>
               <span class="calendar-board-title">高一 英數物化行事曆</span>
-              <span class="calendar-board-meta">115 學年度 · 第一次段考</span>
+              <span class="calendar-board-meta">115 學年度 · 第二段</span>
             </span>
           </figcaption>
-          <div class="calendar-board-frame" role="button" tabindex="0" data-full="115高一1段行事曆.jpg" aria-label="點擊放大 高一行事曆">
-            <picture><source srcset="115高一1段行事曆.webp" type="image/webp" /><img src="115高一1段行事曆.jpg" alt="115 高一 英數物化行事曆" width="937" height="1340" loading="lazy" decoding="async" /></picture>
+          <div class="calendar-board-frame" role="button" tabindex="0" data-full="115高一二段行事曆.jpg" aria-label="點擊放大 高一行事曆">
+            <picture><source srcset="115高一二段行事曆.webp" type="image/webp" /><img src="115高一二段行事曆.jpg" alt="115 高一 英數物化行事曆 第二段" width="983" height="1320" loading="lazy" decoding="async" /></picture>
             <span class="calendar-board-zoom" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>點擊放大</span>
           </div>
         </figure>
@@ -11278,11 +11383,11 @@ document.addEventListener('DOMContentLoaded', function () {
             <span class="calendar-board-text">
               <span class="calendar-board-kicker">SENIOR 2 · 高二</span>
               <span class="calendar-board-title">高二 英數物化行事曆</span>
-              <span class="calendar-board-meta">115 學年度 · 第一次段考</span>
+              <span class="calendar-board-meta">115 學年度 · 第二段</span>
             </span>
           </figcaption>
-          <div class="calendar-board-frame" role="button" tabindex="0" data-full="115高二1段行事曆.jpg" aria-label="點擊放大 高二行事曆">
-            <picture><source srcset="115高二1段行事曆.webp" type="image/webp" /><img src="115高二1段行事曆.jpg" alt="115 高二 英數物化行事曆" width="861" height="1507" loading="lazy" decoding="async" /></picture>
+          <div class="calendar-board-frame" role="button" tabindex="0" data-full="115高二二段行事曆.jpg" aria-label="點擊放大 高二行事曆">
+            <picture><source srcset="115高二二段行事曆.webp" type="image/webp" /><img src="115高二二段行事曆.jpg" alt="115 高二 英數物化行事曆 第二段" width="1017" height="1624" loading="lazy" decoding="async" /></picture>
             <span class="calendar-board-zoom" aria-hidden="true"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="7"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>點擊放大</span>
           </div>
         </figure>
@@ -12395,8 +12500,8 @@ document.addEventListener('DOMContentLoaded', function () {
 
       var scene = new THREE.Scene();
       var camera = new THREE.PerspectiveCamera(26, W / H, 0.1, 100);
-      camera.position.set(0, 1.30, 5.15);
-      camera.lookAt(0, 0.82, 0);
+      if (window.HW_ON) { camera.position.set(0, 1.42, 5.45); camera.lookAt(0, 0.98, 0); }   // 萬聖節：戴帽子，鏡頭稍微往上
+      else { camera.position.set(0, 1.30, 5.15); camera.lookAt(0, 0.82, 0); }
 
       var root = new THREE.Group(); scene.add(root);
       var rig = new THREE.Group(); root.add(rig);
@@ -12427,6 +12532,20 @@ document.addEventListener('DOMContentLoaded', function () {
         [0.566,0.878],[0.512,0.986],[0.432,1.078],[0.322,1.150],[0.176,1.193],
         [0.000,1.206]
       ], 96), headMat));
+
+      /* 萬聖節：巫師帽（只在 10/25–10/31 出現） */
+      if (window.HW_ON) {
+        var hatMat = new THREE.MeshStandardMaterial({ color: 0x2a1745, roughness: 0.72, side: THREE.DoubleSide });
+        var hat = new THREE.Group();
+        hat.position.set(0.0, 0.93, 0.0); hat.rotation.z = 0.16; hat.rotation.x = -0.06;
+        hat.add(new THREE.Mesh(lathe([[0,0],[0.80,0],[0.85,0.03],[0.74,0.065],[0,0.065]], 64), hatMat));
+        var cone = new THREE.Mesh(lathe([[0.53,0.04],[0.47,0.18],[0.34,0.34],[0.19,0.46],[0.07,0.53],[0.0,0.55]], 48), hatMat);
+        hat.add(cone);
+        var band = new THREE.Mesh(new THREE.TorusGeometry(0.505, 0.04, 10, 64),
+          new THREE.MeshStandardMaterial({ color: 0xff8a1f, emissive: 0xff5a00, emissiveIntensity: 0.35, roughness: 0.5 }));
+        band.rotation.x = Math.PI / 2; band.position.y = 0.12; hat.add(band);
+        head.add(hat);
+      }
 
       /* 電子軌道 */
       var atom = new THREE.Group(); rig.add(atom); atom.position.y = 0.68;
@@ -12502,7 +12621,7 @@ document.addEventListener('DOMContentLoaded', function () {
       var rim = new THREE.DirectionalLight(0xbcd9ff, 0.55); rim.position.set(-1.2, 2.2, -3); scene.add(rim);
 
       /* ---------- 問答內容（要改文字改這裡） ---------- */
-      var HELLO = '我是小飛，理化是我的本行。想問什麼？';
+      var HELLO = window.HW_ON ? '嘿嘿，萬聖節快樂！不給糖就搗蛋，不過我只搗蛋理化題。想問什麼？' : '我是小飛，理化是我的本行。想問什麼？';
       // k = 打字發問時用來比對的關鍵字
       var QA = [
         { q: '幾點上課？',
@@ -12840,7 +12959,7 @@ document.addEventListener('DOMContentLoaded', function () {
         setTimeout(function () {
           if (!holding && !bubble.classList.contains('show') && !hidden()) {
             state.wave = 1.5;
-            shell(head2('小飛') + '有問題想問嗎？點我一下。');
+            shell(head2('小飛') + (window.HW_ON ? '萬聖節快樂！右下角的南瓜今天有小驚喜喔。' : '有問題想問嗎？點我一下。'));
             clearTimeout(bubble._t);
             bubble._t = setTimeout(hideBubble, 4500);
           }
@@ -13796,5 +13915,464 @@ document.addEventListener('DOMContentLoaded', function () {
   </a>
 </nav>
 
+
+<script>
+/* ================= 萬聖節互動（只在 window.HW_ON 時執行）=================
+   · 蝙蝠、幽靈、南瓜隨機飄過畫面，碰到（滑鼠）或點到（手指）會炸開成火花
+   · 滑鼠游標後面有一小串火花（只有桌機）
+   · 右下角南瓜：點一下抽「今日學習小運勢」（純娛樂、沒有獎品）
+   · 抓滿 8 隻會跳出提示，引導去點南瓜
+   要加運勢：在 FORTUNES 裡加一行。 */
+(function () {
+  if (!window.HW_ON) return;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fine = window.matchMedia('(pointer: fine)').matches;
+  var phone = window.matchMedia('(max-width: 720px)').matches;
+
+  var SVG = {
+    bat: '<svg viewBox="0 0 64 36"><g fill="#2a1745" stroke="#a97bff" stroke-width="1.2" stroke-linejoin="round"><path d="M32 18C26 6 14 4 2 10c6 2 8 8 10 14 4-6 10-6 14 0 2-2 4-4 6-6z"/><path d="M32 18C38 6 50 4 62 10c-6 2-8 8-10 14-4-6-10-6-14 0-2-2-4-4-6-6z"/><ellipse cx="32" cy="20" rx="5" ry="7"/><path d="M28 14l2-6 2 5 2-5 2 6z"/></g><circle cx="30" cy="19" r="1.3" fill="#ffb347"/><circle cx="34" cy="19" r="1.3" fill="#ffb347"/></svg>',
+    pumpkin: '<svg viewBox="0 0 60 56"><path d="M30 13c-2-6 1-10 6-11" stroke="#3a7d2c" stroke-width="4" fill="none" stroke-linecap="round"/><ellipse cx="18" cy="34" rx="15" ry="20" fill="#ff8a1f"/><ellipse cx="42" cy="34" rx="15" ry="20" fill="#ff8a1f"/><ellipse cx="30" cy="34" rx="12" ry="21" fill="#ffa040"/><path d="M19 27l5 8H14zM41 27l5 8H36zM18 43q12 9 24 0-12 4-24 0z" fill="#3a1a05"/></svg>',
+    ghost: '<svg viewBox="0 0 48 56"><path d="M5 52V24C5 11 13 3 24 3s19 8 19 21v28l-6.3-5-6.3 5-6.4-5-6.4 5-6.3-5z" fill="#fff" fill-opacity=".96" stroke="#cbb8f0" stroke-width="2"/><ellipse cx="17" cy="23" rx="3" ry="4.2" fill="#2a1745"/><ellipse cx="31" cy="23" rx="3" ry="4.2" fill="#2a1745"/><ellipse cx="24" cy="34" rx="4" ry="5" fill="#2a1745"/></svg>'
+  };
+  var WEB = '<svg viewBox="0 0 170 170" fill="none" stroke="#3b2266" stroke-width="1.4" stroke-linecap="round"><path d="M0 0L170 0M0 0L0 170M0 0L140 140M0 0L170 70M0 0L70 170"/><path d="M34 0Q28 28 0 34M68 0Q58 58 0 68M102 0Q88 88 0 102M136 0Q118 118 0 136"/></svg>';
+  var FORTUNES = [
+    ['理化頓悟日', '今天看到的公式，特別容易記住。順手推導一次，印象會更深。', '幸運科目：理化'],
+    ['數學通透日', '卡很久的那一題，今天換個角度就解開了。', '幸運科目：數學'],
+    ['英文開口日', '今天敢開口，單字就會自己跳出來。', '幸運科目：英文'],
+    ['錯題逆襲日', '把上次寫錯的題目再做一遍，這次會對。', '幸運動作：訂正錯題'],
+    ['專注滿格日', '手機放遠一點，45 分鐘就能讀完一個章節。', '幸運動作：番茄鐘'],
+    ['早睡加分日', '今晚早點睡，明天的記憶力比熬夜更可靠。', '幸運時間：11 點前'],
+    ['睡前複習日', '睡前看 10 分鐘筆記，效果比想像中好。', '幸運動作：翻筆記'],
+    ['提問勇氣日', '有不懂的就問，老師其實很樂意回答。', '幸運動作：舉手'],
+    ['小考順風日', '今天的小考，靠平常的累積就夠了。', '幸運心態：放輕鬆'],
+    ['糖果補給日', '讀累了就吃顆糖、伸展一下，再繼續。', '幸運零食：一顆糖'],
+    ['整理筆記日', '把筆記整理成一頁重點，考前最好用。', '幸運工具：螢光筆'],
+    ['搗蛋惡作劇', '不給糖就搗蛋？今天的搗蛋是——把作業先寫完！', '幸運順序：先寫完再玩']
+  ];
+
+  var layer = document.createElement('div');
+  layer.id = 'hwLayer';
+  layer.innerHTML = '<div class="hw-web tl">' + WEB + '</div><div class="hw-web tr">' + WEB + '</div>';
+  document.body.appendChild(layer);
+
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+
+  /* ---- 火花 ---- */
+  var COLORS = ['#ff8a1f', '#ffd25a', '#b583ff', '#ffffff', '#ff5ea8'];
+  function burst(x, y) {
+    if (reduced) return;
+    for (var i = 0; i < 12; i++) {
+      var p = document.createElement('div');
+      p.className = 'hw-p';
+      p.style.background = pick(COLORS);
+      document.body.appendChild(p);
+      var a = Math.random() * Math.PI * 2, r = rnd(34, 86);
+      p.animate([
+        { transform: 'translate(' + x + 'px,' + y + 'px) scale(1)', opacity: 1 },
+        { transform: 'translate(' + (x + Math.cos(a) * r) + 'px,' + (y + Math.sin(a) * r) + 'px) scale(0)', opacity: 0 }
+      ], { duration: rnd(450, 800), easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = (function (el) { return function () { el.remove(); }; })(p);
+    }
+  }
+
+  /* ---- 提示 ---- */
+  var toast = document.createElement('div');
+  toast.id = 'hwToast'; toast.setAttribute('role', 'status');
+  document.body.appendChild(toast);
+  var toastT;
+  function say(msg) {
+    toast.textContent = msg; toast.classList.add('on');
+    clearTimeout(toastT); toastT = setTimeout(function () { toast.classList.remove('on'); }, 3800);
+  }
+
+  /* ---- 飄過畫面的小東西 ---- */
+  var alive = 0, popped = 0, MAX = phone ? 3 : 6;
+  function remove(el) { if (el.parentNode) { el.remove(); alive = Math.max(0, alive - 1); } }
+  function pop(el) {
+    if (!el.parentNode) return;
+    var r = el.getBoundingClientRect();
+    burst(r.left + r.width / 2, r.top + r.height / 2);
+    remove(el);
+    popped++;
+    if (popped === 8) say('抓到 8 隻了！右下角的南瓜有小驚喜');
+  }
+  function spawn() {
+    if (document.hidden || alive >= MAX) return;
+    var type = pick(['bat', 'bat', 'bat', 'ghost', 'pumpkin']);
+    var el = document.createElement('div');
+    el.className = 'hw-crit hw-' + type;
+    el.innerHTML = SVG[type];
+    var W = window.innerWidth, H = window.innerHeight;
+    el.style.width = (phone ? 40 : (type === 'bat' ? 58 : 50)) + 'px';
+    layer.appendChild(el); alive++;
+    var kf = [], dur, i, t, n = 8;
+    if (type === 'bat') {
+      var dir = Math.random() < 0.5 ? 1 : -1, y0 = rnd(0.1, 0.72) * H, ph = rnd(0, 6), amp = rnd(0.04, 0.09) * H;
+      var x0 = dir > 0 ? -90 : W + 90, x1 = dir > 0 ? W + 90 : -90;
+      dur = rnd(7000, 12000);
+      for (i = 0; i <= n; i++) { t = i / n; kf.push({ transform: 'translate(' + (x0 + (x1 - x0) * t) + 'px,' + (y0 + Math.sin(t * 8 + ph) * amp) + 'px) rotate(' + (Math.cos(t * 8 + ph) * 12) + 'deg)' }); }
+    } else if (type === 'ghost') {
+      var d2 = Math.random() < 0.5 ? 1 : -1, y1 = rnd(0.2, 0.75) * H, ph2 = rnd(0, 6);
+      var xa = d2 > 0 ? -80 : W + 80, xb = d2 > 0 ? W + 80 : -80;
+      dur = rnd(14000, 20000);
+      for (i = 0; i <= n; i++) { t = i / n; kf.push({ transform: 'translate(' + (xa + (xb - xa) * t) + 'px,' + (y1 + Math.sin(t * 5 + ph2) * 36) + 'px)' }); }
+    } else {
+      var xp = rnd(0.08, 0.9) * W, ph3 = rnd(0, 6);
+      dur = rnd(12000, 18000);
+      for (i = 0; i <= n; i++) { t = i / n; kf.push({ transform: 'translate(' + (xp + Math.sin(t * 6 + ph3) * 40) + 'px,' + (H + 70 - (H + 160) * t) + 'px) rotate(' + (Math.sin(t * 6 + ph3) * 14) + 'deg)' }); }
+    }
+    var anim = el.animate(kf, { duration: dur, easing: 'linear' });
+    anim.onfinish = function () { remove(el); };
+    if (fine) el.addEventListener('pointerenter', function () { pop(el); });
+    el.addEventListener('pointerdown', function (e) { e.preventDefault(); pop(el); });
+  }
+  if (!reduced) {
+    setTimeout(function loop() { spawn(); setTimeout(loop, rnd(2200, 4500)); }, 1500);
+    spawn();
+  }
+
+  /* ---- 滑鼠火花尾巴（只有桌機）---- */
+  if (fine && !reduced) {
+    var last = 0;
+    window.addEventListener('pointermove', function (e) {
+      var now = performance.now();
+      if (now - last < 50 || e.pointerType === 'touch') return;
+      last = now;
+      var s = document.createElement('div');
+      s.className = 'hw-spark';
+      s.style.background = pick(COLORS);
+      document.body.appendChild(s);
+      s.animate([
+        { transform: 'translate(' + e.clientX + 'px,' + e.clientY + 'px) scale(1)', opacity: .9 },
+        { transform: 'translate(' + (e.clientX + rnd(-14, 14)) + 'px,' + (e.clientY + rnd(8, 26)) + 'px) scale(0)', opacity: 0 }
+      ], { duration: 700, easing: 'ease-out' }).onfinish = function () { s.remove(); };
+    }, { passive: true });
+  }
+
+  /* ---- 右下角南瓜 + 抽小驚喜 ---- */
+  var pk = document.createElement('button');
+  pk.id = 'hwPumpkin'; pk.type = 'button';
+  pk.setAttribute('aria-label', '萬聖節小驚喜：點一下抽今日學習小運勢');
+  pk.innerHTML = '<span class="hw-tip">點我抽小驚喜</span>' + SVG.pumpkin;
+  document.body.appendChild(pk);
+
+  var modal = document.createElement('div');
+  modal.id = 'hwModal'; modal.hidden = true;
+  modal.setAttribute('role', 'dialog'); modal.setAttribute('aria-modal', 'true'); modal.setAttribute('aria-label', '萬聖節小驚喜');
+  modal.innerHTML =
+    '<div class="hw-bd"></div><div class="hw-card">' +
+      '<button type="button" class="hw-x" aria-label="關閉">×</button>' +
+      '<div class="hw-big">' + SVG.pumpkin + '</div>' +
+      '<div class="hw-kick">HAPPY HALLOWEEN</div>' +
+      '<div class="hw-res"><div class="hw-ttl"></div><div class="hw-txt"></div><span class="hw-lucky"></span></div>' +
+      '<div class="hw-btns"><button type="button" class="hw-b pri hw-again">再抽一次</button><a class="hw-b sec" href="#contact">預約免費試聽</a></div>' +
+      '<div class="hw-foot">純屬娛樂，沒有獎品。祝你萬聖節快樂！</div>' +
+    '</div>';
+  document.body.appendChild(modal);
+  var big = modal.querySelector('.hw-big'), res = modal.querySelector('.hw-res');
+  var lastF = -1, drawT;
+  function draw() {
+    res.classList.remove('on');
+    big.classList.remove('shake'); void big.offsetWidth; big.classList.add('shake');
+    clearTimeout(drawT);
+    drawT = setTimeout(function () {
+      var i; do { i = Math.floor(Math.random() * FORTUNES.length); } while (i === lastF && FORTUNES.length > 1);
+      lastF = i;
+      var f = FORTUNES[i];
+      modal.querySelector('.hw-ttl').textContent = f[0];
+      modal.querySelector('.hw-txt').textContent = f[1];
+      modal.querySelector('.hw-lucky').textContent = f[2];
+      res.classList.add('on');
+      var r = big.getBoundingClientRect();
+      burst(r.left + r.width / 2, r.top + r.height / 2);
+    }, reduced ? 0 : 700);
+  }
+  function openM() { modal.hidden = false; draw(); modal.querySelector('.hw-x').focus(); }
+  function closeM() { modal.hidden = true; pk.focus(); }
+  pk.addEventListener('click', openM);
+  modal.querySelector('.hw-bd').addEventListener('click', closeM);
+  modal.querySelector('.hw-x').addEventListener('click', closeM);
+  modal.querySelector('.hw-again').addEventListener('click', draw);
+  modal.querySelector('.hw-b.sec').addEventListener('click', closeM);
+  document.addEventListener('keydown', function (e) { if (e.key === 'Escape' && !modal.hidden) closeM(); });
+})();
+</script>
+<script>
+/* ================= 萬聖節互動・加強版（只在 window.HW_ON 時執行）=================
+   · 連擊：2.5 秒內連續抓到會累積連擊（5 連擊→糖果雨、10 連擊→蝙蝠群、20 連擊→大糖果雨）
+   · 糖果：糖果雨掉下來可以接（滑過/點到就收進口袋，左下角計數）
+   · 點空白處：噴出小蝙蝠
+   · 連點左上角 Logo 5 下：停電＋手電筒，找出藏起來的 3 顆糖
+   · 抓到的蝙蝠/幽靈/南瓜會彈出小對白
+   純娛樂、沒有獎品。 */
+(function () {
+  if (!window.HW_ON) return;
+  var reduced = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fine = window.matchMedia('(pointer: fine)').matches;
+  var phone = window.matchMedia('(max-width: 720px)').matches;
+  var layer = document.getElementById('hwLayer');
+  if (!layer) return;
+  function rnd(a, b) { return a + Math.random() * (b - a); }
+  function pick(a) { return a[Math.floor(Math.random() * a.length)]; }
+  function say(m) {
+    var t = document.getElementById('hwToast'); if (!t) return;
+    t.textContent = m; t.classList.add('on');
+    clearTimeout(say._t); say._t = setTimeout(function () { t.classList.remove('on'); }, 3600);
+  }
+
+  var css = document.createElement('style');
+  css.textContent =
+    '#hwHud{position:fixed;left:12px;bottom:18px;z-index:10020;display:none;gap:8px;align-items:center;pointer-events:none;font:700 13px/1 system-ui,"Noto Sans TC",sans-serif;color:#fff}' +
+    '#hwHud.on{display:flex}' +
+    '#hwHud span{background:rgba(30,12,58,.82);border:1px solid rgba(255,160,64,.55);border-radius:99px;padding:7px 12px;backdrop-filter:blur(6px);white-space:nowrap}' +
+    '#hwHud .cb{color:#ffb347;transform-origin:left center}' +
+    '#hwHud .cb.bump{animation:hwBump .35s ease}' +
+    '@keyframes hwBump{40%{transform:scale(1.35)}}' +
+    '@media (max-width:720px){#hwHud{bottom:96px}}' +
+    '.hw-float{position:fixed;left:0;top:0;z-index:10010;pointer-events:none;font:800 15px/1 system-ui,"Noto Sans TC",sans-serif;color:#ffd25a;text-shadow:0 2px 6px rgba(30,0,60,.9),0 0 10px rgba(255,138,31,.8);white-space:nowrap}' +
+    '.hw-candy{position:fixed;left:0;top:0;font-size:30px;line-height:1;cursor:pointer;pointer-events:auto;user-select:none;filter:drop-shadow(0 4px 5px rgba(30,10,60,.45))}' +
+    '.hw-mini{position:fixed;left:0;top:0;width:26px;pointer-events:none}' +
+    '.hw-mini svg{display:block;width:100%;height:auto}' +
+    '.hw-buddy{position:fixed;left:0;top:0;width:34px;z-index:9;cursor:pointer;pointer-events:auto;will-change:transform;opacity:.92}' +
+    '.hw-buddy svg{display:block;width:100%;height:auto;filter:drop-shadow(0 4px 6px rgba(30,10,60,.4))}' +
+    '.hw-bubble{position:absolute;left:50%;bottom:100%;transform:translateX(-50%);background:#fff;color:#2a1745;border-radius:10px;padding:4px 8px;font:700 12px/1.2 system-ui,"Noto Sans TC",sans-serif;white-space:nowrap;box-shadow:0 4px 10px rgba(30,10,60,.35);animation:hwPop .25s ease}' +
+    '@keyframes hwPop{from{opacity:0;transform:translateX(-50%) scale(.6)}}' +
+    '#hwDark{position:fixed;inset:0;z-index:10030;pointer-events:none;opacity:0;transition:opacity .5s;' +
+      'background:radial-gradient(circle 120px at var(--mx,50%) var(--my,50%),transparent 0,transparent 60%,rgba(6,2,14,.96) 100%),rgba(6,2,14,.96)}' +
+    '#hwDark.on{opacity:1}' +
+    '#hwFlash{position:fixed;inset:0;z-index:10031;background:#fff;opacity:0;pointer-events:none}' +
+    '.hw-hidden{position:fixed;left:0;top:0;z-index:10025;font-size:32px;cursor:pointer;pointer-events:auto}';
+  document.head.appendChild(css);
+
+  var hud = document.createElement('div');
+  hud.id = 'hwHud';
+  hud.innerHTML = '<span class="cb">連擊 ×0</span><span class="tot">已抓 0</span><span class="cd">🍬 0</span>';
+  document.body.appendChild(hud);
+  var cbEl = hud.querySelector('.cb'), totEl = hud.querySelector('.tot'), cdEl = hud.querySelector('.cd');
+
+  function floatText(x, y, txt) {
+    var f = document.createElement('div');
+    f.className = 'hw-float'; f.textContent = txt;
+    document.body.appendChild(f);
+    f.animate([
+      { transform: 'translate(' + (x - 20) + 'px,' + y + 'px)', opacity: 1 },
+      { transform: 'translate(' + (x - 20) + 'px,' + (y - 46) + 'px)', opacity: 0 }
+    ], { duration: 950, easing: 'ease-out' }).onfinish = function () { f.remove(); };
+  }
+  function burstAt(x, y, n) {
+    for (var i = 0; i < (n || 10); i++) {
+      var p = document.createElement('div');
+      p.className = 'hw-p';
+      p.style.background = pick(['#ff8a1f', '#ffd25a', '#b583ff', '#fff', '#ff5ea8']);
+      document.body.appendChild(p);
+      var a = Math.random() * 6.283, r = rnd(30, 80);
+      p.animate([
+        { transform: 'translate(' + x + 'px,' + y + 'px) scale(1)', opacity: 1 },
+        { transform: 'translate(' + (x + Math.cos(a) * r) + 'px,' + (y + Math.sin(a) * r) + 'px) scale(0)', opacity: 0 }
+      ], { duration: rnd(450, 800), easing: 'cubic-bezier(.2,.8,.3,1)' }).onfinish = (function (el) { return function () { el.remove(); }; })(p);
+    }
+  }
+
+  /* ---- 糖果 ---- */
+  var candies = 0;
+  function addCandy(x, y) {
+    candies++; cdEl.textContent = '🍬 ' + candies; hud.classList.add('on');
+    floatText(x, y, '+1 🍬');
+    if (candies === 10) say('口袋裡有 10 顆糖了！');
+    if (candies === 30) say('糖果大王！記得刷牙喔');
+  }
+  function candyRain(n) {
+    if (reduced) return;
+    var W = innerWidth, H = innerHeight;
+    for (var i = 0; i < n; i++) (function (i) {
+      setTimeout(function () {
+        var c = document.createElement('div');
+        c.className = 'hw-candy'; c.textContent = pick(['🍬', '🍭', '🍫', '🍬']);
+        document.body.appendChild(c);
+        c.style.zIndex = 10005;
+        var x = rnd(0.04, 0.94) * W, sway = rnd(-40, 40), taken = false;
+        var an = c.animate([
+          { transform: 'translate(' + x + 'px,-50px) rotate(0)' },
+          { transform: 'translate(' + (x + sway) + 'px,' + (H * 0.5) + 'px) rotate(180deg)', offset: .5 },
+          { transform: 'translate(' + (x - sway) + 'px,' + (H + 50) + 'px) rotate(360deg)' }
+        ], { duration: rnd(4200, 6200), easing: 'linear' });
+        an.onfinish = function () { c.remove(); };
+        function take() {
+          if (taken) return; taken = true;
+          var r = c.getBoundingClientRect();
+          burstAt(r.left + 15, r.top + 15, 6); addCandy(r.left, r.top); c.remove();
+        }
+        c.addEventListener('pointerdown', take);
+        if (fine) c.addEventListener('pointerenter', take);
+      }, i * 160);
+    })(i);
+  }
+
+  /* ---- 連擊 ---- */
+  var combo = 0, total = 0, comboT, DIALOG = {
+    bat: ['啪！', '吱吱～', '蝙蝠逃跑！', '抓到了'],
+    ghost: ['Boo!', '嚇到你了嗎', '嗚～我不是壞鬼', '被發現了'],
+    pumpkin: ['南瓜開花！', '不給糖就搗蛋', '好香的南瓜', '啵！']
+  };
+  function swarm() {
+    if (reduced) return;
+    say('蝙蝠群出動！');
+    var W = innerWidth, H = innerHeight, bat = (document.querySelector('.hw-bat svg') || {}).outerHTML;
+    var BAT = '<svg viewBox="0 0 64 36"><g fill="#2a1745" stroke="#a97bff" stroke-width="1.2" stroke-linejoin="round"><path d="M32 18C26 6 14 4 2 10c6 2 8 8 10 14 4-6 10-6 14 0 2-2 4-4 6-6z"/><path d="M32 18C38 6 50 4 62 10c-6 2-8 8-10 14-4-6-10-6-14 0-2-2-4-4-6-6z"/><ellipse cx="32" cy="20" rx="5" ry="7"/></g><circle cx="30" cy="19" r="1.3" fill="#ffb347"/><circle cx="34" cy="19" r="1.3" fill="#ffb347"/></svg>';
+    for (var i = 0; i < 14; i++) (function (i) {
+      setTimeout(function () {
+        var m = document.createElement('div');
+        m.className = 'hw-mini'; m.style.width = rnd(28, 44) + 'px'; m.style.zIndex = 10005; m.innerHTML = BAT;
+        document.body.appendChild(m);
+        var y = rnd(0.05, 0.85) * H, d = i % 2 ? 1 : -1, x0 = d > 0 ? -60 : W + 60, x1 = d > 0 ? W + 60 : -60;
+        m.animate([
+          { transform: 'translate(' + x0 + 'px,' + y + 'px) rotate(-8deg)' },
+          { transform: 'translate(' + ((x0 + x1) / 2) + 'px,' + (y + rnd(-60, 60)) + 'px) rotate(8deg)', offset: .5 },
+          { transform: 'translate(' + x1 + 'px,' + (y + rnd(-40, 40)) + 'px) rotate(-8deg)' }
+        ], { duration: rnd(2200, 3600), easing: 'ease-in-out' }).onfinish = function () { m.remove(); };
+      }, i * 140);
+    })(i);
+  }
+  function onPop(type, x, y) {
+    total++; combo++;
+    hud.classList.add('on');
+    cbEl.textContent = '連擊 ×' + combo; totEl.textContent = '已抓 ' + total;
+    cbEl.classList.remove('bump'); void cbEl.offsetWidth; cbEl.classList.add('bump');
+    floatText(x, y, pick(DIALOG[type] || DIALOG.bat));
+    clearTimeout(comboT);
+    comboT = setTimeout(function () { combo = 0; cbEl.textContent = '連擊 ×0'; }, 2500);
+    if (combo === 5) { say('5 連擊！糖果雨來了'); candyRain(12); }
+    else if (combo === 10) { swarm(); }
+    else if (combo === 20) { say('20 連擊！你是捉鬼大師'); candyRain(26); swarm(); }
+  }
+  layer.addEventListener('pointerover', capture, true);
+  layer.addEventListener('pointerdown', capture, true);
+  function capture(e) {
+    if (e.type === 'pointerover' && !fine) return;
+    var el = e.target.closest && e.target.closest('.hw-crit');
+    if (!el || el._hwDone) return;
+    el._hwDone = true;
+    var r = el.getBoundingClientRect(), type = el.classList.contains('hw-ghost') ? 'ghost' : el.classList.contains('hw-pumpkin') ? 'pumpkin' : 'bat';
+    onPop(type, r.left + r.width / 2, r.top);
+    if (type === 'pumpkin') { burstAt(r.left + r.width / 2, r.top + r.height / 2, 8); addCandy(r.left, r.top + 10); }
+  }
+
+  /* ---- 點空白處：噴小蝙蝠 ---- */
+  var lastC = 0;
+  document.addEventListener('pointerdown', function (e) {
+    if (reduced || document.getElementById('hwModal') && !document.getElementById('hwModal').hidden) return;
+    if (e.target.closest && e.target.closest('a,button,input,textarea,select,label,video,iframe,summary,[role=button],.hw-crit,.hw-candy,.hw-buddy,.hw-hidden,#hwModal')) return;
+    var now = Date.now(); if (now - lastC < 450) return; lastC = now;
+    burstAt(e.clientX, e.clientY, 8);
+    var BAT = (document.querySelector('.hw-bat') || {}).innerHTML;
+    if (!BAT) return;
+    for (var i = 0; i < 3; i++) {
+      var m = document.createElement('div');
+      m.className = 'hw-mini'; m.style.zIndex = 10005; m.innerHTML = BAT;
+      document.body.appendChild(m);
+      var a = rnd(-2.6, -0.5), d = rnd(90, 190);
+      m.animate([
+        { transform: 'translate(' + e.clientX + 'px,' + e.clientY + 'px) scale(.4)', opacity: 1 },
+        { transform: 'translate(' + (e.clientX + Math.cos(a) * d) + 'px,' + (e.clientY + Math.sin(a) * d - 40) + 'px) scale(1)', opacity: 0 }
+      ], { duration: rnd(900, 1400), easing: 'ease-out' }).onfinish = (function (el) { return function () { el.remove(); }; })(m);
+    }
+  });
+
+  /* ---- 連點 Logo 5 下：停電 + 手電筒找糖 ---- */
+  var logo = document.querySelector('img.logo-img');
+  var lt = [];
+  if (logo) logo.addEventListener('click', function () {
+    var now = Date.now(); lt.push(now); lt = lt.filter(function (t) { return now - t < 3500; });
+    if (lt.length >= 5) { lt = []; blackout(); }
+  });
+  var dark = document.createElement('div'); dark.id = 'hwDark'; document.body.appendChild(dark);
+  var flash = document.createElement('div'); flash.id = 'hwFlash'; document.body.appendChild(flash);
+  var busy = false;
+  function blackout() {
+    if (busy || reduced) return; busy = true;
+    flash.animate([{ opacity: 0 }, { opacity: .95 }, { opacity: 0 }, { opacity: .7 }, { opacity: 0 }], { duration: 650 });
+    setTimeout(function () {
+      dark.classList.add('on');
+      dark.style.setProperty('--mx', '50%'); dark.style.setProperty('--my', '50%');
+      say('停電了！用手電筒找出 3 顆藏起來的糖');
+    }, 450);
+    function mv(e) {
+      var p = e.touches ? e.touches[0] : e; if (!p) return;
+      dark.style.setProperty('--mx', p.clientX + 'px'); dark.style.setProperty('--my', p.clientY + 'px');
+    }
+    window.addEventListener('pointermove', mv, { passive: true });
+    window.addEventListener('touchmove', mv, { passive: true });
+    var found = 0, items = [];
+    for (var i = 0; i < 3; i++) {
+      var h = document.createElement('div');
+      h.className = 'hw-hidden'; h.textContent = pick(['🍬', '🍭', '🍫']);
+      var hx = rnd(0.08, 0.88) * innerWidth, hy = rnd(0.15, 0.8) * innerHeight;
+      h.style.transform = 'translate(' + hx + 'px,' + hy + 'px)';
+      document.body.appendChild(h); items.push(h);
+      h.addEventListener('pointerdown', (function (h, hx, hy) { return function () {
+        if (h._t) return; h._t = 1; found++;
+        burstAt(hx + 16, hy + 16, 10); addCandy(hx, hy); h.remove();
+        if (found === 3) { say('全部找到了！電力恢復～'); setTimeout(end, 900); }
+      }; })(h, hx, hy));
+    }
+    var endT = setTimeout(end, 20000);
+    function end() {
+      if (!busy) return; busy = false; clearTimeout(endT);
+      dark.classList.remove('on');
+      window.removeEventListener('pointermove', mv); window.removeEventListener('touchmove', mv);
+      items.forEach(function (h) { h.remove(); });
+      flash.animate([{ opacity: 0 }, { opacity: .6 }, { opacity: 0 }], { duration: 450 });
+      if (found < 3) say('時間到，電力恢復了（找到 ' + found + ' 顆）');
+    }
+  }
+
+  /* ---- 蜘蛛吊絲垂下來（偶爾一隻，停一下就爬回去；點到＝抓到，掉糖＋連擊）---- */
+  var SPIDER = '<svg viewBox="0 0 60 56"><g stroke="#a97bff" stroke-width="2.4" stroke-linecap="round" fill="none"><path d="M24 26L8 14L2 24M24 30L6 32L2 44M26 34L12 48L10 56M36 26L52 14L58 24M36 30L54 32L58 44M34 34L48 48L50 56"/></g><ellipse cx="30" cy="34" rx="13" ry="14" fill="#2a1745" stroke="#a97bff" stroke-width="1.6"/><circle cx="30" cy="22" r="8" fill="#2a1745" stroke="#a97bff" stroke-width="1.6"/><circle cx="26.5" cy="21" r="2.2" fill="#ff5ea8"/><circle cx="33.5" cy="21" r="2.2" fill="#ff5ea8"/><path d="M30 28l-2 6h4zM25 36q5 4 10 0" fill="#ff8a1f" opacity=".75"/></svg>';
+  DIALOG.spider = ['抓到蜘蛛啦！', '嚇到我了', '八隻腳也跑不掉', '蜘蛛：救命～'];
+  var sp = document.createElement('style');
+  sp.textContent =
+    '.hw-spider{position:fixed;top:0;z-index:9;pointer-events:none;will-change:transform}' +
+    '.hw-spider .th{position:absolute;left:50%;bottom:calc(100% - 14px);width:0;height:1200px;border-left:1.5px solid rgba(255,255,255,.55);transform:translateX(-50%)}' +
+    '.hw-spider .bd{position:relative;pointer-events:auto;cursor:pointer;transform-origin:50% 0}' +
+    '.hw-spider .bd svg{display:block;width:100%;height:auto;filter:drop-shadow(0 5px 6px rgba(20,5,45,.5))}' +
+    '.hw-spider .bd:hover{animation:hwWig .35s ease-in-out infinite}' +
+    '@keyframes hwWig{25%{transform:rotate(-14deg)}75%{transform:rotate(14deg)}}';
+  document.head.appendChild(sp);
+  var spAlive = 0;
+  function dropSpider() {
+    if (reduced || document.hidden || spAlive >= (phone ? 1 : 2)) return;
+    spAlive++;
+    var W = innerWidth, H = innerHeight, size = phone ? 34 : 46;
+    var w = document.createElement('div');
+    w.className = 'hw-spider';
+    w.style.width = size + 'px';
+    w.style.left = rnd(0.06, 0.88) * (W - size) + 'px';
+    w.innerHTML = '<div class="th"></div><div class="bd">' + SPIDER + '</div>';
+    document.body.appendChild(w);
+    var depth = rnd(0.28, 0.62) * H, stay = rnd(3500, 6500), down = 1700, up = 1500, tot = down + stay + up;
+    var kf = [
+      { transform: 'translateY(-' + (size + 20) + 'px)', offset: 0, easing: 'cubic-bezier(.3,1.4,.5,1)' },
+      { transform: 'translateY(' + depth + 'px)', offset: down / tot }
+    ];
+    var n = 6;
+    for (var i = 1; i <= n; i++) kf.push({ transform: 'translateY(' + (depth + (i % 2 ? 22 : -14)) + 'px)', offset: (down + stay * i / n) / tot, easing: 'ease-in-out' });
+    kf.push({ transform: 'translateY(-' + (size + 20) + 'px)', offset: 1, easing: 'ease-in' });
+    var an = w.animate(kf, { duration: tot, fill: 'forwards' });
+    function gone() { if (w.parentNode) { w.remove(); spAlive--; } }
+    an.onfinish = gone;
+    w.querySelector('.bd').addEventListener('pointerdown', function (e) {
+      e.preventDefault();
+      var r = w.getBoundingClientRect();
+      burstAt(r.left + size / 2, r.top + size / 2, 12);
+      onPop('spider', r.left + size / 2, r.top);
+      addCandy(r.left, r.top + 10);
+      an.cancel(); gone();
+    });
+  }
+  if (!reduced) {
+    setTimeout(function sl() { dropSpider(); setTimeout(sl, rnd(9000, 16000)); }, 4000);
+  }
+})();
+</script>
 </body>
 </html>
