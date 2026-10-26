@@ -5557,6 +5557,102 @@
     .champion-caption-sub { font-size: 0.78rem; }
   }
 
+  /* ===== 115 上學期第一次段考英雄榜 — 最醒目橫幅 ===== */
+  .exam-banner {
+    position: relative;
+    margin: 0 auto 64px;
+    max-width: 1120px;
+    border-radius: 26px;
+    overflow: hidden;
+    background: linear-gradient(135deg, #0b1a4a 0%, #14307f 55%, #0b1a4a 100%);
+    border: 3px solid #f5b72e;
+    box-shadow: 0 0 0 7px rgba(245, 183, 46, 0.2),
+                0 36px 90px -22px rgba(245, 183, 46, 0.55),
+                0 14px 34px -10px rgba(10, 20, 80, 0.6);
+    cursor: pointer;
+    animation: examPulse 2.4s ease-in-out infinite;
+    transition: transform 0.4s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .exam-banner:hover { transform: scale(1.012) translateY(-4px); }
+  @keyframes examPulse {
+    0%, 100% { box-shadow: 0 0 0 7px rgba(245,183,46,.2), 0 36px 90px -22px rgba(245,183,46,.5), 0 14px 34px -10px rgba(10,20,80,.6); }
+    50%      { box-shadow: 0 0 0 12px rgba(245,183,46,.32), 0 44px 100px -22px rgba(245,183,46,.75), 0 18px 40px -10px rgba(10,20,80,.7); }
+  }
+  .exam-banner::after {              /* 掃過的亮光 */
+    content: ''; position: absolute; top: 0; bottom: 0; left: -40%; width: 30%;
+    background: linear-gradient(100deg, transparent, rgba(255,255,255,.35), transparent);
+    transform: skewX(-18deg); z-index: 6; pointer-events: none;
+    animation: examShine 4.5s ease-in-out infinite;
+  }
+  @keyframes examShine { 0%, 55% { left: -40%; } 100% { left: 130%; } }
+  .exam-top {
+    display: flex; align-items: center; justify-content: space-between; gap: 10px;
+    padding: 12px 14px; background: linear-gradient(90deg, #07123a, #0f2566);
+    border-bottom: 2px solid #f5b72e;
+  }
+  .exam-ribbon {
+    background: linear-gradient(135deg, #f5b72e, #f97316);
+    color: #3b1500; padding: 9px 20px; border-radius: 999px;
+    font-size: 0.95rem; font-weight: 900; letter-spacing: 0.06em;
+    box-shadow: 0 8px 22px -6px rgba(249, 115, 22, 0.7);
+  }
+  .exam-new {
+    background: #fff; color: #dc2626; padding: 7px 16px; border-radius: 999px;
+    font-size: 0.8rem; font-weight: 900; letter-spacing: 0.14em; border: 2px solid #dc2626;
+    animation: championNewFlash 1s ease-in-out infinite;
+  }
+  .exam-img-wrap { display: block; position: relative; background: #050a24; }
+  .exam-img-wrap img { width: 100%; height: auto; display: block; }
+  .exam-zoom {
+    position: absolute; right: 16px; bottom: 16px; z-index: 7;
+    display: flex; align-items: center; gap: 8px;
+    background: rgba(255,255,255,.96); color: #0b1a4a;
+    padding: 10px 16px; border-radius: 999px; font-size: 0.9rem; font-weight: 800;
+    box-shadow: 0 6px 18px -2px rgba(0,0,0,.4);
+  }
+  .exam-caption {
+    padding: 22px 24px 24px; text-align: center;
+    background: linear-gradient(180deg, #fff7d6, #ffe8a3);
+    border-top: 3px solid #f5b72e;
+  }
+  .exam-caption-title { margin: 0 0 12px; font-size: 1.45rem; font-weight: 900; color: #7c1d12; letter-spacing: 0.02em; }
+  .exam-stats { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; }
+  .exam-stat {
+    background: #14307f; color: #fff; border-radius: 14px; padding: 10px 18px;
+    font-weight: 800; font-size: 1rem; line-height: 1.35;
+  }
+  .exam-stat b { color: #ffd54a; font-size: 1.5rem; font-weight: 900; margin: 0 2px; }
+  .exam-hint { margin: 12px 0 0; color: #92400e; font-size: 0.86rem; font-weight: 700; }
+
+  /* 放大檢視：橫式榜單字很小，手機上用橫向捲動看原尺寸 */
+  .exam-lightbox { z-index: 10050; overflow: auto; align-items: center; justify-content: center; -webkit-overflow-scrolling: touch; }
+  .exam-lightbox img { max-width: 96vw; max-height: 92vh; }
+  @media (max-width: 900px) {
+    .exam-lightbox { align-items: flex-start; justify-content: flex-start; padding: 64px 12px 24px; }
+    .exam-lightbox img { max-width: none; max-height: none; width: 1500px; }
+  }
+  .exam-lightbox-tip {
+    position: fixed; left: 50%; bottom: 18px; transform: translateX(-50%); z-index: 10052;
+    background: rgba(255,255,255,.95); color: #0b1a4a; font-weight: 800; font-size: .85rem;
+    padding: 8px 16px; border-radius: 999px; display: none;
+  }
+  @media (max-width: 900px) { .exam-lightbox.is-open .exam-lightbox-tip { display: block; } }
+  @media (max-width: 560px) {
+    .exam-banner { margin-bottom: 40px; border-width: 2px; }
+    .exam-top { padding: 9px 10px; }
+    .exam-ribbon { font-size: 0.74rem; padding: 6px 12px; }
+    .exam-new { font-size: 0.66rem; padding: 5px 10px; }
+    .exam-stats { display: grid; grid-template-columns: 1fr 1fr; gap: 8px; }
+    .exam-stat { padding: 8px 6px; font-size: 0.8rem; }
+    .exam-zoom { font-size: 0.74rem; padding: 7px 12px; right: 10px; bottom: 10px; }
+    .exam-caption { padding: 16px 14px 18px; }
+    .exam-caption-title { font-size: 1.12rem; }
+    .exam-stat b { font-size: 1.25rem; }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .exam-banner, .exam-banner::after, .exam-new { animation: none; }
+  }
+
   /* ========== 榜單 ========== */
   .honor {
     padding: 160px 0;
@@ -11430,6 +11526,37 @@ document.addEventListener('DOMContentLoaded', function () {
 <section class="honor" id="honor" data-page="honor">
   <div class="container">
 
+    <!-- 🏆 115 上學期第一次段考英雄榜（最新・最醒目）-->
+    <div class="exam-banner fade-up" id="examBanner" role="button" tabindex="0" aria-label="115 上學期第一次段考英雄榜 點擊放大">
+      <div class="exam-top">
+        <span class="exam-ribbon">🏆 最新・第一次段考英雄榜</span>
+        <span class="exam-new">NEW</span>
+      </div>
+      <div class="exam-img-wrap">
+        <img src="榜單/115上學期第一次段考英雄榜.webp" alt="115 學年度上學期第一次段考英雄榜 — 國八、國九理化多人滿分" width="2400" height="1467" loading="lazy" decoding="async" />
+        <span class="exam-zoom" aria-hidden="true">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.4" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/><line x1="11" y1="8" x2="11" y2="14"/><line x1="8" y1="11" x2="14" y2="11"/></svg>
+          點開看完整名單
+        </span>
+      </div>
+      <div class="exam-caption">
+        <p class="exam-caption-title">115 學年度上學期 · 第一次段考 英雄榜</p>
+        <div class="exam-stats">
+          <span class="exam-stat">國八理化 <b>100</b> 分 <b>9</b> 人</span>
+          <span class="exam-stat">國九理化 <b>100</b> 分 <b>3</b> 人</span>
+          <span class="exam-stat">國八 90 分以上 <b>60%</b></span>
+          <span class="exam-stat">國九 90 分以上 <b>69%</b></span>
+        </div>
+        <p class="exam-hint">超強的理化成績，大放異彩！點圖可放大查看每位同學的成績</p>
+      </div>
+    </div>
+
+    <div class="champion-lightbox exam-lightbox" id="examLightbox" hidden>
+      <button type="button" class="champion-lightbox-close" id="examLightboxClose" aria-label="關閉">×</button>
+      <img src="榜單/115上學期第一次段考英雄榜.webp" alt="115 學年度上學期第一次段考英雄榜" />
+      <span class="exam-lightbox-tip">左右滑動看完整名單</span>
+    </div>
+
     <!-- 🏆 115 年會考英雄榜 (今年最新榮譽 - 超醒目) -->
     <div class="champion-banner fade-up" id="championBanner" role="button" tabindex="0" aria-label="115 年會考英雄榜 點擊放大">
       <span class="champion-ribbon">2026 最新</span>
@@ -13212,6 +13339,35 @@ document.addEventListener('DOMContentLoaded', function () {
     if (!banner || !lb || !close) return;
     function open() {
       lb.hidden = false;
+      requestAnimationFrame(function () { lb.classList.add('is-open'); });
+      document.body.style.overflow = 'hidden';
+    }
+    function shut() {
+      lb.classList.remove('is-open');
+      setTimeout(function () { lb.hidden = true; }, 280);
+      document.body.style.overflow = '';
+    }
+    banner.addEventListener('click', open);
+    banner.addEventListener('keydown', function (e) {
+      if (e.key === 'Enter' || e.key === ' ') { e.preventDefault(); open(); }
+    });
+    close.addEventListener('click', shut);
+    lb.addEventListener('click', function (e) { if (e.target === lb) shut(); });
+    document.addEventListener('keydown', function (e) {
+      if (e.key === 'Escape' && lb.classList.contains('is-open')) shut();
+    });
+  })();
+
+  // 115 上學期第一次段考英雄榜 - lightbox
+  (function initExamBanner() {
+    var banner = document.getElementById('examBanner');
+    var lb = document.getElementById('examLightbox');
+    var close = document.getElementById('examLightboxClose');
+    if (!banner || !lb || !close) return;
+    document.body.appendChild(lb);   // 移到最外層，才不會被頁面的導覽列蓋住
+    function open() {
+      lb.hidden = false;
+      lb.scrollLeft = 0; lb.scrollTop = 0;
       requestAnimationFrame(function () { lb.classList.add('is-open'); });
       document.body.style.overflow = 'hidden';
     }
