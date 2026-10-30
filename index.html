@@ -5653,6 +5653,9 @@
     .exam-banner, .exam-banner::after, .exam-new { animation: none; }
   }
 
+  /* 線上課程暫時隱藏（由 window.ONLINE_OPEN 控制，見網頁開頭的開關） */
+  html:not(.online-open) [data-online] { display: none !important; }
+
   /* ========== 榜單 ========== */
   .honor {
     padding: 160px 0;
@@ -8911,6 +8914,10 @@ document.addEventListener('DOMContentLoaded', function () {
   window.HW_ON = on;
   if (on) document.documentElement.classList.add('halloween');
 })();
+/* ====== 線上課程：暫時隱藏 ======
+   要重新開放：把下面的 false 改成 true 就好（導覽列、手機底部列、線上課程頁會一起回來）。 */
+window.ONLINE_OPEN = false;
+if (window.ONLINE_OPEN) document.documentElement.classList.add('online-open');
 </script>
 <div class="scroll-progress" id="scrollProgress"></div>
 <div class="cursor-glow" id="cursorGlow"></div>
@@ -9116,7 +9123,7 @@ document.addEventListener('DOMContentLoaded', function () {
       <li><a href="#courses">聯絡簿</a></li>
       <li><a href="#calendar">行事曆</a></li>
       <li><a href="#dm">課程DM</a></li>
-      <li><a href="#online">線上課程</a></li>
+      <li data-online><a href="#online">線上課程</a></li>
       <li><a href="#teachers">師資</a></li>
       <li><a href="#honor">榜單</a></li>
       <li><a href="#testimonials">好評</a></li>
@@ -10012,7 +10019,7 @@ document.addEventListener('DOMContentLoaded', function () {
 </section>
 
 <!-- 線上課程專區 -->
-<section class="online-section" id="online" data-page="online">
+<section class="online-section" id="online" data-page="online" data-online>
   <div class="container">
     <div class="section-header">
       <span class="section-kicker">ONLINE COURSES</span>
@@ -13498,7 +13505,7 @@ document.addEventListener('DOMContentLoaded', function () {
       '#calendar': 'calendar', '#honor': 'honor', '#testimonials': 'testimonials',
       '#contact': 'contact'
     };
-    var VALID = { home:1, about:1, courses:1, dm:1, online:1, teachers:1, calendar:1, honor:1, testimonials:1, contact:1 };
+    var VALID = { home:1, about:1, courses:1, dm:1, online: window.ONLINE_OPEN ? 1 : 0, teachers:1, calendar:1, honor:1, testimonials:1, contact:1 };
 
     function setPage(name) {
       if (!name || !VALID[name]) name = 'home';
@@ -14061,7 +14068,7 @@ document.addEventListener('DOMContentLoaded', function () {
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="8" r="3.6"/><path d="M4.5 20c0-3.9 3.4-6.3 7.5-6.3s7.5 2.4 7.5 6.3"/></svg>
     <span>師資</span>
   </a>
-  <a href="#online" class="mob-nav-item" data-page="online">
+  <a href="#online" class="mob-nav-item" data-page="online" data-online>
     <svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><polygon points="6 4 18 12 6 20 6 4" fill="currentColor" stroke="none"/></svg>
     <span>線上</span>
   </a>
