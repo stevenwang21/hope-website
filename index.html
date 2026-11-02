@@ -2666,7 +2666,8 @@
 
   /* ===== 手機板 DM 橫向滑動 (國七 → 課表) ===== */
   .dm-mobile-swipe { display: none; }
-  @media (max-width: 720px) {
+  /* 手機、折疊機(含展開後的寬螢幕)、平板：只要是觸控裝置或窄螢幕，就用左右滑 */
+  @media (max-width: 720px), (hover: none) and (pointer: coarse) {
     .dm-layout { display: none !important; }
     .dm-mobile-swipe {
       display: flex;
@@ -2675,13 +2676,13 @@
       overflow-y: hidden;
       scroll-snap-type: x mandatory;
       -webkit-overflow-scrolling: touch;
-      padding: 20px 12%;
+      padding: 20px max(12%, calc((100% - 340px) / 2));
       margin: 0 -20px;
       scrollbar-width: none;
     }
     .dm-mobile-swipe::-webkit-scrollbar { display: none; }
     .dm-swipe-card {
-      flex: 0 0 76%;
+      flex: 0 0 min(76%, 340px);
       aspect-ratio: 3/4;
       scroll-snap-align: center;
       background: #fff;
@@ -5656,6 +5657,7 @@
   /* 線上課程暫時隱藏（由 window.ONLINE_OPEN 控制，見網頁開頭的開關） */
   html:not(.online-open) [data-online] { display: none !important; }
 
+  html:not(.show-114) [data-board114] { display: none !important; }
   /* ========== 榜單 ========== */
   .honor {
     padding: 160px 0;
@@ -8918,6 +8920,8 @@ document.addEventListener('DOMContentLoaded', function () {
    要重新開放：把下面的 false 改成 true 就好（導覽列、手機底部列、線上課程頁會一起回來）。 */
 window.ONLINE_OPEN = false;
 if (window.ONLINE_OPEN) document.documentElement.classList.add('online-open');
+  /* 114 上學期舊榜單：false = 隱藏；要放回來改成 true */
+  window.SHOW_114_BOARDS = false; if (window.SHOW_114_BOARDS) document.documentElement.classList.add('show-114');
 </script>
 <div class="scroll-progress" id="scrollProgress"></div>
 <div class="cursor-glow" id="cursorGlow"></div>
@@ -11663,7 +11667,7 @@ if (window.ONLINE_OPEN) document.documentElement.classList.add('online-open');
     <div class="honor-boards">
 
       <!-- 高中部 第一次段考 -->
-      <div class="honor-board fade-up">
+      <div class="honor-board fade-up" data-board114>
         <div class="honor-board-header">
           <span class="honor-board-kicker">SENIOR HIGH · MIDTERM 1</span>
           <h3 class="honor-board-title">114 上學期 <span class="accent">高中部第一次段考</span></h3>
@@ -11772,7 +11776,7 @@ if (window.ONLINE_OPEN) document.documentElement.classList.add('online-open');
       </div>
 
       <!-- 國中部 第三次段考 英雄榜 -->
-      <div class="honor-board fade-up">
+      <div class="honor-board fade-up" data-board114>
         <div class="honor-board-header">
           <span class="honor-board-kicker">JUNIOR HIGH · MIDTERM 3 · HEROES</span>
           <h3 class="honor-board-title">114 上學期 <span class="accent">國中部第三次段考英雄榜</span></h3>
